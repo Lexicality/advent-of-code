@@ -1,10 +1,12 @@
 import math
+from typing import List
 
 from .utils import read_file
 
 DAY = "3"
-RIGHT_BIAS = 3
+RIGHT_BIAS = 7
 TREE = "#"
+SLOPES = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
 
 
 def generate_map():
@@ -18,14 +20,28 @@ def generate_map():
     return [row * mul for row in map]
 
 
+def check_slope(
+    map: List[str],
+    right: int,
+    down: int,
+) -> int:
+    xpos = 0
+    ypos = 0
+    trees = 0
+    while xpos < len(map):
+        row = map[xpos]
+        if row[ypos] == TREE:
+            trees += 1
+        xpos += down
+        ypos += right
+    return trees
+
+
 def main():
     map = generate_map()
-    pos = 0
-    trees = 0
-    for row in map:
-        if row[pos] == TREE:
-            trees += 1
-        pos += RIGHT_BIAS
+    trees = 1
+    for slope in SLOPES:
+        trees *= check_slope(map, *slope)
     print(trees)
 
 
