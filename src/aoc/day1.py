@@ -28,7 +28,3 @@ def main():
         #     return
 
     print("None found?")
-
-
-if __name__ == "__main__":
-    main()
