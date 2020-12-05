@@ -81,6 +81,3 @@ def main():
             ret += 1
 
     print(ret)
-
-
-main()

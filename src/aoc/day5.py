@@ -39,6 +39,3 @@ def main():
     print("how did you get here without raising?")
 
     print(all_passes)
-
-
-main()

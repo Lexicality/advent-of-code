@@ -43,7 +43,3 @@ def main():
     for slope in SLOPES:
         trees *= check_slope(map, *slope)
     print(trees)
-
-
-if __name__ == "__main__":
-    main()

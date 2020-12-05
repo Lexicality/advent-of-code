@@ -42,7 +42,3 @@ def main():
         if valid:
             num_valid += 1
     print(num_valid)
-
-
-if __name__ == "__main__":
-    main()
