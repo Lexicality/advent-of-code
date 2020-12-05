@@ -1,12 +1,8 @@
-from typing import Optional
-
-from .utils import read_file
-
-DAY = 1
+from typing import Iterable, Optional
 
 
-def main():
-    nums = [int(line) for line in read_file(DAY)]
+def main(data: Iterable[str]):
+    nums = [int(line) for line in data]
     num_set = set(nums)
 
     def search(num: int) -> Optional[int]:

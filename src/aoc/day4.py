@@ -2,10 +2,6 @@ import itertools
 import re
 from typing import Callable, Dict, Iterable
 
-from .utils import read_file
-
-DAY = "4"
-
 YEAR = re.compile(r"^[12]\d{3}$")
 
 
@@ -57,8 +53,7 @@ def passport(iter: Iterable[str]) -> Passport:
     )
 
 
-def passports() -> Iterable[Passport]:
-    data = read_file(DAY)
+def passports(data: Iterable[str]) -> Iterable[Passport]:
     while pp := passport(data):
         yield pp
 
@@ -73,10 +68,10 @@ def validate(passport: Passport) -> bool:
     return True
 
 
-def main():
+def main(data: Iterable[str]):
     ret = 0
 
-    for pp in passports():
+    for pp in passports(data):
         if validate(pp):
             ret += 1
 

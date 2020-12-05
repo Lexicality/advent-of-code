@@ -1,6 +1,4 @@
-from .utils import read_file
-
-DAY = "5"
+from typing import Iterable
 
 ROWS = list(range(128))
 COLS = list(range(8))
@@ -24,8 +22,8 @@ def process_pass(bpass: str) -> int:
     return my_rows[0] * 8 + my_cols[0]
 
 
-def main():
-    all_passes = list(process_pass(bp) for bp in read_file(DAY))
+def main(data: Iterable[str]):
+    all_passes = list(process_pass(bp) for bp in data)
 
     all_passes.sort()
 
