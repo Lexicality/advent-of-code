@@ -30,6 +30,21 @@ class Node:
             itertools.chain.from_iterable(c.all_metadata for c in self.children)
         )
 
+    @property
+    def all_metadata2(self) -> int:
+        num_children = len(self.children)
+        print("METADATA", self.name, self.metadata, num_children)
+        if num_children == 0:
+            print("no kids")
+            return sum(self.metadata)
+
+        print("asking", *(c.name for c in self.children))
+
+        return sum(
+            self.children[m - 1].all_metadata2 if m <= num_children else 0
+            for m in self.metadata
+        )
+
     def __str__(self) -> str:
         kids = "\n\t".join(str(c) for c in self.children)
         return (
@@ -44,5 +59,6 @@ def main(data: Iterator[str]):
 
     root = Node(numbers)
     print(root)
-    print(root.all_metadata)
-    print(sum(root.all_metadata))
+    # print(root.all_metadata)
+    # print(sum(root.all_metadata))
+    print(root.all_metadata2)
