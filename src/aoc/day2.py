@@ -1,8 +1,5 @@
 import re
-
-from .utils import read_file
-
-DAY = "2"
+from typing import Iterable
 
 
 def validate(input: str) -> bool:
@@ -34,9 +31,9 @@ def validate2(input: str) -> bool:
     return (one_v or two_v) and not (one_v and two_v)
 
 
-def main():
+def main(data: Iterable[str]):
     num_valid = 0
-    for line in read_file(DAY):
+    for line in data:
         valid = validate2(line)
         print(f"Input: {line} Valid: {valid}")
         if valid:

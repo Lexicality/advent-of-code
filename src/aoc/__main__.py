@@ -3,6 +3,13 @@ import importlib
 import inspect
 import os
 import pathlib
+from typing import Iterable
+
+
+def read_file(path: pathlib.Path) -> Iterable[str]:
+    with open(path, "r") as f:
+        for line in f:
+            yield line.strip()
 
 
 def main():
@@ -14,6 +21,7 @@ def main():
     available_days.sort()
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--example", default=False, action="store_true")
     parser.add_argument(
         "day",
         type=int,
@@ -22,8 +30,13 @@ def main():
     )
     args = parser.parse_args()
 
+    day_data_file = pathlib.Path(
+        "data", "example" if args.example else ".", f"{args.day}.txt"
+    ).resolve()
+    day_data = read_file(day_data_file)
+
     day = importlib.import_module(f"aoc.day{args.day}")
-    day.main()
+    day.main(day_data)
 
 
 main()

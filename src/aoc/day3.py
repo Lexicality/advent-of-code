@@ -1,16 +1,13 @@
 import math
-from typing import List
+from typing import Iterable, List
 
-from .utils import read_file
-
-DAY = "3"
 RIGHT_BIAS = 7
 TREE = "#"
 SLOPES = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
 
 
-def generate_map():
-    map = list(read_file(DAY))
+def generate_map(data: Iterable[str]):
+    map = list(data)
     height = len(map)
     width = len(map[0])
 
@@ -37,8 +34,8 @@ def check_slope(
     return trees
 
 
-def main():
-    map = generate_map()
+def main(data: Iterable[str]):
+    map = generate_map(data)
     trees = 1
     for slope in SLOPES:
         trees *= check_slope(map, *slope)
