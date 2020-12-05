@@ -1,10 +1,9 @@
 import itertools
 import re
-from pprint import pprint
-from typing import Iterable, List, Optional, Set, Tuple
+from typing import Iterable, Optional, Set, Tuple
 
-NUM_WORKERS = 2
-JOB_TIME = 0 - ord("A") + 1
+NUM_WORKERS = 5
+JOB_TIME = 60 - ord("A") + 1
 
 
 class Worker:
@@ -35,12 +34,14 @@ class Step:
         self.dependencies = set()
         self.dependants = set()
         self.timeLeft = JOB_TIME + ord(name)
+        print("step", name, "takes", self.timeLeft)
 
     def __repr__(self) -> str:
         deps = ",".join(step.name for step in self.dependencies)
         rep = f"Step {self.name} [{deps}]"
         if self.worker:
-            rep += f" (Being worked on by #{self.worker.name}, {self.timeLeft:,} seconds left)"
+            rep += f" (Being worked on by #{self.worker.name}"
+            rep += f", {self.timeLeft:02} seconds left)"
         return rep
 
 
@@ -71,13 +72,25 @@ def main(data: Iterable[str]):
 
     workers = [Worker(i + 1) for i in range(NUM_WORKERS)]
 
+    order = ""
     time = 0
 
-    while len(all_steps) > 0:
-        print()
-        pprint(all_steps)
-        pprint(workers)
+    done_size = len(all_steps) + 2
 
+    print(
+        f"{'time': ^6}",
+        *(f"{w.name: ^3}" for w in workers),
+        f"{'done': ^{done_size}}",
+        sep="|",
+    )
+    print(
+        "-" * 6,
+        *("---" for _ in workers),
+        "-" * done_size,
+        sep="+",
+    )
+
+    while len(all_steps) > 0:
         idle_workers = list(worker for worker in workers if worker.job is None)
         to_delete = []
 
@@ -88,23 +101,39 @@ def main(data: Iterable[str]):
             if not step.worker and len(idle_workers) > 0:
                 step.worker = idle_workers.pop()
                 step.worker.job = step
-                print("starting step", step)
+                # print("starting step", step)
+
+            if not step.worker:
+                continue
 
             step.timeLeft -= 1
 
-            if step.timeLeft > 0:
-                continue
+            if step.timeLeft <= 0:
+                to_delete.append(name)
+                # print("completed step", step)
 
-            print("Ye", name)
+        print(
+            f"{time: ^6}",
+            *(
+                f"{worker.job.name: ^3}" if worker.job is not None else " . "
+                for worker in workers
+            ),
+            f"{order: ^{done_size}}",
+            sep="|",
+        )
+
+        for name in to_delete:
+            # print("Ye", name)
+
+            order += name
+
+            step = all_steps[name]
 
             step.worker.job = None
 
             for dep in step.dependants:
                 dep.dependencies.remove(step)
 
-            to_delete.append(name)
-
-        for name in to_delete:
             del all_steps[name]
 
         time += 1
