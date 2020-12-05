@@ -25,12 +25,20 @@ def process_pass(bpass: str) -> int:
 
 
 def main():
-    highest = -1
+    all_passes = list(process_pass(bp) for bp in read_file(DAY))
 
-    for bpass in read_file(DAY):
-        highest = max(highest, process_pass(bpass))
+    all_passes.sort()
 
-    print(highest)
+    for i in range(len(all_passes)):
+        this = all_passes[i]
+        next = all_passes[i + 1]
+        if next > this + 1:
+            print(this + 1)
+            return
+
+    print("how did you get here without raising?")
+
+    print(all_passes)
 
 
 main()
