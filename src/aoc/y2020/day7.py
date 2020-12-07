@@ -51,18 +51,17 @@ def main(data: Iterable[str]):
             bag.can_contain.add(rule)
             target.contained_by.add(bag)
 
-    can_contain_gold: Set[Bag] = set()
-
     shiny_gold = bags["shiny gold"]
 
-    to_check = [bag for bag in shiny_gold.contained_by]
+    total_bags = 0
+
+    to_check = [rule for rule in shiny_gold.can_contain]
     while len(to_check) > 0:
-        bag = to_check.pop(0)
-        if bag in can_contain_gold or bag is shiny_gold:
-            continue
+        rule = to_check.pop(0)
+        assert rule.target is not shiny_gold
 
-        can_contain_gold.add(bag)
-        for other_bag in bag.contained_by:
-            to_check.append(other_bag)
+        total_bags += rule.count
+        for _ in range(rule.count):
+            to_check.extend(rule.target.can_contain)
 
-    print(len(can_contain_gold))
+    print(total_bags)
