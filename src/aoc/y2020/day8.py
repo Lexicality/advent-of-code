@@ -1,4 +1,4 @@
-from typing import Iterable, NamedTuple, Set
+from typing import Iterable, List, NamedTuple, Set, Tuple
 
 class Opcode(NamedTuple):
     opcode: str
@@ -8,19 +8,17 @@ def parse_opcode(input: str) -> Opcode:
     opcode, value = input.split(" ", maxsplit=1)
     return Opcode(opcode, int(value))
 
-
-def main(data: Iterable[str]):
-    pc = 0
-    acc = 0
-    program = [parse_opcode(line) for line in data]
-
+def compute(program: List[Opcode]) -> Tuple[bool, int]:
     visited_lines: Set[int] = set()
 
-    while pc <= len(program):
+    pc = 0
+    acc = 0
+
+    while pc < len(program):
 
         if pc in visited_lines:
-            print(acc)
-            return
+            return False, acc
+
         visited_lines.add(pc)
 
         opcode, value = program[pc]
@@ -32,8 +30,34 @@ def main(data: Iterable[str]):
         elif opcode == "jmp":
             pc += value
             assert pc >= 0, "invalid jump backwards!"
-            assert pc < len(program), "invalid jump forwards!"
         else:
             assert False, "invalid opcode!"
 
-    assert False, "program halted?"
+    return True, acc
+
+
+
+def main(data: Iterable[str]):
+    program = [parse_opcode(line) for line in data]
+
+    for i in range(len(program)):
+        opcode, value = program[i]
+        if opcode == "acc":
+            continue
+        elif opcode == "jmp":
+            opcode = "nop"
+        elif opcode == "nop":
+            opcode = "jmp"
+        else:
+            assert False, "invalid opcode!"
+
+        new_program = program.copy()
+        new_program[i] = Opcode(opcode, value)
+
+        finished, acc = compute(new_program)
+        if finished:
+            print("success!")
+            print(acc)
+            return
+
+    assert False, "Unsolvable?"
