@@ -1,5 +1,4 @@
-import itertools
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 PREAMBLE = 25
 
@@ -14,15 +13,40 @@ def has_sum(window: List[int], target: int) -> bool:
     return False
 
 
-def main(data: Iterable[str]):
-    nums = (int(line) for line in data)
+def find_weakness(nums: List[int], target: int) -> Optional[List[int]]:
+    count = len(nums)
+    running_total = 0
+    for i in range(count - 1):
+        running_total = nums[i]
+        for j in range(i + 1, count):
+            running_total += nums[j]
+            if running_total > target:
+                break
+            elif running_total < target:
+                continue
+            return nums[i : j + 1]
 
-    window = list(itertools.islice(nums, PREAMBLE))
-    for num in nums:
+    return None
+
+
+def main(data: Iterable[str]):
+    nums = [int(line) for line in data]
+
+    window = nums[:PREAMBLE]
+
+    target_num = -1
+
+    for num in nums[PREAMBLE:]:
         if not has_sum(window, num):
-            print(num)
-            return
+            target_num = num
+            break
         window.pop(0)
         window.append(num)
+    else:
+        print("failed?")
+        return
 
-    print("failed?")
+    weakness = find_weakness(nums, target_num)
+    assert weakness is not None, "No weakness?"
+    weakness.sort()
+    print(weakness[0] + weakness.pop())
