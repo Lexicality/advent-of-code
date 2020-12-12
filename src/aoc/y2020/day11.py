@@ -58,10 +58,26 @@ class Grid(Dict[Coord, GridCell]):
             except KeyError:
                 pass
 
+    def get_visible_seats(self, coord: Coord) -> Iterable[GridCell]:
+        for dir in DIRECTIONS:
+            target = coord + dir
+            try:
+                while (cell := self[target]) == GridCell.Floor:
+                    target += dir
+                yield cell
+            except KeyError:
+                pass
+
     def get_num_occupied_neighbours(self, coord: Coord) -> int:
         return sum(
             1 if cell == GridCell.OccupiedChair else 0
             for cell in self.get_neighbours(coord)
+        )
+
+    def get_num_occupied_visible_neighbours(self, coord: Coord) -> int:
+        return sum(
+            1 if cell == GridCell.OccupiedChair else 0
+            for cell in self.get_visible_seats(coord)
         )
 
     def __str__(self):
@@ -77,7 +93,7 @@ def simulate(grid: Grid) -> bool:
     changed = False
     # We have to precalculate everything to update simultaneously
     neighbours = {
-        coord: grid.get_num_occupied_neighbours(coord) for coord in grid.keys()
+        coord: grid.get_num_occupied_visible_neighbours(coord) for coord in grid.keys()
     }
 
     for coord, cell in grid.items():
@@ -86,7 +102,7 @@ def simulate(grid: Grid) -> bool:
                 changed = True
                 grid[coord] = GridCell.OccupiedChair
         elif cell == GridCell.OccupiedChair:
-            if neighbours[coord] >= 4:
+            if neighbours[coord] >= 5:
                 changed = True
                 grid[coord] = GridCell.Chair
 
@@ -97,8 +113,8 @@ def main(data: Iterable[str]):
     grid = Grid()
     grid.read_data(data)
 
-    # print(str(grid))
-    # print()
+    print(str(grid))
+    print()
 
     # print(list(grid.get_neighbours(Coord(9, 0))))
 
@@ -110,7 +126,7 @@ def main(data: Iterable[str]):
 
     while simulate(grid):
         pass
-        # print(str(grid))
-        # print()
+    # print(str(grid))
+    # print()
 
     print(sum(1 if cell == GridCell.OccupiedChair else 0 for cell in grid.values()))
