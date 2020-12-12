@@ -1,21 +1,44 @@
 import itertools
-from typing import Iterable, List
+from typing import Dict, Iterable, List
 
 
-def permutaturize(all_nums: List[int], current: List[int]) -> List[List[int]]:
-    latest = current[-1]
-    assert latest != all_nums[-1]
+class Adapter:
+    jolts: int
+    compatible: List[int]
+    compatible2: List["Adapter"]
 
-    i = all_nums.index(latest)
+    def __init__(self, jolts: int, adapters: List[int]):
+        self.jolts = jolts
+        self.compatible = list(
+            itertools.takewhile(
+                lambda adapter: adapter <= jolts + 3,
+                (adapter for adapter in adapters if adapter > jolts),
+            )
+        )
 
-    ret = []
-    for optn in itertools.takewhile(lambda a: a <= latest + 3, all_nums[i + 1 :]):
-        permutation = current.copy()
-        permutation.append(optn)
+    @property
+    def permutations(self):
+        return len(self.compatible)
 
-        ret.append(permutation)
+    def my_trees(self):
+        me_tree = [self.jolts]
 
-    return ret
+        if self.permutations == 0:
+            return [me_tree]
+
+        return [
+            me_tree + tree
+            for tree in itertools.chain.from_iterable(
+                adapter.my_trees() for adapter in self.compatible2
+            )
+        ]
+
+    def __str__(self):
+        compatible = ", ".join(str(adapter) for adapter in self.compatible)
+        return f"Adapter {self.jolts}" f" - {self.permutations}: " f"[{compatible}]"
+
+    def __repr__(self):
+        return str(self)
 
 
 def main(data: Iterable[str]):
@@ -25,16 +48,14 @@ def main(data: Iterable[str]):
     LAST = joltrain[-1] + 3
     joltrain.append(LAST)
 
-    permutations: List[List[int]] = [[0]]
-    complete: List[List[int]] = []
+    adapters: Dict[int, Adapter] = {
+        jolts: Adapter(jolts, joltrain) for jolts in joltrain
+    }
+    for adapter in adapters.values():
+        adapter.compatible2 = [adapters[jolts] for jolts in adapter.compatible]
 
-    while len(permutations) > 0:
-        current = permutations.pop(0)
-        results = permutaturize(joltrain, current)
-        for result in results:
-            if result[-1] == LAST:
-                complete.append(result)
-            else:
-                permutations.append(result)
+    # from pprint import pprint
 
-    print(len(complete))
+    # pprint(adapters)
+    # pprint(adapters[0].my_trees())
+    print(len(adapters[0].my_trees()))
