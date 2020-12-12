@@ -20,24 +20,21 @@ class Adapter:
     def permutations(self):
         return len(self.compatible)
 
-    _tree: Optional[List[List[int]]] = None
+    _tree: Optional[List[int]] = None
 
-    @property
-    def tree(self) -> List[List[int]]:
+    def get_tree(self) -> List[List[int]]:
         if self._tree is None:
             self._tree = self._get_tree()
         return self._tree
 
     def _get_tree(self):
-        me_tree = [self.jolts]
-
         if self.permutations == 0:
-            return [me_tree]
+            return [1]
 
         return [
-            me_tree + tree
-            for tree in itertools.chain.from_iterable(
-                adapter.tree for adapter in self.compatible2
+            i + 1
+            for i in itertools.chain.from_iterable(
+                adapter.get_tree() for adapter in self.compatible2
             )
         ]
 
@@ -65,11 +62,11 @@ def main(data: Iterable[str]):
     # pretree?
     for jolt in joltrain[::-1]:
         adapter = adapters[jolt]
-        print("Doing tree for", adapter, ":", len(adapter.tree))
+        print("Doing tree for", adapter, ":", len(adapter.get_tree()))
     print("done!")
 
     # from pprint import pprint
 
     # pprint(adapters)
     # pprint(adapters[0].my_trees())
-    print(len(adapters[0].tree))
+    print(len(adapters[0].get_tree()))
