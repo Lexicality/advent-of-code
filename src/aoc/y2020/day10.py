@@ -1,5 +1,5 @@
 import itertools
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional
 
 
 class Adapter:
@@ -20,7 +20,15 @@ class Adapter:
     def permutations(self):
         return len(self.compatible)
 
-    def my_trees(self):
+    _tree: Optional[List[List[int]]] = None
+
+    @property
+    def tree(self) -> List[List[int]]:
+        if self._tree is None:
+            self._tree = self._get_tree()
+        return self._tree
+
+    def _get_tree(self):
         me_tree = [self.jolts]
 
         if self.permutations == 0:
@@ -29,7 +37,7 @@ class Adapter:
         return [
             me_tree + tree
             for tree in itertools.chain.from_iterable(
-                adapter.my_trees() for adapter in self.compatible2
+                adapter.tree for adapter in self.compatible2
             )
         ]
 
@@ -58,4 +66,4 @@ def main(data: Iterable[str]):
 
     # pprint(adapters)
     # pprint(adapters[0].my_trees())
-    print(len(adapters[0].my_trees()))
+    print(len(adapters[0].tree))
