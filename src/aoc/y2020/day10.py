@@ -62,6 +62,12 @@ def main(data: Iterable[str]):
     for adapter in adapters.values():
         adapter.compatible2 = [adapters[jolts] for jolts in adapter.compatible]
 
+    # pretree?
+    for jolt in joltrain[::-1]:
+        adapter = adapters[jolt]
+        print("Doing tree for", adapter, ":", len(adapter.tree))
+    print("done!")
+
     # from pprint import pprint
 
     # pprint(adapters)
