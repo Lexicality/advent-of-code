@@ -36,9 +36,7 @@ class Direction(Enum):
     West = Coord(x=-1, y=0)
 
 
-def rotate(pos_dir: Direction, direction: Command, amount: int):
-    pos = pos_dir.value
-
+def rotate(pos: Coord, direction: Command, amount: int):
     assert amount % 90 == 0
     amount //= 90
     assert amount <= 4
@@ -51,7 +49,7 @@ def rotate(pos_dir: Direction, direction: Command, amount: int):
         x, y = pos
         pos = Coord(x=y, y=-x)
 
-    return Direction(pos)
+    return pos
 
 
 def comandorate(data: Iterable[str]) -> Iterable[Tuple[Command, int]]:
@@ -60,14 +58,20 @@ def comandorate(data: Iterable[str]) -> Iterable[Tuple[Command, int]]:
 
 
 def main(data: Iterable[str]):
-    dir = Direction.East
-    pos = Coord(0, 0)
+    ship_pos = Coord(0, 0)
+    waypoint = Coord(10, 1)
     for cmd, amt in comandorate(data):
-        print("Currently at", pos, "facing", dir)
-        if cmd == Command.Left or cmd == Command.Right:
-            print("Turning", cmd.name, amt, "degrees")
-            dir = rotate(dir, cmd, amt)
+        print("Currently at", ship_pos, "waypoint is at", waypoint)
+
+        if cmd == Command.Forward:
+            print("Moving to waypoint", amt, "times")
+            ship_pos += waypoint * amt
             continue
+        elif cmd == Command.Left or cmd == Command.Right:
+            print("Rotating waypoint", cmd.name, amt, "degrees")
+            waypoint = rotate(waypoint, cmd, amt)
+            continue
+
         if cmd == Command.North:
             move_dir = Direction.North
         elif cmd == Command.South:
@@ -77,11 +81,10 @@ def main(data: Iterable[str]):
         elif cmd == Command.West:
             move_dir = Direction.West
         else:
-            print("(fwd)")
-            move_dir = dir
+            assert False
 
-        print("Moving", move_dir.name, amt, "units")
-        pos += move_dir.value * amt
+        print("Moving waypoint", move_dir.name, amt, "units")
+        waypoint += move_dir.value * amt
 
-    print("end pos", pos)
-    print(abs(pos.x) + abs(pos.y))
+    print("end pos", ship_pos)
+    print(abs(ship_pos.x) + abs(ship_pos.y))
