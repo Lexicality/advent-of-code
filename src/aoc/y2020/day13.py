@@ -1,19 +1,28 @@
-from typing import Dict, Iterable
+from typing import Iterable, List, Literal, Union
+
+
+def bus_party(timestamp: int, busses: List[Union[int, Literal["x"]]]) -> bool:
+    for i in range(len(busses)):
+        timestamp += 1
+        bus = busses[i]
+        if bus == "x":
+            continue
+        elif (timestamp % bus) != 0:
+            return False
+
+    return True
 
 
 def main(data: Iterable[str]):
-    timestamp, schedule = data
-    timestamp = int(timestamp)
-    busses = [int(bus) for bus in schedule.split(",") if bus != "x"]
+    _, schedule = data
+    busses = [int(bus) if bus != "x" else "x" for bus in schedule.split(",")]
 
-    bus_leavers: Dict[int, int] = {}
+    first_bus = busses.pop(0)
+    assert isinstance(first_bus, int)
 
-    for bus in busses:
-        latest = bus
-        while latest < timestamp:
-            latest += bus
-        bus_leavers[bus] = latest
-
-    soonest = sorted(bus_leavers.items(), key=lambda a: a[1])[0]
-    print(soonest)
-    print(soonest[0] * (soonest[1] - timestamp))
+    timestamp = 0
+    while True:
+        timestamp += first_bus
+        if bus_party(timestamp, busses):
+            print(timestamp)
+            return
