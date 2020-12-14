@@ -36,26 +36,22 @@ class Direction(Enum):
     West = Coord(x=-1, y=0)
 
 
-def rotate(what: Direction, how: Command, amount: int):
+def rotate(pos_dir: Direction, direction: Command, amount: int):
+    pos = pos_dir.value
+
     assert amount % 90 == 0
     amount //= 90
     assert amount <= 4
 
-    # Always rotate left
-    if how == Command.Right:
+    # Always rotate right
+    if direction == Command.Left:
         amount = 4 - amount
 
     for _ in range(amount):
-        if what == Direction.North:
-            what = Direction.West
-        elif what == Direction.West:
-            what = Direction.South
-        elif what == Direction.South:
-            what = Direction.East
-        elif what == Direction.East:
-            what = Direction.North
+        x, y = pos
+        pos = Coord(x=y, y=-x)
 
-    return what
+    return Direction(pos)
 
 
 def comandorate(data: Iterable[str]) -> Iterable[Tuple[Command, int]]:
