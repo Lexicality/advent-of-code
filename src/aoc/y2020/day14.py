@@ -1,18 +1,26 @@
+import itertools
 import re
 from typing import Dict, Iterable
 
 MEM_RE = re.compile(r"mem\[(\d+)\]")
 
 
-def maskify(input: int, mask: str) -> int:
+def maskify(input: int, mask: str) -> Iterable[int]:
     binput = list(f"{input:036b}")
 
+    x_count = 0
     for i in range(36):
         mask_val = mask[i]
-        if mask_val == "1" or mask_val == "0":
+        if mask_val == "1":
             binput[i] = mask_val
+        elif mask_val == "X":
+            binput[i] = "{}"
+            x_count += 1
 
-    return int("".join(binput), 2)
+    binput_str = "".join(binput)
+
+    for iteration in set(itertools.combinations((1, 0) * x_count, x_count)):
+        yield int(binput_str.format(*iteration), 2)
 
 
 def main(data: Iterable[str]):
@@ -30,7 +38,8 @@ def main(data: Iterable[str]):
         assert m
         mem_addr = int(m[1])
         new_value = int(value)
-        memory[mem_addr] = maskify(new_value, mask)
+        for real_mem_addr in maskify(mem_addr, mask):
+            memory[real_mem_addr] = new_value
 
     print(memory)
     print(sum(memory.values()))
