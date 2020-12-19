@@ -1,37 +1,36 @@
 import re
-from typing import Dict, Iterable, NamedTuple
-
-
-class BitMasks(NamedTuple):
-    and_mask: int
-    or_mask: int
-
-
-def mit_basks(input: str) -> BitMasks:
-    return BitMasks(
-        and_mask=int(input.replace("X", "1"), 2),
-        or_mask=int(input.replace("X", "0"), 2),
-    )
-
+from typing import Dict, Iterable
 
 MEM_RE = re.compile(r"mem\[(\d+)\]")
 
 
+def maskify(input: int, mask: str) -> int:
+    binput = list(f"{input:036b}")
+
+    for i in range(36):
+        mask_val = mask[i]
+        if mask_val == "1" or mask_val == "0":
+            binput[i] = mask_val
+
+    return int("".join(binput), 2)
+
+
 def main(data: Iterable[str]):
-    masks = BitMasks(and_mask=(2 ** 36) - 1, or_mask=0)
-    memory: Dict[str, int] = {}
+    mask = "0" * 36
+    memory: Dict[int, int] = {}
     for line in data:
-        print(f"Current mask: {masks.and_mask:036b}/{masks.or_mask:036b}")
+        print(f"Current mask: {mask}")
         action, value = line.split(" = ", maxsplit=1)
         if action == "mask":
             print("Setting mask to", value)
-            masks = mit_basks(value)
+            mask = value
             continue
 
         m = MEM_RE.match(action)
         assert m
-        intval = int(value)
-        memory[m[1]] = (intval & masks.and_mask) | masks.or_mask
+        mem_addr = int(m[1])
+        new_value = int(value)
+        memory[mem_addr] = maskify(new_value, mask)
 
     print(memory)
     print(sum(memory.values()))
