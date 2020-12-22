@@ -31,7 +31,7 @@ def run_game(nums: List[int]) -> int:
 
     print(last_heard)
 
-    for round in range(len(nums) + 1, 2020 + 1):
+    for round in range(len(nums) + 1, 30000000 + 1):
         # for round in range(len(nums) + 1, 21):
         last = last_heard[last_spoken]
         value = last.get_value()
