@@ -1,5 +1,7 @@
 from enum import Enum
-from typing import Iterable, NamedTuple, Tuple
+from typing import Iterable, Tuple
+
+from aoc.utils import Coord2D, Direction
 
 
 class Command(Enum):
@@ -12,31 +14,7 @@ class Command(Enum):
     Forward = "F"
 
 
-class Coord(NamedTuple):
-    x: int
-    y: int
-
-    def __add__(self, other: "Coord") -> "Coord":
-        return Coord(x=self.x + other.x, y=self.y + other.y)
-
-    def __sub__(self, other: "Coord") -> "Coord":
-        return Coord(x=self.x - other.x, y=self.y - other.y)
-
-    def __mul__(self, other: int) -> "Coord":
-        return Coord(x=self.x * other, y=self.y * other)
-
-    def __str__(self):
-        return f"[{self.x}, {self.y}]"
-
-
-class Direction(Enum):
-    North = Coord(x=0, y=1)
-    South = Coord(x=0, y=-1)
-    East = Coord(x=1, y=0)
-    West = Coord(x=-1, y=0)
-
-
-def rotate(pos: Coord, direction: Command, amount: int):
+def rotate(pos: Coord2D, direction: Command, amount: int):
     assert amount % 90 == 0
     amount //= 90
     assert amount <= 4
@@ -47,7 +25,7 @@ def rotate(pos: Coord, direction: Command, amount: int):
 
     for _ in range(amount):
         x, y = pos
-        pos = Coord(x=y, y=-x)
+        pos = Coord2D(x=y, y=-x)
 
     return pos
 
@@ -58,8 +36,8 @@ def comandorate(data: Iterable[str]) -> Iterable[Tuple[Command, int]]:
 
 
 def main(data: Iterable[str]):
-    ship_pos = Coord(0, 0)
-    waypoint = Coord(10, 1)
+    ship_pos = Coord2D(0, 0)
+    waypoint = Coord2D(10, 1)
     for cmd, amt in comandorate(data):
         print("Currently at", ship_pos, "waypoint is at", waypoint)
 
