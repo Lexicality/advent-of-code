@@ -1,0 +1,3 @@
+ipython
+typing_extensions
+pandas
