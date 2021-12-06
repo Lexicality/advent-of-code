@@ -2,7 +2,7 @@ from typing import Iterable
 
 import pandas as pd
 
-SIMULATION_DAYS = 80
+SIMULATION_DAYS = 256
 
 
 def main(data: Iterable[str]) -> None:
@@ -15,6 +15,7 @@ def main(data: Iterable[str]) -> None:
             fische.replace(0, 7, inplace=True)
             fische = fische.append(pd.Series([9 for _ in range(zeros)]))
         fische -= 1
+        print(i, end=" ", flush=True)
         # print(fische.to_frame().T.to_string(header=False, index=False))
 
     print(len(fische))
