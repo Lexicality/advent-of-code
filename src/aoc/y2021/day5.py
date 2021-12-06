@@ -7,6 +7,14 @@ import pandas as pd
 from aoc.utils import Coord2D
 
 
+def _steppe(start: int, end: int) -> int:
+    if start > end:
+        return -1
+    elif start < end:
+        return 1
+    return 0
+
+
 class Vent(NamedTuple):
     start: Coord2D
     end: Coord2D
@@ -28,12 +36,15 @@ class Vent(NamedTuple):
     def __iter__(self) -> Iterator[Coord2D]:
         start = self.start
         end = self.end
-        if start > end:
-            end, start = start, end
-
-        for x in range(start.x, end.x + 1):
-            for y in range(start.y, end.y + 1):
-                yield Coord2D(x, y)
+        step = Coord2D(_steppe(start.x, end.x), _steppe(start.y, end.y))
+        pos = start
+        yield pos
+        # probably fine
+        while True:
+            pos += step
+            yield pos
+            if pos == end:
+                break
 
 
 def main(data: Iterable[str]) -> None:
@@ -52,18 +63,10 @@ def main(data: Iterable[str]) -> None:
     )
 
     for vent in vents:
-        print(vent, end=" ")
-        if not vent.part1filter():
-            print("discarded")
-            continue
-        print()
-        print("  ", end="")
         for coord in vent:
-            print(coord, end=", ")
             grid[coord.x][coord.y] += 1
-        print()
 
-    print(grid)
+    # print(grid.replace(0, ".").to_string(header=False, index=False))
 
     overlaps = 0
     # gnee
