@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterator, List, Optional
+from typing import Iterator, Optional
 
 import pandas as pd
 
@@ -46,6 +46,11 @@ def _check_bingo(df: pd.DataFrame) -> bool:
     return False
 
 
+def _boardify(num: int, board: pd.DataFrame) -> bool:
+    board.replace(num, pd.NA, inplace=True)
+    return _check_bingo(board)
+
+
 def main(data: Iterator[str]) -> None:
     draws = [int(num) for num in next(data).split(",")]
     print(draws)
@@ -64,14 +69,19 @@ def main(data: Iterator[str]) -> None:
     winning_board: pd.DataFrame = None
     for num in draws:
         print("Drawing #", num)
-        for board in boards:
-            board.replace(num, pd.NA, inplace=True)
-            if _check_bingo(board):
-                print("BINGO!")
+        # crimes
+        if len(boards) > 1:
+            boards = [
+                board
+                for board in boards
+                # crimes crimes crimes
+                if not _boardify(num, board)
+            ]
+        else:
+            board = boards[0]
+            if _boardify(num, board):
                 winning_board = board
-
-        if winning_board is not None:
-            break
+                break
 
         # i = input()
         # if i == "q":
