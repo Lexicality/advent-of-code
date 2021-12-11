@@ -1,3 +1,4 @@
 ipython
 typing_extensions
 pandas
+termcolor
