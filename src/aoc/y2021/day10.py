@@ -15,6 +15,12 @@ SYNTAX_SCORES = {
     "}": 1197,
     ">": 25137,
 }
+COMPLETION_SCORES = {
+    ")": 1,
+    "]": 2,
+    "}": 3,
+    ">": 4,
+}
 
 
 class ParserError(ValueError):
@@ -46,21 +52,36 @@ class Parser:
         else:
             raise ParserError(f"Unexpected {token}", token=token)
 
-    def parse(self, line: str) -> None:
+    def parse(self, line: str) -> str:
         self.closing_stack.clear()
         for token in line:
             self._step(token)
 
+        return "".join(reversed(self.closing_stack))
+
 
 def main(data: Iterable[str]) -> None:
     parser = Parser()
-    score = 0
+    line_scores: List[int] = []
 
     for line in data:
         try:
-            parser.parse(line)
-        except ParserError as e:
-            print(line, e)
-            score += SYNTAX_SCORES[e.token]
+            remaining = parser.parse(line)
+        except ParserError:
+            continue
 
-    print(score)
+        line_score = 0
+        for char in remaining:
+            # print(char, line_score, end=" ")
+            line_score *= 5
+            # print(line_score, end=" ")
+            line_score += COMPLETION_SCORES[char]
+            # print(line_score)
+        line_scores.append(line_score)
+
+        print(line, line_score)
+
+    sorted_scores = sorted(line_scores)
+    center = int(len(line_scores) / 2)
+
+    print(sorted_scores[center])
