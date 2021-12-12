@@ -1,12 +1,15 @@
 from typing import Iterable, List, NamedTuple, Set, Tuple
 
+
 class Opcode(NamedTuple):
     opcode: str
     value: int
 
+
 def parse_opcode(input: str) -> Opcode:
     opcode, value = input.split(" ", maxsplit=1)
     return Opcode(opcode, int(value))
+
 
 def compute(program: List[Opcode]) -> Tuple[bool, int]:
     visited_lines: Set[int] = set()
@@ -34,7 +37,6 @@ def compute(program: List[Opcode]) -> Tuple[bool, int]:
             assert False, "invalid opcode!"
 
     return True, acc
-
 
 
 def main(data: Iterable[str]):
