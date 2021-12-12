@@ -113,6 +113,9 @@ class Grid(Dict[Coord2D, T]):
             for y in (-1, 0, 1):
                 if x == 0 and y == 0:
                     continue
-                if not diagonal and not (x == 0 or y == 0):
+                elif not diagonal and not (x == 0 or y == 0):
                     continue
-                yield coord + Coord2D(x, y)
+                neighbour = coord + Coord2D(x, y)
+                if not self._check_valid(neighbour):
+                    continue
+                yield neighbour
