@@ -78,9 +78,11 @@ class SquidGrid(Grid[int]):
 def main(data: Iterable[str]) -> None:
     grid = SquidGrid.parse(data)
 
-    num_flashes = 0
-
-    for _ in range(SQUID_STEPS):
-        num_flashes += grid.energize()
-
-    print(num_flashes)
+    i = 0
+    while True:
+        i += 1
+        print(i, end=" ", flush=i % 20 == 0)
+        num_flashes = grid.energize()
+        if num_flashes == 100:
+            print("complete!", i)
+            break
