@@ -45,20 +45,25 @@ class CavePath(NamedTuple):
     cave: Cave
     path: List[Cave]
     seen: Set[Cave]
+    part2: bool
 
     def __str__(self) -> str:
         return "->".join(cave.key for cave in self.path) + "->" + self.cave.key
 
 
 def _travel(cave_path: CavePath) -> Iterator[CavePath]:
-    cave, path, seen = cave_path
+    cave, path, seen, part2 = cave_path
     if cave.smol:
         seen = seen | set((cave,))
     path = path + [cave]
     for link in cave.links:
-        if link in seen:
+        if link.key == "start":
             continue
-        yield CavePath(link, path, seen)
+        if link in seen:
+            if not part2:
+                yield CavePath(link, path, seen, True)
+            continue
+        yield CavePath(link, path, seen, part2)
 
 
 def main(data: Iterator[str]) -> None:
@@ -71,15 +76,8 @@ def main(data: Iterator[str]) -> None:
         cave1.links.add(cave2)
         cave2.links.add(cave1)
 
-    for cave in caves.values():
-        # casually orphan caves without cleaning them up
-        for other in list(cave.links):
-            if other.prunable:
-                cave.links.remove(other)
-        # print(cave)
-
     donepaths: List[CavePath] = []
-    paths: List[CavePath] = [CavePath(caves["start"], [], set())]
+    paths: List[CavePath] = [CavePath(caves["start"], [], set(), False)]
 
     while paths:
         path = paths.pop()
