@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import NamedTuple
+from typing import Dict, Iterable, Iterator, NamedTuple, TypeVar
 
 
 class Coord2D(NamedTuple):
@@ -72,3 +72,47 @@ class Coord3D(NamedTuple):
 
     def get_min(self, other: Coord3D) -> Coord3D:
         return Coord3D(min(self.x, other.x), min(self.y, other.y), min(self.z, other.z))
+
+
+T = TypeVar("T")
+
+
+class Grid(Dict[Coord2D, T]):
+    width: int = 0
+    height: int = 0
+
+    def _fill(self, data: Iterable[Iterable[T]]) -> None:
+        """
+        Fills the grid with data, expecting it to come in like a standard AOC
+        data dump, eg the first iterable is rows and the second is columns
+
+        eg (x, y):
+        [[(0,0), (1, 0), (2, 0)], [(0, 1), (1, 1), ...], ...]
+
+        also this doesn't support sparse data so make sure all rows are the same
+        length or you're going to have a very bad time
+        """
+
+        y = 0
+        for row in data:
+            x = 0
+            for item in row:
+                self[Coord2D(x, y)] = item
+                x += 1
+            y += 1
+
+        self.width = x
+        self.height = y
+
+    def _check_valid(self, coord: Coord2D) -> bool:
+        # yay python bullshit
+        return (0 <= coord.x < self.width) and (0 <= coord.y < self.height)
+
+    def _get_neighbours(self, coord: Coord2D, diagonal: bool) -> Iterator[Coord2D]:
+        for x in (-1, 0, 1):
+            for y in (-1, 0, 1):
+                if x == 0 and y == 0:
+                    continue
+                if not diagonal and not (x == 0 or y == 0):
+                    continue
+                yield coord + Coord2D(x, y)
