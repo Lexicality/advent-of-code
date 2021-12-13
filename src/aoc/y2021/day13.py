@@ -68,5 +68,3 @@ def main(data: Iterator[str]) -> None:
         axis, pos = cmd.split("=")
         page.fold(axis, int(pos))
         print(page)
-        print(len(page))
-        break
