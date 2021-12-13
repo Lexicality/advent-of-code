@@ -119,3 +119,8 @@ class Grid(Dict[Coord2D, T]):
                 if not self._check_valid(neighbour):
                     continue
                 yield neighbour
+
+    def _iterate_grid(self) -> Iterator[Coord2D]:
+        for y in range(self.height):
+            for x in range(self.width):
+                yield Coord2D(x, y)
