@@ -1,4 +1,5 @@
+bitstring
 ipython
-typing_extensions
 pandas
 termcolor
+typing_extensions
