@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Iterator, List, Type
 
 from bitstring import BitStream, ConstBitStream
@@ -21,6 +22,9 @@ class Packet:
 
     def part1(self) -> int:
         return self.version
+
+    def part2(self) -> int:
+        return self.value
 
 
 class PacketLiteral(Packet):
@@ -79,6 +83,34 @@ class PacketOperator(Packet):
     def part1(self) -> int:
         return super().part1() + sum(packet.part1() for packet in self.contents)
 
+    def part2(self) -> int:
+        iterdata = (packet.part2() for packet in self.contents)
+        if self.type == 0:
+            return sum(iterdata)
+        elif self.type == 1:
+            return math.prod(iterdata)
+        elif self.type == 2:
+            return min(iterdata)
+        elif self.type == 3:
+            return max(iterdata)
+
+        if len(self.contents) != 2:
+            raise ValueError(
+                f"Unexpected #{len(self.contents)} subpackets for type {self.type}"
+            )
+
+        first = self.contents[0].part2()
+        second = self.contents[1].part2()
+
+        if self.type == 5:
+            return 1 if first > second else 0
+        elif self.type == 6:
+            return 1 if first < second else 0
+        elif self.type == 7:
+            return 1 if first == second else 0
+
+        raise ValueError(f"Unknown packet type {self.type}")
+
 
 def _get_packet_class(type: int) -> Type[Packet]:
     if type == 4:
@@ -101,4 +133,4 @@ def main(data: Iterator[str]):
         bits = ConstBitStream(hex=encoded)
         packet = _parse_packet(bits)
         print(packet)
-        print(packet.part1())
+        print(packet.part2())
