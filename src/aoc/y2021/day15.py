@@ -88,6 +88,22 @@ class ChitonCave(Grid[Chiton]):
                 for line in data
             )
         )
+        for y in range(6):
+            for x in range(6):
+                if x == 0 and y == 0:
+                    continue
+                for coord in ret._iterate_grid():
+                    newcoord = Coord2D(
+                        x=coord.x + ret.width * x,
+                        y=coord.y + ret.height * y,
+                    )
+                    existing = ret[coord]
+                    ret[newcoord] = existing._replace(
+                        risk=((existing.risk + x + y) % 9) or 9
+                    )
+        ret.width *= 5
+        ret.height *= 5
+
         ret._goal = Coord2D(ret.width - 1, ret.height - 1)
         return ret
 
