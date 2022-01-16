@@ -154,6 +154,15 @@ class Pair:
     def magnitude(self) -> int:
         return self._get_magnitude("left") + self._get_magnitude("right")
 
+    def copy(self) -> Pair:
+        leftval = self.left
+        if isinstance(leftval, Pair):
+            leftval = leftval.copy()
+        rightval = self.right
+        if isinstance(rightval, Pair):
+            rightval = rightval.copy()
+        return Pair(leftval, rightval)
+
     @classmethod
     def _readside(cls, input: List[str]) -> PairValue:
         val = input.pop(0)
@@ -184,10 +193,14 @@ def _get_pair(line: str) -> Pair:
 
 
 def main(data: Iterator[str]):
-    res = _get_pair(next(data))
+    nums = [_get_pair(line) for line in data]
 
-    for line in data:
-        res = res.add(_get_pair(line))
-
-    print(res.stringulate())
-    print(res.magnitude())
+    maxmag = 0
+    for num1 in nums:
+        for num2 in nums:
+            if num1 == num2:
+                continue
+            mag = num1.copy().add(num2.copy()).magnitude()
+            if mag > maxmag:
+                maxmag = mag
+    print(maxmag)
