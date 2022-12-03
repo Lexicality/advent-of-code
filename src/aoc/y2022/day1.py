@@ -14,4 +14,9 @@ def main(data: Iterable[str]) -> None:
             continue
         running_elf += int(line)
 
-    print(sorted(elves, reverse=True)[0])
+    if running_elf:
+        elves.append(running_elf)
+
+    elves.sort(reverse=True)
+
+    print(sum(elves[:3]))
