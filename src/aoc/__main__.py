@@ -37,7 +37,10 @@ def main():
     args = parser.parse_args()
 
     day_data_file = pathlib.Path(
-        "data", args.year, "example" if args.example else ".", f"{args.day}.txt"
+        "data",
+        args.year,
+        "example" if args.example else ".",
+        f"{args.day:02}.txt",
     ).resolve()
     day_data = read_file(day_data_file)
 
