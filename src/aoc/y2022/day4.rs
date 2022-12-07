@@ -11,8 +11,9 @@ impl Range {
         }
     }
 
-    fn contains(&self, other: &Range) -> bool {
-        other.start >= self.start && other.end <= self.end
+    fn intersects(&self, other: &Range) -> bool {
+        (other.start >= self.start && other.start <= self.end)
+            || (other.end >= self.start && other.end <= self.end)
     }
 }
 
@@ -22,7 +23,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         let (elf1, elf2) = pair.split_once(',').unwrap();
         let elf1 = Range::new(elf1);
         let elf2 = Range::new(elf2);
-        if elf1.contains(&elf2) || elf2.contains(&elf1) {
+        if elf1.intersects(&elf2) || elf2.intersects(&elf1) {
             overlap += 1;
         }
     }
