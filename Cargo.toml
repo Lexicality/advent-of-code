@@ -12,3 +12,4 @@ license = "Apache-2.0"
 [dependencies]
 clap = { version = "4.0.29", features = ["cargo"] }
 inventory = "0.3.2"
+itertools = "0.10.5"
