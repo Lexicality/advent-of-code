@@ -68,11 +68,17 @@ impl Yard {
 
     fn perform_move(&mut self, op: &Move) {
         println!("Moving {} from {} to {}", op.count, op.start, op.end);
-        for _ in 0..op.count {
-            let moving_box = self.stacks.get_mut(&op.start).unwrap().pop().unwrap();
-            println!(" Moving {} from {} to {}", moving_box, op.start, op.end);
-            self.stacks.get_mut(&op.end).unwrap().push(moving_box);
-        }
+        let boxes: Vec<_> = (0..op.count)
+            .map(|_| {
+                let moving_box = self.stacks.get_mut(&op.start).unwrap().pop().unwrap();
+                println!(" Moving {} from {} to {}", moving_box, op.start, op.end);
+                moving_box
+            })
+            .collect();
+        self.stacks
+            .get_mut(&op.end)
+            .unwrap()
+            .extend(boxes.iter().rev());
     }
 
     /// destructive because it's late and I want this damn thing done
