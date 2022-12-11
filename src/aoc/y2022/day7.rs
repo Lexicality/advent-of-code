@@ -1,6 +1,5 @@
 use std::borrow::Borrow;
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::fmt::Display;
 use std::rc::{Rc, Weak};
 
@@ -9,7 +8,7 @@ type INoder = RefCell<INode>;
 enum INode {
     File {
         name: String,
-        size: u32,
+        size: u64,
         parent: Weak<INoder>,
     },
     Folder {
@@ -34,7 +33,7 @@ impl INode {
         }
     }
 
-    fn size(&self) -> u32 {
+    fn size(&self) -> u64 {
         match self {
             Self::File { size, .. } => *size,
             Self::Folder { children, .. } => children
@@ -55,7 +54,7 @@ impl INode {
         })
     }
 
-    fn add_file(&mut self, name: String, size: u32) {
+    fn add_file(&mut self, name: String, size: u64) {
         let (this, children) = match self {
             Self::File { .. } => panic!("I'm a file!"),
             Self::Folder { this, children, .. } => (this, children),
@@ -184,6 +183,11 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
     }
     println!("{}", Borrow::<INoder>::borrow(&root).borrow());
 
+    let total_space = 70_000_000;
+    let total_needed = 30_000_000;
+    let left = total_space - root.borrow_mut().size();
+    let needed = total_needed - left;
+
     let size: u64 = folders
         .iter()
         .map(|d| {
@@ -192,8 +196,13 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
             println!("Folder {} is {}", dir.name(), size);
             size as u64
         })
-        .filter(|s| s < &100_000)
-        .sum();
+        .filter(|s| s >= &needed)
+        .map(|s| {
+            println!("{}", s);
+            s
+        })
+        .min()
+        .unwrap();
 
     return format!("{}", size);
 }
