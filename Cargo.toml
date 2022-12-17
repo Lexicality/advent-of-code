@@ -10,6 +10,7 @@ license = "Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+ansi_term = "0.12.1"
 clap = { version = "4.0.29", features = ["cargo"] }
 inventory = "0.3.2"
 itertools = "0.10.5"
