@@ -1,4 +1,4 @@
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> String {
     return data.next().unwrap();
 }
 
