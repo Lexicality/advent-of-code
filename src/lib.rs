@@ -17,7 +17,7 @@ pub struct AoCDay {
 
 inventory::collect!(AoCDay);
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Default)]
 pub struct Coord2D {
     pub x: i32,
     pub y: i32,
@@ -144,6 +144,7 @@ struct Grid<Item> {
     pub height: u32,
 }
 
+#[allow(dead_code)]
 impl<Item> Grid<Item> {
     pub fn new<I>(data: I, width: u32) -> Grid<Item>
     where
@@ -178,8 +179,8 @@ impl<Item> Grid<Item> {
         coord: Coord2D,
         diagonal: bool,
     ) -> impl Iterator<Item = Coord2D> + 'a {
-        (-1..1)
-            .cartesian_product(-1..1)
+        (-1..=1)
+            .cartesian_product(-1..=1)
             .map(|c| c.into())
             .filter(move |c: &Coord2D| {
                 if c.x == 0 && c.y == 0 {
@@ -195,6 +196,33 @@ impl<Item> Grid<Item> {
 
     pub fn keys<'a>(&'a self) -> impl Iterator<Item = Coord2D> + 'a {
         (0..self.height as i32).flat_map(|y| (0..self.width as i32).map(move |x| (x, y).into()))
+    }
+
+    fn find<P>(&self, predicate: P) -> Option<Coord2D>
+    where
+        P: FnMut(&(&Coord2D, &Item)) -> bool,
+    {
+        self.grid.iter().find(predicate).map(|(coord, _)| *coord)
+    }
+
+    pub fn len(&self) -> usize {
+        self.grid.len()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&Coord2D, &Item)> {
+        self.grid.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&Coord2D, &mut Item)> {
+        self.grid.iter_mut()
+    }
+
+    pub fn get(&self, k: &Coord2D) -> Option<&Item> {
+        self.grid.get(k)
+    }
+
+    pub fn get_mut(&mut self, k: &Coord2D) -> Option<&mut Item> {
+        self.grid.get_mut(k)
     }
 }
 
