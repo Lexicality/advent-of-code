@@ -91,6 +91,7 @@ impl Step {
     fn is_start(&self) -> bool {
         match self.height {
             StepHeight::Start => true,
+            StepHeight::Step(0) => true,
             _ => false,
         }
     }
@@ -172,16 +173,22 @@ impl Grid {
             end: Default::default(),
         };
         ret.end = ret.get_end();
-        let startc = ret.get_start();
-        let start = ret.grid.get_mut(&startc).unwrap();
-        start.cost = 0;
+        ret.grid
+            .iter_mut()
+            .map(|(_, s)| s)
+            .filter(|s| s.is_start())
+            .for_each(|s| {
+                s.visited = true;
+                s.cost = 0
+            });
         return ret;
     }
 
-    fn get_start(&self) -> Coord2D {
+    fn get_start(&self) -> impl Iterator<Item = (Coord2D, u32)> + '_ {
         self.grid
-            .find(|(_, step)| step.is_start())
-            .expect("no start?")
+            .iter()
+            .filter(|(_, step)| step.is_start())
+            .map(|(coord, _)| (*coord, self.heuristic(coord)))
     }
 
     fn get_end(&self) -> Coord2D {
@@ -213,7 +220,6 @@ impl Grid {
         self.grid
             .get_neighbours(coord, false)
             .filter(|coord| step.can_move_to(self.get(coord).unwrap()))
-        // pass
     }
 
     fn heuristic(&self, coord: &Coord2D) -> u32 {
@@ -233,10 +239,9 @@ pub fn main(data: crate::DataIn) -> String {
     println!("{}", grid);
 
     let mut queue = BinaryHeap::with_capacity(grid.len());
-    queue.push(PotentialStep {
-        heuristic: 0,
-        coord: grid.get_start(),
-    });
+    for (coord, heuristic) in grid.get_start() {
+        queue.push(PotentialStep { heuristic, coord });
+    }
 
     while let Some(PotentialStep { coord, .. }) = queue.pop() {
         if grid.is_end(coord) {
