@@ -1,5 +1,5 @@
 pub fn main(data: crate::DataIn) -> String {
-    return data.next().unwrap();
+    format!("")
 }
 
 inventory::submit!(crate::AoCDay {
