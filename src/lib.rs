@@ -25,10 +25,12 @@ pub struct Coord2D {
 
 impl Coord2D {
     pub fn parse(data: &str) -> Coord2D {
-        let (x, y) = data.split_once(',').unwrap();
+        let (x, y) = data
+            .split_once(',')
+            .expect("Coordinates must be in the form x,y");
         Coord2D {
-            x: x.parse().unwrap(),
-            y: y.parse().unwrap(),
+            x: x.parse().expect("Failed to parse X:"),
+            y: y.parse().expect("Failed to parse Y:"),
         }
     }
 
@@ -93,7 +95,11 @@ impl ops::Neg for Coord2D {
 
 impl Display for Coord2D {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[{}, {}]", self.x, self.y)
+        write!(f, "[")?;
+        self.x.fmt(f)?;
+        write!(f, ",")?;
+        self.y.fmt(f)?;
+        write!(f, "]")
     }
 }
 
@@ -113,16 +119,13 @@ pub enum Direction {
 
 impl Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Direction::North => "North",
-                Direction::East => "East",
-                Direction::South => "South",
-                Direction::West => "West",
-            }
-        )
+        match self {
+            Direction::North => "North",
+            Direction::East => "East",
+            Direction::South => "South",
+            Direction::West => "West",
+        }
+        .fmt(f)
     }
 }
 
@@ -152,8 +155,12 @@ impl<Item> Grid<Item> {
     {
         assert!(width <= (i32::MAX as u32), "grid is too wide!");
         let data = data.peekable();
+
+        let size_hint = data.size_hint();
+        let size = size_hint.1.unwrap_or(size_hint.0).max(width as usize);
+
         let mut grid = Grid::<Item> {
-            grid: HashMap::with_capacity(data.size_hint().0),
+            grid: HashMap::with_capacity(size),
             width,
             height: 0,
         };
@@ -167,6 +174,20 @@ impl<Item> Grid<Item> {
         grid.height = y as u32;
 
         return grid;
+    }
+
+    pub fn new_empty(width: u32, height: u32) -> Grid<Item> {
+        assert!(width <= (i32::MAX as u32), "grid is too wide!");
+        assert!(height <= (i32::MAX as u32), "grid is too tall!");
+        let size = (width as usize)
+            .checked_mul(height as usize)
+            .expect("Grid is too big!");
+
+        Grid::<Item> {
+            grid: HashMap::with_capacity(size),
+            width,
+            height,
+        }
     }
 
     pub fn check_coord(&self, coord: &Coord2D) -> bool {
@@ -194,8 +215,9 @@ impl<Item> Grid<Item> {
             .filter(|c| self.check_coord(&c))
     }
 
-    pub fn keys<'a>(&'a self) -> impl Iterator<Item = Coord2D> + 'a {
-        (0..self.height as i32).flat_map(|y| (0..self.width as i32).map(move |x| (x, y).into()))
+    pub fn keys(&self) -> impl Iterator<Item = Coord2D> {
+        let width = self.width;
+        (0..self.height as i32).flat_map(move |y| (0..width as i32).map(move |x| (x, y).into()))
     }
 
     fn find<P>(&self, predicate: P) -> Option<Coord2D>
@@ -226,11 +248,20 @@ impl<Item> Grid<Item> {
     }
 }
 
+#[allow(dead_code)]
+impl<Item: Clone> Grid<Item> {
+    pub fn fill(&mut self, value: Item) {
+        for coord in self.keys() {
+            self.grid.insert(coord, value.clone());
+        }
+    }
+}
+
 impl<Item: Display> Display for Grid<Item> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.height as i32 {
             for x in 0..self.width as i32 {
-                write!(f, "{}", self.grid.get(&(x, y).into()).unwrap())?;
+                self.grid.get(&(x, y).into()).unwrap().fmt(f)?;
             }
             writeln!(f)?;
         }
