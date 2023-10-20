@@ -89,18 +89,11 @@ impl Step {
     }
 
     fn is_start(&self) -> bool {
-        match self.height {
-            StepHeight::Start => true,
-            StepHeight::Step(0) => true,
-            _ => false,
-        }
+        matches!(self.height, StepHeight::Start | StepHeight::Step(0))
     }
 
     fn is_end(&self) -> bool {
-        match self.height {
-            StepHeight::End => true,
-            _ => false,
-        }
+        matches!(self.height, StepHeight::End)
     }
 
     fn can_move_to(&self, other: &Self) -> bool {

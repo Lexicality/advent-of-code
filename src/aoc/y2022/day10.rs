@@ -10,10 +10,10 @@ impl Instruction {
     fn new(inst: String) -> Vec<Instruction> {
         if inst == "noop" {
             return vec![Instruction::Noop];
-        } else if inst.starts_with("addx ") {
+        } else if let Some(stripped) = inst.strip_prefix("addx ") {
             return vec![
                 Instruction::Tick,
-                Instruction::AddX(inst[5..].parse().unwrap()),
+                Instruction::AddX(stripped.parse().unwrap()),
             ];
         }
         panic!("Unknown instruction {}", inst);
@@ -34,15 +34,15 @@ impl Display for Instruction {
     }
 }
 
-struct CPU {
+struct Cpu {
     pc: usize,
     instructions: Vec<Instruction>,
     x: i64,
 }
 
-impl CPU {
-    fn new(data: &mut dyn Iterator<Item = String>) -> CPU {
-        CPU {
+impl Cpu {
+    fn new(data: &mut dyn Iterator<Item = String>) -> Cpu {
+        Cpu {
             pc: 0,
             instructions: data.flat_map(Instruction::new).collect(),
             x: 1,
@@ -75,7 +75,7 @@ impl CPU {
 }
 
 pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
-    let mut cpu = CPU::new(data);
+    let mut cpu = Cpu::new(data);
     println!(" {:>3} | {:^4} | {:^8} | {:4}", "pc", "x", "inst", "newx");
     while !cpu.done() {
         cpu.cycle();

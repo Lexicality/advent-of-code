@@ -204,9 +204,7 @@ impl<Item> Grid<Item> {
             .cartesian_product(-1..=1)
             .map(|c| c.into())
             .filter(move |c: &Coord2D| {
-                if c.x == 0 && c.y == 0 {
-                    return false;
-                } else if !diagonal && !(c.x == 0 || c.y == 0) {
+                if (c.x == 0 && c.y == 0) || (!diagonal && c.x != 0 && c.y != 0) {
                     return false;
                 }
                 true

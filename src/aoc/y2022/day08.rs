@@ -4,6 +4,8 @@ use std::fmt::Display;
 use ansi_term::{Color, Style};
 use lazy_static::lazy_static;
 
+use crate::Direction;
+
 const NUM_SIZES: usize = 10;
 const BASE_COLOUR: u8 = 238;
 const NUM_COLOURS: u8 = 255 - BASE_COLOUR + 1;
@@ -24,21 +26,13 @@ lazy_static! {
     static ref COLOURS: [Style; NUM_SIZES] = _COLOURS.map(|c| Color::Fixed(c).on(Color::Black));
 }
 
-#[derive(Debug, Clone)]
-enum Direction {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST,
-}
-
 impl Direction {
     fn idx(&self) -> usize {
         match self {
-            Direction::NORTH => 0,
-            Direction::EAST => 1,
-            Direction::SOUTH => 2,
-            Direction::WEST => 3,
+            Direction::North => 0,
+            Direction::East => 1,
+            Direction::South => 2,
+            Direction::West => 3,
         }
     }
 }
@@ -84,13 +78,11 @@ impl Forest {
             trees: HashMap::with_capacity(size * size),
             size,
         };
-        let mut y = 0;
-        for line in data {
+        for (y, line) in data.enumerate() {
             for (x, height) in line.chars().map(|c| c.to_digit(10).unwrap()).enumerate() {
-                let coord: Coord = (x as u32, y);
+                let coord: Coord = (x as u32, y as u32);
                 forest.trees.insert(coord, Tree::new(height));
             }
-            y += 1;
         }
         forest
     }
@@ -100,10 +92,10 @@ impl Forest {
         let limit = self.size as u32;
 
         let iter: Box<dyn Iterator<Item = Coord>> = match direction {
-            Direction::NORTH => Box::new((0..y).rev().map(move |y| (x, y))),
-            Direction::EAST => Box::new((x + 1..limit).map(move |x| (x, y))),
-            Direction::SOUTH => Box::new((y + 1..limit).map(move |y| (x, y))),
-            Direction::WEST => Box::new((0..x).rev().map(move |x| (x, y))),
+            Direction::North => Box::new((0..y).rev().map(move |y| (x, y))),
+            Direction::East => Box::new((x + 1..limit).map(move |x| (x, y))),
+            Direction::South => Box::new((y + 1..limit).map(move |y| (x, y))),
+            Direction::West => Box::new((0..x).rev().map(move |x| (x, y))),
         };
         iter
     }
@@ -139,10 +131,10 @@ impl Forest {
             for x in 1..limit {
                 let coord = (x, y);
                 for dir in [
-                    Direction::NORTH,
-                    Direction::EAST,
-                    Direction::SOUTH,
-                    Direction::WEST,
+                    Direction::North,
+                    Direction::East,
+                    Direction::South,
+                    Direction::West,
                 ] {
                     self.floodify(&dir, coord);
                 }
