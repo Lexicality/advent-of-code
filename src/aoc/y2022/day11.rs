@@ -10,7 +10,7 @@ fn get_data(data: crate::DataIn, text: &'static str) -> String {
     let line = data.next().unwrap();
     let line = line.trim();
     assert!(line.starts_with(text));
-    return line[text.len()..].to_string();
+    line[text.len()..].to_string()
 }
 
 enum Op {
@@ -177,7 +177,7 @@ impl Monke {
             // println!("  Bored: {}", item);
             let target = self.test.test(item);
             // println!("  Yeets to: {}", target);
-            return (item, target);
+            (item, target)
         });
     }
 }
@@ -196,7 +196,7 @@ impl Display for Monke {
 pub fn main(data: crate::DataIn) -> String {
     let mut data = data.peekable();
     let mut monkeys = Vec::with_capacity(8);
-    while let Some(_) = data.peek() {
+    while data.peek().is_some() {
         monkeys.push(Monke::new(&mut data));
         if let Some(line) = data.next() {
             assert!(line.is_empty())
@@ -239,7 +239,7 @@ pub fn main(data: crate::DataIn) -> String {
         .take(2)
         .product();
 
-    return format!("{}", res);
+    format!("{}", res)
 }
 
 inventory::submit!(crate::AoCDay {

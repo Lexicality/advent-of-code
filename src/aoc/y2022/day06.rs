@@ -6,10 +6,7 @@ struct SubRoutine(VecDeque<char>, HashSet<char>);
 
 impl SubRoutine {
     fn new(chars: &mut Chars) -> SubRoutine {
-        SubRoutine {
-            0: chars.take(14).collect(),
-            1: HashSet::with_capacity(14),
-        }
+        SubRoutine(chars.take(14).collect(), HashSet::with_capacity(14))
     }
 
     fn bingo_bango(&mut self) -> bool {
@@ -17,7 +14,7 @@ impl SubRoutine {
         for c in self.0.iter() {
             self.1.insert(*c);
         }
-        return self.1.len() == 14;
+        self.1.len() == 14
     }
 
     fn rotate(&mut self, value: char) {

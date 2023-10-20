@@ -7,7 +7,7 @@ pub fn main(data: crate::DataIn) -> String {
             println!("{}", coord);
         }
     }
-    format!("")
+    String::new()
 }
 
 inventory::submit!(crate::AoCDay {

@@ -48,14 +48,14 @@ enum StepHeight {
 impl StepHeight {
     fn new(step: char) -> Self {
         assert!(step.is_ascii_alphabetic());
-        return match step {
+        match step {
             'S' => Self::Start,
             'E' => Self::End,
             _ => {
                 assert!(step.is_ascii_lowercase());
                 Self::Step((step as u32 - 'a' as u32) as u8)
             }
-        };
+        }
     }
 
     fn get_value(&self) -> u8 {
@@ -181,7 +181,7 @@ impl Grid {
                 s.visited = true;
                 s.cost = 0
             });
-        return ret;
+        ret
     }
 
     fn get_start(&self) -> impl Iterator<Item = (Coord2D, u32)> + '_ {
@@ -215,7 +215,7 @@ impl Grid {
         self.grid.get_mut(k)
     }
 
-    fn get_neighbours<'a>(&'a self, coord: Coord2D) -> impl Iterator<Item = Coord2D> + 'a {
+    fn get_neighbours(&self, coord: Coord2D) -> impl Iterator<Item = Coord2D> + '_ {
         let step = self.get(&coord).unwrap();
         self.grid
             .get_neighbours(coord, false)

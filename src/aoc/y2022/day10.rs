@@ -53,7 +53,7 @@ impl CPU {
         let sprpos = self.x;
         let px = (self.pc % 40) as i64;
         if px == 0 {
-            println!("");
+            println!();
         }
         if px >= sprpos - 1 && px <= sprpos + 1 {
             print!("#");
@@ -70,7 +70,7 @@ impl CPU {
     }
 
     fn done(&self) -> bool {
-        return self.pc >= self.instructions.len();
+        self.pc >= self.instructions.len()
     }
 }
 
@@ -81,7 +81,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         cpu.cycle();
     }
     println!();
-    return format!("");
+    String::new()
 }
 
 inventory::submit!(crate::AoCDay {

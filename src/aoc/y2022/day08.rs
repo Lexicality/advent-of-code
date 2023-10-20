@@ -61,7 +61,7 @@ impl Tree {
     }
 
     fn style(&self) -> &'static Style {
-        return &COLOURS[self.height as usize];
+        &COLOURS[self.height as usize]
     }
 
     fn set_vis(&mut self, direction: &Direction, visibility: usize) {
@@ -81,7 +81,7 @@ struct Forest {
 impl Forest {
     fn new(size: usize, data: &mut dyn Iterator<Item = String>) -> Forest {
         let mut forest = Forest {
-            trees: HashMap::with_capacity((size * size) as usize),
+            trees: HashMap::with_capacity(size * size),
             size,
         };
         let mut y = 0;
@@ -92,7 +92,7 @@ impl Forest {
             }
             y += 1;
         }
-        return forest;
+        forest
     }
 
     fn zoop(&self, start: &Coord, direction: &Direction) -> Box<dyn Iterator<Item = Coord>> {
@@ -105,7 +105,7 @@ impl Forest {
             Direction::SOUTH => Box::new((y + 1..limit).map(move |y| (x, y))),
             Direction::WEST => Box::new((0..x).rev().map(move |x| (x, y))),
         };
-        return iter;
+        iter
     }
 
     fn check_vis(&self, coord: &Coord, direction: &Direction, tree_height: u32) -> usize {
@@ -116,7 +116,7 @@ impl Forest {
                 return vis;
             }
         }
-        return vis;
+        vis
     }
 
     fn get_tree(&self, coord: &Coord) -> &Tree {
@@ -129,8 +129,8 @@ impl Forest {
     fn floodify(&mut self, direction: &Direction, coord: Coord) {
         let tree_height = self.get_tree(&coord).height;
 
-        let visibility = self.check_vis(&coord, &direction, tree_height);
-        self.get_tree_mut(&coord).set_vis(&direction, visibility);
+        let visibility = self.check_vis(&coord, direction, tree_height);
+        self.get_tree_mut(&coord).set_vis(direction, visibility);
     }
 
     fn flood(&mut self) {
@@ -144,7 +144,7 @@ impl Forest {
                     Direction::SOUTH,
                     Direction::WEST,
                 ] {
-                    self.floodify(&dir, coord.clone());
+                    self.floodify(&dir, coord);
                 }
                 // let tree = self.get_tree(&coord);
                 // if tree.get_visibility() > 2 {
@@ -180,7 +180,7 @@ impl Display for Forest {
                     tree.get_visibility()
                 )?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }
@@ -193,7 +193,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
     println!("{}", forest);
     forest.flood();
     println!("{}", forest);
-    return format!("{}", forest.get_visibilist());
+    format!("{}", forest.get_visibilist())
 }
 
 inventory::submit!(crate::AoCDay {

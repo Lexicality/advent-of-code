@@ -73,7 +73,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         println!("{}", total_score);
     }
 
-    return format!("{}", total_score);
+    format!("{}", total_score)
 }
 
 inventory::submit!(crate::AoCDay {

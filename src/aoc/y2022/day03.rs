@@ -11,7 +11,7 @@ fn get_priority(item: char) -> u32 {
     if item.is_ascii_uppercase() {
         return item as u32 - ('A' as u32 - 26 - 1);
     }
-    return item as u32 - ('a' as u32 - 1);
+    item as u32 - ('a' as u32 - 1)
 }
 
 fn get_comomn_item<L: Iterator<Item = String>>(lines: L) -> Option<char> {
@@ -20,14 +20,14 @@ fn get_comomn_item<L: Iterator<Item = String>>(lines: L) -> Option<char> {
     let e2: Pocket = e2.chars().collect();
     let e3: Pocket = e3.chars().collect();
 
-    let wat: Pocket = e1.intersection(&e2).map(|c| *c).collect();
+    let wat: Pocket = e1.intersection(&e2).copied().collect();
 
     let intersection: Vec<_> = e3.intersection(&wat).collect();
 
     if intersection.len() != 1 {
         panic!("Got multiple intersections: {:?}", intersection)
     }
-    return Some(*intersection[0]);
+    Some(*intersection[0])
 }
 
 pub fn main(data: &mut dyn Iterator<Item = String>) -> String {

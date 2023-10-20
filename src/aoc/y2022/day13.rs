@@ -51,7 +51,7 @@ fn actual_check_order(left: &Value, right: &Value) -> Option<Order> {
                     }
                 }
             }
-            return None;
+            None
         }
         _ => panic!("Unexpected value!"),
     }

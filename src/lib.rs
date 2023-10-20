@@ -35,7 +35,7 @@ impl Coord2D {
     }
 
     pub fn distance(&self, other: &Coord2D) -> u32 {
-        return (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs();
+        (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
     }
 
     pub fn get_max(&self, other: &Coord2D) -> Coord2D {
@@ -173,7 +173,7 @@ impl<Item> Grid<Item> {
         }
         grid.height = y as u32;
 
-        return grid;
+        grid
     }
 
     pub fn new_empty(width: u32, height: u32) -> Grid<Item> {
@@ -195,11 +195,11 @@ impl<Item> Grid<Item> {
             && ((coord.x as u32) < self.width && (coord.y as u32) < self.height)
     }
 
-    pub fn get_neighbours<'a>(
-        &'a self,
+    pub fn get_neighbours(
+        &self,
         coord: Coord2D,
         diagonal: bool,
-    ) -> impl Iterator<Item = Coord2D> + 'a {
+    ) -> impl Iterator<Item = Coord2D> + '_ {
         (-1..=1)
             .cartesian_product(-1..=1)
             .map(|c| c.into())
@@ -209,10 +209,10 @@ impl<Item> Grid<Item> {
                 } else if !diagonal && !(c.x == 0 || c.y == 0) {
                     return false;
                 }
-                return true;
+                true
             })
             .map(move |c| c + coord)
-            .filter(|c| self.check_coord(&c))
+            .filter(|c| self.check_coord(c))
     }
 
     pub fn keys(&self) -> impl Iterator<Item = Coord2D> {

@@ -73,7 +73,7 @@ impl INode {
         };
         let folder = Self::new_folder(name, this.clone());
         children.push(folder.clone());
-        return folder;
+        folder
     }
 
     fn get_child(&self, name: &str) -> Rc<INoder> {
@@ -96,7 +96,7 @@ impl INode {
             depth += 1;
             parent = Borrow::<INoder>::borrow(&gp).borrow().parent().clone();
         }
-        return depth;
+        depth
     }
 }
 
@@ -119,7 +119,7 @@ impl Display for INode {
                 write!(f, "{}", Borrow::<INoder>::borrow(child).borrow())?;
             }
         }
-        return Ok(());
+        Ok(())
     }
 }
 
@@ -194,7 +194,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
             let dir = Borrow::<INoder>::borrow(d).borrow();
             let size = dir.size();
             println!("Folder {} is {}", dir.name(), size);
-            size as u64
+            size
         })
         .filter(|s| s >= &needed)
         .map(|s| {
@@ -204,7 +204,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         .min()
         .unwrap();
 
-    return format!("{}", size);
+    format!("{}", size)
 }
 
 inventory::submit!(crate::AoCDay {

@@ -32,7 +32,7 @@ impl Yard {
                 // it's a stack line
                 let mut boxes_in_row: &str = &line;
                 let mut stack_i: u32 = 0;
-                while boxes_in_row.len() > 0 {
+                while !boxes_in_row.is_empty() {
                     stack_i += 1;
                     let current_box;
                     if boxes_in_row.len() == 3 {
@@ -45,9 +45,7 @@ impl Yard {
                         continue;
                     }
                     let current_box = current_box.chars().nth(1).unwrap();
-                    if !yard.stacks.contains_key(&stack_i) {
-                        yard.stacks.insert(stack_i, Vec::with_capacity(NUM_BOXES));
-                    }
+                    yard.stacks.entry(stack_i).or_insert_with(|| Vec::with_capacity(NUM_BOXES));
                     yard.stacks
                         .get_mut(&stack_i)
                         .unwrap()
@@ -91,12 +89,12 @@ impl Yard {
 
 impl Display for Yard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let depth = self.stacks.iter().map(|(_, v)| v.len()).max().unwrap();
+        let depth = self.stacks.values().map(|v| v.len()).max().unwrap();
         for depth in (0..depth).rev() {
             for stack in 1..self.count + 1 {
                 write!(f, "{} ", self.stacks[&stack].get(depth).unwrap_or(&' '))?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         for stack in 1..self.count + 1 {
             write!(f, "{} ", stack)?;
@@ -118,23 +116,23 @@ impl Move {
             static ref RE: Regex = Regex::new(r"^move (\d+) from (\d+) to (\d+)$").unwrap();
         }
         let matches = RE.captures(&line).unwrap();
-        return Move {
+        Move {
             count: matches[1].parse().unwrap(),
             start: matches[2].parse().unwrap(),
             end: matches[3].parse().unwrap(),
-        };
+        }
     }
 }
 
 pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
     let mut yard = Yard::new(data);
     println!("{}", yard);
-    for op in data.map(|l| Move::new(l)) {
+    for op in data.map(Move::new) {
         yard.perform_move(&op);
         println!("{}", yard);
     }
 
-    return yard.get_top();
+    yard.get_top()
 }
 
 inventory::submit!(crate::AoCDay {

@@ -17,7 +17,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
     elves.sort_unstable();
     elves.reverse();
 
-    return format!("{}", elves[..3].iter().sum::<i32>());
+    format!("{}", elves[..3].iter().sum::<i32>())
 }
 
 inventory::submit!(crate::AoCDay {
