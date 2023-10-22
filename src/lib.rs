@@ -51,6 +51,14 @@ impl Coord2D {
             y: cmp::min(self.y, other.y),
         }
     }
+
+    pub fn len(&self) -> f64 {
+        (self.len_sqr() as f64).sqrt()
+    }
+
+    pub fn len_sqr(&self) -> i64 {
+        self.x.pow(2) as i64 + self.y.pow(2) as i64
+    }
 }
 
 impl ops::Add for Coord2D {
@@ -83,6 +91,30 @@ impl ops::Mul for Coord2D {
     }
 }
 
+impl<T: num::NumCast> ops::Mul<T> for Coord2D {
+    type Output = Option<Self>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        let rhs: i32 = num::NumCast::from(rhs)?;
+        Some(Coord2D {
+            x: rhs * self.x,
+            y: rhs * self.y,
+        })
+    }
+}
+
+impl<T: num::NumCast> ops::Div<T> for Coord2D {
+    type Output = Option<Self>;
+
+    fn div(self, rhs: T) -> Self::Output {
+        let rhs: f64 = num::NumCast::from(rhs)?;
+        Some(Coord2D {
+            x: ((self.x as f64) / rhs).floor() as i32,
+            y: ((self.y as f64) / rhs).floor() as i32,
+        })
+    }
+}
+
 impl ops::Neg for Coord2D {
     type Output = Self;
     fn neg(self) -> Self::Output {
@@ -109,7 +141,7 @@ impl From<(i32, i32)> for Coord2D {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Direction {
     North,
     East,
@@ -243,6 +275,10 @@ impl<Item> Grid<Item> {
 
     pub fn get_mut(&mut self, k: &Coord2D) -> Option<&mut Item> {
         self.grid.get_mut(k)
+    }
+
+    pub fn set(&mut self, k: Coord2D, v: Item) {
+        self.grid.insert(k, v);
     }
 }
 
