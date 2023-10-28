@@ -13,7 +13,7 @@ pub struct Grid<Item> {
 
 #[allow(dead_code)]
 impl<Item> Grid<Item> {
-    pub fn new<I>(data: I, width: u32) -> Grid<Item>
+    pub fn new_from_data<I>(data: I, width: u32) -> Grid<Item>
     where
         I: Iterator<Item = Item>,
     {
@@ -40,13 +40,16 @@ impl<Item> Grid<Item> {
         grid
     }
 
-    pub fn new_empty(width: u32, height: u32) -> Grid<Item> {
+    fn validate_dimensions(width: u32, height: u32) -> usize {
         assert!(width <= (i32::MAX as u32), "grid is too wide!");
         assert!(height <= (i32::MAX as u32), "grid is too tall!");
-        let size = (width as usize)
+        (width as usize)
             .checked_mul(height as usize)
-            .expect("Grid is too big!");
+            .expect("Grid is too big!")
+    }
 
+    pub fn new_empty(width: u32, height: u32) -> Grid<Item> {
+        let size = Grid::<Item>::validate_dimensions(width, height);
         Grid::<Item> {
             grid: HashMap::with_capacity(size),
             width,
@@ -115,6 +118,50 @@ impl<Item> Grid<Item> {
 
     pub fn set(&mut self, k: Coord2D, v: Item) {
         self.grid.insert(k, v);
+    }
+}
+
+impl<Item: Clone> Grid<Item> {
+    pub fn new_filled(width: u32, height: u32, default: Item) -> Grid<Item> {
+        Grid::<Item>::validate_dimensions(width, height);
+        Grid::<Item> {
+            grid: (0..width)
+                .zip(0..height)
+                .map(|(x, y)| {
+                    (
+                        Coord2D {
+                            x: x as i32,
+                            y: y as i32,
+                        },
+                        default.clone(),
+                    )
+                })
+                .collect(),
+            width,
+            height,
+        }
+    }
+}
+
+impl<Item: Default> Grid<Item> {
+    pub fn new(width: u32, height: u32) -> Grid<Item> {
+        Grid::<Item>::validate_dimensions(width, height);
+        Grid::<Item> {
+            grid: (0..width)
+                .zip(0..height)
+                .map(|(x, y)| {
+                    (
+                        Coord2D {
+                            x: x as i32,
+                            y: y as i32,
+                        },
+                        Default::default(),
+                    )
+                })
+                .collect(),
+            width,
+            height,
+        }
     }
 }
 

@@ -100,10 +100,7 @@ pub fn main(data: crate::DataIn) -> String {
                 tail_pos = new_tail;
                 visited.insert(tail_pos);
             }
-            // let mut grid = Grid::<char>::new_empty(6, 5);
-            // for coord in grid.keys() {
-            //     grid.set(coord, '.');
-            // }
+            // let mut grid = Grid::<char>::new_filled(6, 5, '.');
             // grid.set(tail_pos, '9');
             // for (coord, name) in midroll
             //     .iter()
