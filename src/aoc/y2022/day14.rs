@@ -1,8 +1,9 @@
+use std::cmp;
 use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{Coord2D, Direction, Grid};
+use crate::{Coord2D, Direction, InfGrid};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum GridData {
@@ -28,71 +29,50 @@ const SAND_STEPS: [Coord2D; 3] = [
     Coord2D { x: 1, y: 1 },
 ];
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum SandBehaviour {
-    Move(Coord2D),
-    Settle,
-    Void,
-}
-
-fn get_next_sand(pos: Coord2D, grid: &Grid<GridData>) -> SandBehaviour {
+fn get_next_sand(pos: Coord2D, floor_y: i32, grid: &InfGrid<GridData>) -> Option<Coord2D> {
     for step in SAND_STEPS {
         let target = pos + step;
+        if target.y >= floor_y {
+            return None;
+        }
         let contents = grid.get(&target);
         match contents {
-            None => return SandBehaviour::Void,
-            Some(contents) => {
-                if let GridData::Air = contents {
-                    return SandBehaviour::Move(target);
-                }
-            }
+            None => return Some(target),
+            Some(GridData::Air) => return Some(target),
+            _ => (),
         }
     }
-    SandBehaviour::Settle
+    None
 }
 
-fn settle_sand(sand_start: Coord2D, grid: &Grid<GridData>) -> Option<Coord2D> {
-    // consistency check
-    assert_eq!(grid.get(&sand_start), Some(&GridData::Air));
+fn settle_sand(sand_start: Coord2D, floor_y: i32, grid: &InfGrid<GridData>) -> Option<Coord2D> {
+    if grid.get(&sand_start).is_some() {
+        return None;
+    }
     let mut sand = sand_start;
     loop {
-        let behaviour = get_next_sand(sand, grid);
+        let behaviour = get_next_sand(sand, floor_y, grid);
         match behaviour {
-            SandBehaviour::Move(pos) => sand = pos,
-            SandBehaviour::Void => return None,
-            SandBehaviour::Settle => return Some(sand),
+            Some(pos) => sand = pos,
+            None => return Some(sand),
         }
     }
 }
 
 pub fn main(data: crate::DataIn) -> String {
-    let mut max = Coord2D {
-        x: i32::MIN,
-        y: i32::MIN,
-    };
-    let mut min = Coord2D { x: i32::MAX, y: 0 };
-    let mut rocks: Vec<Vec<Coord2D>> = data
+    let mut maxy = 0;
+    let rocks: Vec<Vec<Coord2D>> = data
         .map(|line| {
             line.split(" -> ")
                 .map(|coord| {
                     let coord = Coord2D::parse(coord);
-                    min = min.get_min(&coord);
-                    max = max.get_max(&coord);
+                    maxy = cmp::max(maxy, coord.y);
                     coord
                 })
                 .collect()
         })
         .collect();
-    for rock in rocks.iter_mut() {
-        for coord in rock.iter_mut() {
-            coord.x -= min.x;
-        }
-    }
-    let grid_size = max - min;
-    let mut grid = Grid::<GridData>::new(
-        TryInto::<u32>::try_into(grid_size.x).expect("No negative cooords") + 1,
-        TryInto::<u32>::try_into(grid_size.y).expect("No negative cooords") + 1,
-    );
+    let mut grid = InfGrid::<GridData>::new();
 
     for rock in rocks.iter() {
         for (start, end) in rock.iter().tuple_windows() {
@@ -109,21 +89,19 @@ pub fn main(data: crate::DataIn) -> String {
             }
         }
     }
-    println!("{grid}");
+    println!("{grid}\n=====\n");
 
-    let sand_start = Coord2D {
-        x: 500 - min.x,
-        y: 0,
-    };
+    let sand_start = Coord2D { x: 500, y: 0 };
+    let floor_y = maxy + 2;
     let mut i = 0;
     loop {
-        let sandpos = settle_sand(sand_start, &grid);
+        let sandpos = settle_sand(sand_start, floor_y, &grid);
         match sandpos {
             Some(pos) => grid.set(pos, GridData::Sand),
             None => break,
         }
         i += 1;
-        println!("{grid}");
+        // println!("{grid}");
     }
 
     println!("{grid}");
