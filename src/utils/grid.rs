@@ -1,6 +1,6 @@
 use itertools::Itertools;
 use std::collections::HashMap;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
 use crate::Coord2D;
 
@@ -125,8 +125,8 @@ impl<Item: Clone> Grid<Item> {
     pub fn new_filled(width: u32, height: u32, default: Item) -> Grid<Item> {
         Grid::<Item>::validate_dimensions(width, height);
         Grid::<Item> {
-            grid: (0..width)
-                .zip(0..height)
+            grid: (0..=width)
+                .zip(0..=height)
                 .map(|(x, y)| {
                     (
                         Coord2D {
@@ -143,12 +143,12 @@ impl<Item: Clone> Grid<Item> {
     }
 }
 
-impl<Item: Default> Grid<Item> {
+impl<Item: Default + Debug> Grid<Item> {
     pub fn new(width: u32, height: u32) -> Grid<Item> {
         Grid::<Item>::validate_dimensions(width, height);
         Grid::<Item> {
             grid: (0..width)
-                .zip(0..height)
+                .cartesian_product(0..height)
                 .map(|(x, y)| {
                     (
                         Coord2D {
