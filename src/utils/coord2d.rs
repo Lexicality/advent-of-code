@@ -11,6 +11,15 @@ pub struct Coord2D {
 }
 
 impl Coord2D {
+    pub const MAX: Coord2D = Coord2D {
+        x: i32::MAX,
+        y: i32::MAX,
+    };
+    pub const MIN: Coord2D = Coord2D {
+        x: i32::MIN,
+        y: i32::MIN,
+    };
+
     pub fn parse(data: &str) -> Coord2D {
         let (x, y) = data
             .split_once(',')
