@@ -1,41 +1,98 @@
-use std::{collections::BTreeMap, fmt::Display, str::FromStr};
+use std::collections::BTreeMap;
+use std::fmt::Display;
+use std::str::FromStr;
 
 use itertools::Itertools;
+use text_io::read;
 
-use crate::AoCError;
+use crate::{AoCError, AoCResult};
 
-pub type ComputerResult<T> = Result<T, AoCError>;
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum ParameterMode {
+    Position,
+    Immediate,
+}
 
+impl TryFrom<char> for ParameterMode {
+    type Error = AoCError;
+
+    fn try_from(s: char) -> Result<Self, Self::Error> {
+        match s {
+            '0' => Ok(ParameterMode::Position),
+            '1' => Ok(ParameterMode::Immediate),
+            _ => Err(AoCError::new(format!("Unknown parameter mode {s}"))),
+        }
+    }
+}
+
+#[derive(Debug)]
 pub enum Opcode {
-    Add,
-    Mul,
+    Add(ParameterMode, ParameterMode, ParameterMode),
+    Mul(ParameterMode, ParameterMode, ParameterMode),
+    Input(ParameterMode),
+    Output(ParameterMode),
     End,
 }
 
 impl Opcode {
     fn num_instructions(&self) -> u64 {
         match self {
-            Self::Add => 3,
-            Self::Mul => 3,
+            Self::Add(_, _, _) | Self::Mul(_, _, _) => 3,
+            Self::Input(_) | Self::Output(_) => 1,
             Self::End => 0,
+        }
+    }
+
+    fn validate(&self) -> AoCResult<()> {
+        match self {
+            Self::Add(_, _, ParameterMode::Immediate)
+            | Self::Mul(_, _, ParameterMode::Immediate)
+            | Self::Input(ParameterMode::Immediate) => Err(AoCError::new(
+                "Cannot use immediate mode addressing for a target parameter",
+            )),
+            _ => Ok(()),
         }
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Debug, Clone, Copy)]
 pub struct Instruction(i128);
 
 impl Instruction {
     pub fn to_opcode(self) -> Option<Opcode> {
-        match self.0 {
-            1 => Some(Opcode::Add),
-            2 => Some(Opcode::Mul),
-            99 => Some(Opcode::End),
+        let value = self.0;
+        if !(0..=99999).contains(&value) {
+            return None;
+        }
+        let value = &format!("{value:05}");
+        let (flags, opcode) = value.split_at(3);
+        let flags: Vec<char> = flags.chars().rev().collect();
+        // println!("opcode: {opcode}");
+        // println!("flags: {flags:?}");
+
+        match opcode {
+            "01" => Some(Opcode::Add(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+                flags[2].try_into().unwrap(),
+            )),
+            "02" => Some(Opcode::Mul(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+                flags[2].try_into().unwrap(),
+            )),
+            "03" => Some(Opcode::Input(flags[0].try_into().unwrap())),
+            "04" => Some(Opcode::Output(flags[0].try_into().unwrap())),
+            "99" => Some(Opcode::End),
             _ => None,
         }
+        .map(|opcode| {
+            opcode.validate().unwrap();
+            opcode
+        })
     }
 
-    pub fn to_memory_location(self) -> ComputerResult<u64> {
+    pub fn to_memory_location(self) -> AoCResult<u64> {
         self.0
             .try_into()
             .map_err(|e| AoCError::new_with_cause(format!("Invalid memory address {}", self.0), e))
@@ -106,7 +163,7 @@ impl Display for Computer {
 }
 
 impl Computer {
-    pub fn run(&mut self) -> ComputerResult<()> {
+    pub fn run(&mut self) -> AoCResult<()> {
         loop {
             let instr = self.get(&self.pc);
             let opcode = instr
@@ -114,17 +171,27 @@ impl Computer {
                 .ok_or_else(|| AoCError::new(format!("Invalid opcode {instr}")))?;
             let len = opcode.num_instructions();
             match opcode {
-                Opcode::Add => {
-                    let a = self.get_pos(&(self.pc + 1))?.0;
-                    let b = self.get_pos(&(self.pc + 2))?.0;
-                    let target = self.get(&(self.pc + 3));
+                Opcode::Add(a_mode, b_mode, target_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
+                    let target = self.get_target(&(self.pc + 3), target_mode);
                     self.set(target.to_memory_location()?, Instruction(a + b));
                 }
-                Opcode::Mul => {
-                    let a = self.get_pos(&(self.pc + 1))?.0;
-                    let b = self.get_pos(&(self.pc + 2))?.0;
-                    let target = self.get(&(self.pc + 3));
+                Opcode::Mul(a_mode, b_mode, target_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
+                    let target = self.get_target(&(self.pc + 3), target_mode);
                     self.set(target.to_memory_location()?, Instruction(a * b));
+                }
+                Opcode::Input(target_mode) => {
+                    let target = self.get_target(&(self.pc + 1), target_mode);
+                    print!("Please enter a number: ");
+                    let value: i128 = read!("{}\n");
+                    self.set(target.to_memory_location()?, value.into());
+                }
+                Opcode::Output(a_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    println!("{}", a);
                 }
                 Opcode::End => return Ok(()),
             }
@@ -136,7 +203,21 @@ impl Computer {
         self.memory.get(key).copied().unwrap_or_default()
     }
 
-    pub fn get_pos(&self, pos_key: &u64) -> ComputerResult<Instruction> {
+    fn get_with_mode(&self, key: &u64, mode: ParameterMode) -> AoCResult<Instruction> {
+        match mode {
+            ParameterMode::Position => self.get_pos(key),
+            ParameterMode::Immediate => Ok(self.get(key)),
+        }
+    }
+
+    fn get_target(&self, key: &u64, mode: ParameterMode) -> Instruction {
+        match mode {
+            ParameterMode::Position => self.get(key),
+            ParameterMode::Immediate => unreachable!("this should never happen"),
+        }
+    }
+
+    pub fn get_pos(&self, pos_key: &u64) -> AoCResult<Instruction> {
         Ok(self.get(&self.get(pos_key).to_memory_location()?))
     }
 
