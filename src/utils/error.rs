@@ -1,5 +1,7 @@
 use std::{error::Error, fmt::Display};
 
+pub type AoCResult<T> = Result<T, AoCError>;
+
 #[derive(Debug)]
 pub struct AoCError {
     cause: Option<Box<dyn Error>>,

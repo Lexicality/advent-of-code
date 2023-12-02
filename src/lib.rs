@@ -10,6 +10,7 @@ pub mod utils {
 pub use crate::utils::coord2d::Coord2D;
 pub use crate::utils::direction::Direction;
 pub use crate::utils::error::AoCError;
+pub use crate::utils::error::AoCResult;
 pub use crate::utils::grid::Grid;
 pub use crate::utils::infgrid::InfGrid;
 

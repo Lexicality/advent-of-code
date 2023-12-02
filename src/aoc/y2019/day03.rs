@@ -2,7 +2,7 @@ use std::{fmt::Display, str::FromStr};
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coord2D, Direction, InfGrid};
+use crate::{AoCError, AoCResult, Coord2D, Direction, InfGrid};
 
 struct Instruction {
     direction: Direction,
@@ -77,6 +77,40 @@ fn wire_it_up(
     Ok(())
 }
 
+fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResult<u32> {
+    let mut retdata = InfGrid::<u32>::new();
+    for instructions in [first, second].iter() {
+        let instructions: Vec<Instruction> = instructions
+            .split(',')
+            .map(|i| i.parse())
+            .collect::<Result<_, _>>()?;
+        let mut pos = Coord2D { x: 0, y: 0 };
+        let mut steps = 0;
+        for instruction in instructions {
+            let coord: Coord2D = instruction.direction.into();
+            for _ in 0..instruction.amount {
+                pos = pos + coord;
+                steps += 1;
+                match grid.get(&pos) {
+                    Some(GridState::Both) => {
+                        let amt = *retdata.get_or_set_default(&pos);
+                        retdata.set(pos, amt + steps);
+                    }
+                    Some(_) => (),
+                    None => return Err(AoCError::new(format!("path broke at {pos}"))),
+                }
+            }
+        }
+    }
+    retdata
+        .iter()
+        .map(|(_, l)| l)
+        .sorted()
+        .copied()
+        .next()
+        .ok_or(AoCError::new("no crossovers?"))
+}
+
 pub fn main(data: crate::DataIn) -> String {
     let mut ret = 0;
     while let Some(first) = data.next() {
@@ -92,6 +126,9 @@ pub fn main(data: crate::DataIn) -> String {
             .expect("Must have at least one crossover");
         ret = crossover.len_manhatten();
         println!("Crosses at {crossover} which is {ret} away");
+        let best = steppinator(&grid, &first, &second).unwrap();
+        ret = best;
+        println!("best {best}");
     }
     ret.to_string()
 }
