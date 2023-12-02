@@ -8,13 +8,22 @@ fn check_num(num: u32) -> bool {
     let mut digits = num.chars().map(|c| c.to_digit(10).unwrap());
     let mut prev = digits.next().unwrap();
     let mut doubles = false;
+    let mut repetitions = 0;
     for digit in digits {
         match digit.cmp(&prev) {
             Ordering::Less => return false,
-            Ordering::Equal => doubles = true,
-            Ordering::Greater => (),
+            Ordering::Equal => repetitions += 1,
+            Ordering::Greater => {
+                if repetitions == 1 {
+                    doubles = true;
+                }
+                repetitions = 0;
+            }
         };
         prev = digit;
+    }
+    if repetitions == 1 {
+        doubles = true;
     }
     doubles
 }
@@ -50,14 +59,12 @@ mod test {
     }
 
     #[test]
-    fn increasing() {
-        assert!(check_num(111123));
-        // assert!(check_num(135679));
-    }
-
-    #[test]
-    fn oneoneone() {
-        assert!(check_num(111111));
+    fn new_double_rule() {
+        assert!(!check_num(111111), "all ones is invalid");
+        assert!(check_num(112233), "three pairs is good");
+        assert!(check_num(111122), "four-two is fine");
+        assert!(!check_num(111222), "three-three is bad");
+        assert!(!check_num(122223), "1-4-1 is invalid");
     }
 
     #[test]
