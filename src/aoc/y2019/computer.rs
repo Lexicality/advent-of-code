@@ -31,13 +31,21 @@ pub enum Opcode {
     Mul(ParameterMode, ParameterMode, ParameterMode),
     Input(ParameterMode),
     Output(ParameterMode),
+    JumpIfTrue(ParameterMode, ParameterMode),
+    JumpIfFalse(ParameterMode, ParameterMode),
+    LessThan(ParameterMode, ParameterMode, ParameterMode),
+    Equal(ParameterMode, ParameterMode, ParameterMode),
     End,
 }
 
 impl Opcode {
     fn num_instructions(&self) -> u64 {
         match self {
-            Self::Add(_, _, _) | Self::Mul(_, _, _) => 3,
+            Self::Add(_, _, _)
+            | Self::Mul(_, _, _)
+            | Self::LessThan(_, _, _)
+            | Self::Equal(_, _, _) => 3,
+            Self::JumpIfTrue(_, _) | Self::JumpIfFalse(_, _) => 2,
             Self::Input(_) | Self::Output(_) => 1,
             Self::End => 0,
         }
@@ -47,6 +55,8 @@ impl Opcode {
         match self {
             Self::Add(_, _, ParameterMode::Immediate)
             | Self::Mul(_, _, ParameterMode::Immediate)
+            | Self::LessThan(_, _, ParameterMode::Immediate)
+            | Self::Equal(_, _, ParameterMode::Immediate)
             | Self::Input(ParameterMode::Immediate) => Err(AoCError::new(
                 "Cannot use immediate mode addressing for a target parameter",
             )),
@@ -83,6 +93,25 @@ impl Instruction {
             )),
             "03" => Some(Opcode::Input(flags[0].try_into().unwrap())),
             "04" => Some(Opcode::Output(flags[0].try_into().unwrap())),
+            "05" => Some(Opcode::JumpIfTrue(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+            )),
+            "06" => Some(Opcode::JumpIfFalse(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+            )),
+            "07" => Some(Opcode::LessThan(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+                flags[2].try_into().unwrap(),
+            )),
+            "08" => Some(Opcode::Equal(
+                flags[0].try_into().unwrap(),
+                flags[1].try_into().unwrap(),
+                flags[2].try_into().unwrap(),
+            )),
+
             "99" => Some(Opcode::End),
             _ => None,
         }
@@ -192,6 +221,44 @@ impl Computer {
                 Opcode::Output(a_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
                     println!("{}", a);
+                }
+                Opcode::JumpIfTrue(a_mode, b_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self
+                        .get_with_mode(&(self.pc + 2), b_mode)?
+                        .to_memory_location()?;
+                    if a != 0 {
+                        self.pc = b;
+                        continue;
+                    }
+                }
+                Opcode::JumpIfFalse(a_mode, b_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self
+                        .get_with_mode(&(self.pc + 2), b_mode)?
+                        .to_memory_location()?;
+                    if a == 0 {
+                        self.pc = b;
+                        continue;
+                    }
+                }
+                Opcode::LessThan(a_mode, b_mode, target_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
+                    let target = self.get_target(&(self.pc + 3), target_mode);
+                    self.set(
+                        target.to_memory_location()?,
+                        (if a < b { 1 } else { 0 }).into(),
+                    );
+                }
+                Opcode::Equal(a_mode, b_mode, target_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
+                    let target = self.get_target(&(self.pc + 3), target_mode);
+                    self.set(
+                        target.to_memory_location()?,
+                        (if a == b { 1 } else { 0 }).into(),
+                    );
                 }
                 Opcode::End => return Ok(()),
             }
