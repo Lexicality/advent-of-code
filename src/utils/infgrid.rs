@@ -6,7 +6,7 @@ use num::Signed;
 
 use crate::{Coord2D, Coordinate};
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct InfGrid<Item, Key: Coordinate = Coord2D> {
     pub grid: HashMap<Key, Item>,
     pub min: Key,
