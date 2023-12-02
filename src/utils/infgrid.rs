@@ -33,6 +33,27 @@ impl<Item> InfGrid<Item> {
         self.max = self.max.get_max(&k);
         self.grid.insert(k, v);
     }
+
+    pub fn get_or_set(&mut self, k: &Coord2D, default: Item) -> &Item {
+        if !self.grid.contains_key(k) {
+            self.set(*k, default);
+        }
+        self.get(k).unwrap()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&Coord2D, &Item)> {
+        self.grid.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&Coord2D, &mut Item)> {
+        self.grid.iter_mut()
+    }
+}
+
+impl<Item: Default> InfGrid<Item> {
+    pub fn get_or_set_default(&mut self, k: &Coord2D) -> &Item {
+        self.get_or_set(k, Default::default())
+    }
 }
 
 impl<Item: Display> Display for InfGrid<Item> {

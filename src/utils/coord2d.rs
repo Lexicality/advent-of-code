@@ -55,6 +55,10 @@ impl Coord2D {
     pub fn len_sqr(&self) -> i64 {
         self.x.pow(2) as i64 + self.y.pow(2) as i64
     }
+
+    pub fn len_manhatten(&self) -> u32 {
+        self.x.unsigned_abs() + self.y.unsigned_abs()
+    }
 }
 
 impl ops::Add for Coord2D {
