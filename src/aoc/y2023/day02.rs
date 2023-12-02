@@ -6,13 +6,6 @@ use regex::Regex;
 use crate::AoCError;
 
 #[derive(Debug)]
-struct State {
-    red: u32,
-    green: u32,
-    blue: u32,
-}
-
-#[derive(Debug)]
 struct Show {
     red: u32,
     green: u32,
@@ -111,25 +104,16 @@ impl Display for Game {
 }
 
 impl Game {
-    fn is_possible(&self, state: &State) -> bool {
-        self.min_red > state.red || self.min_green > state.green || self.min_blue > state.blue
+    fn power(&self) -> u32 {
+        self.min_red * self.min_green * self.min_blue
     }
 }
 
 pub fn main(data: crate::DataIn) -> String {
     let mut ret = 0;
-    let state = State {
-        red: 12,
-        green: 13,
-        blue: 14,
-    };
     for line in data {
         let game: Game = line.parse().unwrap();
-        println!("{game}");
-        if !game.is_possible(&state) {
-            println!("Impossible!");
-            ret += game.id;
-        }
+        ret += game.power();
     }
     ret.to_string()
 }
