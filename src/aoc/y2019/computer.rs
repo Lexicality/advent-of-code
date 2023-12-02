@@ -26,7 +26,7 @@ impl Opcode {
 pub struct Instruction(i128);
 
 impl Instruction {
-    fn to_opcode(self) -> Option<Opcode> {
+    pub fn to_opcode(self) -> Option<Opcode> {
         match self.0 {
             1 => Some(Opcode::Add),
             2 => Some(Opcode::Mul),
@@ -35,10 +35,14 @@ impl Instruction {
         }
     }
 
-    fn to_memory_location(self) -> ComputerResult<u64> {
+    pub fn to_memory_location(self) -> ComputerResult<u64> {
         self.0
             .try_into()
             .map_err(|e| AoCError::new_with_cause(format!("Invalid memory address {}", self.0), e))
+    }
+
+    pub fn to_value(self) -> i128 {
+        self.0
     }
 }
 
@@ -63,6 +67,7 @@ impl Display for Instruction {
     }
 }
 
+#[derive(Clone)]
 pub struct Computer {
     memory: BTreeMap<u64, Instruction>,
     pc: u64,
