@@ -71,6 +71,13 @@ impl ops::Add for Coord2D {
     }
 }
 
+impl ops::AddAssign for Coord2D {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+    }
+}
+
 impl ops::Sub for Coord2D {
     type Output = Self;
     fn sub(self, rhs: Coord2D) -> Self::Output {
@@ -81,13 +88,27 @@ impl ops::Sub for Coord2D {
     }
 }
 
+impl ops::SubAssign for Coord2D {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+    }
+}
+
 impl ops::Mul for Coord2D {
     type Output = Self;
     fn mul(self, rhs: Coord2D) -> Self::Output {
         Coord2D {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
         }
+    }
+}
+
+impl ops::MulAssign for Coord2D {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.x *= rhs.x;
+        self.y *= rhs.y;
     }
 }
 
@@ -143,11 +164,6 @@ impl From<(i32, i32)> for Coord2D {
 
 impl From<Direction> for Coord2D {
     fn from(dir: Direction) -> Self {
-        match dir {
-            Direction::North => Coord2D { x: 0, y: 1 },
-            Direction::East => Coord2D { x: 1, y: 0 },
-            Direction::South => Coord2D { x: 0, y: -1 },
-            Direction::West => Coord2D { x: -1, y: 0 },
-        }
+        dir.to_coord()
     }
 }
