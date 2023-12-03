@@ -11,6 +11,7 @@ use crate::{AoCError, AoCResult};
 pub enum ParameterMode {
     Position,
     Immediate,
+    Relative,
 }
 
 impl TryFrom<char> for ParameterMode {
@@ -20,6 +21,7 @@ impl TryFrom<char> for ParameterMode {
         match s {
             '0' => Ok(ParameterMode::Position),
             '1' => Ok(ParameterMode::Immediate),
+            '2' => Ok(ParameterMode::Relative),
             _ => Err(AoCError::new(format!("Unknown parameter mode {s}"))),
         }
     }
@@ -35,6 +37,7 @@ pub enum Opcode {
     JumpIfFalse(ParameterMode, ParameterMode),
     LessThan(ParameterMode, ParameterMode, ParameterMode),
     Equal(ParameterMode, ParameterMode, ParameterMode),
+    AdjustRelative(ParameterMode),
     End,
 }
 
@@ -46,7 +49,7 @@ impl Opcode {
             | Self::LessThan(_, _, _)
             | Self::Equal(_, _, _) => 3,
             Self::JumpIfTrue(_, _) | Self::JumpIfFalse(_, _) => 2,
-            Self::Input(_) | Self::Output(_) => 1,
+            Self::Input(_) | Self::Output(_) | Self::AdjustRelative(_) => 1,
             Self::End => 0,
         }
     }
@@ -111,7 +114,7 @@ impl Instruction {
                 flags[1].try_into().unwrap(),
                 flags[2].try_into().unwrap(),
             )),
-
+            "09" => Some(Opcode::AdjustRelative(flags[0].try_into().unwrap())),
             "99" => Some(Opcode::End),
             _ => None,
         }
@@ -157,6 +160,7 @@ impl Display for Instruction {
 pub struct Computer {
     memory: BTreeMap<u64, Instruction>,
     pc: u64,
+    relative_base: i128,
 }
 
 impl FromStr for Computer {
@@ -170,6 +174,7 @@ impl FromStr for Computer {
                 .map(|(i, s)| Ok((i as u64, s.parse()?)))
                 .collect::<Result<BTreeMap<u64, Instruction>, Self::Err>>()?,
             pc: 0,
+            relative_base: 0,
         })
     }
 }
@@ -203,20 +208,20 @@ impl Computer {
                 Opcode::Add(a_mode, b_mode, target_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
                     let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
-                    let target = self.get_target(&(self.pc + 3), target_mode);
-                    self.set(target.to_memory_location()?, Instruction(a + b));
+                    let target = self.get_target(&(self.pc + 3), target_mode)?;
+                    self.set(target, Instruction(a + b));
                 }
                 Opcode::Mul(a_mode, b_mode, target_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
                     let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
-                    let target = self.get_target(&(self.pc + 3), target_mode);
-                    self.set(target.to_memory_location()?, Instruction(a * b));
+                    let target = self.get_target(&(self.pc + 3), target_mode)?;
+                    self.set(target, Instruction(a * b));
                 }
                 Opcode::Input(target_mode) => {
-                    let target = self.get_target(&(self.pc + 1), target_mode);
+                    let target = self.get_target(&(self.pc + 1), target_mode)?;
                     print!("Please enter a number: ");
                     let value: i128 = read!("{}\n");
-                    self.set(target.to_memory_location()?, value.into());
+                    self.set(target, value.into());
                 }
                 Opcode::Output(a_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
@@ -245,20 +250,21 @@ impl Computer {
                 Opcode::LessThan(a_mode, b_mode, target_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
                     let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
-                    let target = self.get_target(&(self.pc + 3), target_mode);
-                    self.set(
-                        target.to_memory_location()?,
-                        (if a < b { 1 } else { 0 }).into(),
-                    );
+                    let target = self.get_target(&(self.pc + 3), target_mode)?;
+                    self.set(target, (if a < b { 1 } else { 0 }).into());
                 }
                 Opcode::Equal(a_mode, b_mode, target_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
                     let b = self.get_with_mode(&(self.pc + 2), b_mode)?.to_value();
-                    let target = self.get_target(&(self.pc + 3), target_mode);
-                    self.set(
-                        target.to_memory_location()?,
-                        (if a == b { 1 } else { 0 }).into(),
-                    );
+                    let target = self.get_target(&(self.pc + 3), target_mode)?;
+                    self.set(target, (if a == b { 1 } else { 0 }).into());
+                }
+                Opcode::AdjustRelative(a_mode) => {
+                    let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
+                    self.relative_base = self
+                        .relative_base
+                        .checked_add(a)
+                        .ok_or(AoCError::new("Relative base overflow"))?;
                 }
                 Opcode::End => return Ok(()),
             }
@@ -274,18 +280,39 @@ impl Computer {
         match mode {
             ParameterMode::Position => self.get_pos(key),
             ParameterMode::Immediate => Ok(self.get(key)),
+            ParameterMode::Relative => self.get_relative(key),
         }
     }
 
-    fn get_target(&self, key: &u64, mode: ParameterMode) -> Instruction {
+    fn get_target(&self, key: &u64, mode: ParameterMode) -> AoCResult<u64> {
         match mode {
-            ParameterMode::Position => self.get(key),
+            ParameterMode::Position => self.get(key).to_memory_location(),
             ParameterMode::Immediate => unreachable!("this should never happen"),
+            ParameterMode::Relative => self.resolve_relative_adress(key),
         }
     }
 
-    pub fn get_pos(&self, pos_key: &u64) -> AoCResult<Instruction> {
-        Ok(self.get(&self.get(pos_key).to_memory_location()?))
+    pub fn get_pos(&self, key: &u64) -> AoCResult<Instruction> {
+        Ok(self.get(&self.get(key).to_memory_location()?))
+    }
+
+    fn resolve_relative_adress(&self, key: &u64) -> AoCResult<u64> {
+        let value = self.get(key);
+        if self.relative_base == 0 {
+            value.to_memory_location()
+        } else {
+            self.relative_base
+                .checked_add(value.to_value())
+                .ok_or(AoCError::new("Created a wildly too big relative address"))?
+                .try_into()
+                .map_err(|e| {
+                    AoCError::new_with_cause("Created a moderately too big relative address", e)
+                })
+        }
+    }
+
+    pub fn get_relative(&self, key: &u64) -> AoCResult<Instruction> {
+        Ok(self.get(&self.resolve_relative_adress(key)?))
     }
 
     pub fn set(&mut self, key: u64, value: Instruction) {
