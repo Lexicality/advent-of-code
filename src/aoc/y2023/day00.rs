@@ -1,5 +1,6 @@
 pub fn main(data: crate::DataIn) -> String {
-    "".to_owned()
+    let ret = 0;
+    ret.to_string()
 }
 
 inventory::submit!(crate::AoCDay {
