@@ -1,9 +1,8 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 use std::fmt::Display;
 use std::str::FromStr;
 
 use itertools::Itertools;
-use text_io::read;
 
 use crate::{AoCError, AoCResult};
 
@@ -161,6 +160,8 @@ pub struct Computer {
     memory: BTreeMap<u64, Instruction>,
     pc: u64,
     relative_base: i128,
+    pub input: VecDeque<i128>,
+    pub output: Vec<i128>,
 }
 
 impl FromStr for Computer {
@@ -175,6 +176,8 @@ impl FromStr for Computer {
                 .collect::<Result<BTreeMap<u64, Instruction>, Self::Err>>()?,
             pc: 0,
             relative_base: 0,
+            input: VecDeque::new(),
+            output: Vec::new(),
         })
     }
 }
@@ -196,8 +199,13 @@ impl Display for Computer {
     }
 }
 
+pub enum Runstate {
+    NeedsInput,
+    Finished,
+}
+
 impl Computer {
-    pub fn run(&mut self) -> AoCResult<()> {
+    pub fn run(&mut self) -> AoCResult<Runstate> {
         loop {
             let instr = self.get(&self.pc);
             let opcode = instr
@@ -218,14 +226,16 @@ impl Computer {
                     self.set(target, Instruction(a * b));
                 }
                 Opcode::Input(target_mode) => {
+                    let value = match self.input.pop_front() {
+                        Some(value) => value,
+                        None => return Ok(Runstate::NeedsInput),
+                    };
                     let target = self.get_target(&(self.pc + 1), target_mode)?;
-                    print!("Please enter a number: ");
-                    let value: i128 = read!("{}\n");
                     self.set(target, value.into());
                 }
                 Opcode::Output(a_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
-                    println!("{}", a);
+                    self.output.push(a);
                 }
                 Opcode::JumpIfTrue(a_mode, b_mode) => {
                     let a = self.get_with_mode(&(self.pc + 1), a_mode)?.to_value();
@@ -266,7 +276,7 @@ impl Computer {
                         .checked_add(a)
                         .ok_or(AoCError::new("Relative base overflow"))?;
                 }
-                Opcode::End => return Ok(()),
+                Opcode::End => return Ok(Runstate::Finished),
             }
             self.pc += len + 1;
         }
@@ -317,5 +327,9 @@ impl Computer {
 
     pub fn set(&mut self, key: u64, value: Instruction) {
         self.memory.insert(key, value);
+    }
+
+    pub fn clear_output(&mut self) {
+        self.output.clear();
     }
 }
