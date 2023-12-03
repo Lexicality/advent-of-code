@@ -45,10 +45,9 @@ pub fn main(data: crate::DataIn) -> String {
 
     let symbols = grid
         .iter()
-        .filter(|(_, state)| matches!(state, GridState::Symbol(_)));
+        .filter(|(_, state)| matches!(state, GridState::Symbol('*')));
 
     let mut ret = 0;
-    let mut seen = HashSet::new();
 
     for (symbol_coord, _symbol) in symbols {
         let surrounding_numbers = grid
@@ -60,7 +59,8 @@ pub fn main(data: crate::DataIn) -> String {
                     _ => None,
                 }
             });
-        // println!("Looking at {symbol} at {symbol_coord}");
+        let mut seen = HashSet::new();
+        let mut numbers = Vec::with_capacity(2);
         for (digit_coord, digit) in surrounding_numbers {
             if !seen.insert(digit_coord) {
                 continue;
@@ -93,8 +93,12 @@ pub fn main(data: crate::DataIn) -> String {
                 .join("")
                 .parse::<u64>()
                 .expect("should be a number");
+            numbers.push(number);
             // println!("Found number {number}!");
-            ret += number;
+            // ret += number;
+        }
+        if numbers.len() == 2 {
+            ret += numbers[0] * numbers[1];
         }
     }
 
