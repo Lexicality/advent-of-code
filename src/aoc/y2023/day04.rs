@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::num::ParseIntError;
 use std::str::FromStr;
 use std::{collections::HashSet, fmt::Display};
@@ -15,10 +16,10 @@ struct Card {
 }
 
 impl Card {
-    fn points(&self) -> u32 {
+    fn num_winning_nums(&self) -> usize {
         self.winning_numbers
             .intersection(&self.card_numbers)
-            .fold(0, |acc, _| if acc == 0 { 1 } else { acc * 2 })
+            .count()
     }
 }
 
@@ -69,13 +70,44 @@ impl Display for Card {
     }
 }
 
+#[derive(Debug)]
+struct CardQueue(VecDeque<u64>);
+
+impl CardQueue {
+    fn pop(&mut self) -> u64 {
+        self.0.pop_front().unwrap_or(0)
+    }
+
+    fn incr(&mut self, amt: usize) {
+        for index in 0..amt {
+            if let Some(count) = self.0.get_mut(index) {
+                *count += 1;
+            } else {
+                self.0.push_back(1);
+            }
+        }
+    }
+
+    fn new() -> Self {
+        CardQueue(VecDeque::new())
+    }
+}
+
 pub fn main(data: crate::DataIn) -> String {
-    let mut ret = 0;
+    let mut ret: u64 = 0;
+    let mut queue = CardQueue::new();
     for line in data {
+        println!("{queue:?}");
         let card: Card = line.parse().unwrap();
-        let points = card.points();
-        println!("{card} | {points}");
-        ret += points;
+        let points = card.num_winning_nums();
+        let count = queue.pop() + 1;
+        println!("{count} x {card} | {points}");
+        if points > 0 {
+            for _ in 0..count {
+                queue.incr(points);
+            }
+        }
+        ret += count;
     }
     ret.to_string()
 }
