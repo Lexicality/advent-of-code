@@ -31,7 +31,7 @@ impl Display for Colour {
             f,
             "{}",
             match self {
-                Self::Black => '.',
+                Self::Black => ' ',
                 Self::White => '#',
             }
         )
@@ -78,7 +78,7 @@ pub fn main(data: crate::DataIn) -> String {
     let mut robot = Robot::new(data.next().unwrap()).unwrap();
     let mut hull: InfGrid<Colour> = InfGrid::new();
 
-    let mut current_square = Colour::Black;
+    let mut current_square = Colour::White;
     while let Some((pos, colour)) = robot.drive(current_square) {
         hull.set(pos, colour);
         current_square = hull.get(&robot.pos).copied().unwrap_or_default();
