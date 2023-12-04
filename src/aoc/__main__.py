@@ -44,7 +44,10 @@ def main():
     ).resolve()
     day_data = read_file(day_data_file)
 
-    day = importlib.import_module(f"aoc.y{args.year}.day{args.day}")
+    try:
+        day = importlib.import_module(f"aoc.y{args.year}.day{args.day}")
+    except ImportError:
+        day = importlib.import_module(f"aoc.y{args.year}.day{args.day:02}")
     day.main(day_data)
 
 
