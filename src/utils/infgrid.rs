@@ -61,11 +61,22 @@ impl<Item: Display> Display for InfGrid<Item> {
         if self.grid.is_empty() {
             return Ok(());
         }
-        for y in self.min.y..=self.max.y {
+        let void = f.fill();
+        // Iterator crimes thanks to Orman
+        let mut forward_range;
+        let mut back_range;
+        let yrange: &mut dyn Iterator<Item = i32> = if f.sign_minus() {
+            back_range = (self.min.y..=self.max.y).rev();
+            &mut back_range
+        } else {
+            forward_range = self.min.y..=self.max.y;
+            &mut forward_range
+        };
+        for y in yrange {
             for x in self.min.x..=self.max.x {
                 match self.get(&(x, y).into()) {
                     Some(item) => item.fmt(f)?,
-                    None => write!(f, ".")?,
+                    None => write!(f, "{}", void)?,
                 }
             }
             writeln!(f)?;

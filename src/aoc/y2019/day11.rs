@@ -83,7 +83,7 @@ pub fn main(data: crate::DataIn) -> String {
         hull.set(pos, colour);
         current_square = hull.get(&robot.pos).copied().unwrap_or_default();
     }
-    println!("{hull}\n");
+    println!("{hull:-}\n");
 
     hull.grid.len().to_string()
 }
