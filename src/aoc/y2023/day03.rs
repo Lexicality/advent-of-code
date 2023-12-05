@@ -75,7 +75,7 @@ pub fn main(data: crate::DataIn) -> String {
                     "should not be possible to get somewhere already seen"
                 );
                 current_number.push_front(digit);
-                pos = pos + LEFT;
+                pos += LEFT;
             }
             const RIGHT: Coord2D = Coord2D { x: 1, y: 0 };
             pos = digit_coord + RIGHT;
@@ -85,7 +85,7 @@ pub fn main(data: crate::DataIn) -> String {
                     "should not be possible to get somewhere already seen"
                 );
                 current_number.push_back(digit);
-                pos = pos + RIGHT;
+                pos += RIGHT;
             }
             // I'm sure there's a smarter way of doing this
             let number = current_number

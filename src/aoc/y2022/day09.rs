@@ -85,7 +85,7 @@ pub fn main(data: crate::DataIn) -> String {
         // println!("== {line} ==");
         let instr: Instruction = line.parse().unwrap();
         for coord in instr.coordinate() {
-            head_pos = head_pos + coord;
+            head_pos += coord;
             let mut last = head_pos;
             midroll.iter_mut().for_each(|coord| {
                 let beep = coord.maybe_move(last);

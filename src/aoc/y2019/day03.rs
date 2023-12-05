@@ -67,7 +67,7 @@ fn wire_it_up(
     for instruction in instructions {
         let coord: Coord2D = instruction.direction.into();
         for _ in 0..instruction.amount {
-            pos = pos + coord;
+            pos += coord;
             let result = grid.get_or_set(&pos, state);
             if *result != state {
                 grid.set(pos, GridState::Both);
@@ -89,7 +89,7 @@ fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResul
         for instruction in instructions {
             let coord: Coord2D = instruction.direction.into();
             for _ in 0..instruction.amount {
-                pos = pos + coord;
+                pos += coord;
                 steps += 1;
                 match grid.get(&pos) {
                     Some(GridState::Both) => {

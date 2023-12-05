@@ -85,7 +85,7 @@ pub fn main(data: crate::DataIn) -> String {
             let mut pos = *start;
             for _ in 0..=len {
                 grid.set(pos, GridData::Rock);
-                pos = pos + dir;
+                pos += dir;
             }
         }
     }
