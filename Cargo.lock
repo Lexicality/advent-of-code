@@ -12,7 +12,6 @@ dependencies = [
  "itertools",
  "lazy_static",
  "num",
- "rangetools",
  "regex",
  "serde",
  "serde_json",
@@ -311,12 +310,6 @@ checksum = "bbe448f377a7d6961e30f5955f9b8d106c3f5e449d493ee1b125c1d43c2b5179"
 dependencies = [
  "proc-macro2",
 ]
-
-[[package]]
-name = "rangetools"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6e97ca3dbabd81e6033cfe09f0cef37c89f34f2a9223cab7cf99305d46a9633"
 
 [[package]]
 name = "regex"
