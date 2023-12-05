@@ -13,6 +13,7 @@ class Card:
     winning_numbers: set[int]
     card_numbers: set[int]
 
+    @staticmethod
     def parse(line: str) -> Card:
         matches = CARD_REGEX.match(line)
         assert matches is not None

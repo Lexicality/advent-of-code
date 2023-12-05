@@ -97,11 +97,9 @@ pub fn main(data: crate::DataIn) -> String {
     let mut ret: u64 = 0;
     let mut queue = CardQueue::new();
     for line in data {
-        println!("{queue:?}");
         let card: Card = line.parse().unwrap();
         let points = card.num_winning_nums();
         let count = queue.pop() + 1;
-        println!("{count} x {card} | {points}");
         if points > 0 {
             for _ in 0..count {
                 queue.incr(points);
