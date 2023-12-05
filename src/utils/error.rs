@@ -37,4 +37,8 @@ impl AoCError {
             message: message.into(),
         }
     }
+
+    pub fn new_from_parseerror<E: Into<Box<dyn Error>>>(cause: E) -> AoCError {
+        Self::new_with_cause("failed to parse:", cause)
+    }
 }
