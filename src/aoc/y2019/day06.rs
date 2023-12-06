@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 
 #[derive(Debug, Default)]
 struct OrbitItem {
@@ -15,6 +15,24 @@ impl OrbitItem {
             children: Vec::with_capacity(1),
         }
     }
+}
+
+fn get_path<'a>(orbit_map: &'a HashMap<String, OrbitItem>, mut obj: &'a str) -> Vec<&'a str> {
+    let mut ret = Vec::new();
+    loop {
+        obj = orbit_map
+            .get(obj)
+            .unwrap()
+            .parent
+            .as_ref()
+            .unwrap()
+            .as_str();
+        ret.push(obj);
+        if obj == "COM" {
+            break;
+        }
+    }
+    ret
 }
 
 pub fn main(data: crate::DataIn) -> String {
@@ -46,30 +64,22 @@ pub fn main(data: crate::DataIn) -> String {
             panic!("Object {} is broken!", object.name);
         }
     }
-
-    let mut ret = 0;
-    let mut to_manage: VecDeque<_> = VecDeque::with_capacity(orbit_map.len() / 2);
-    let mut depths: HashMap<&str, u32> = HashMap::with_capacity(orbit_map.capacity());
-    depths.insert("COM", 0);
-    to_manage.push_back("COM");
-    while let Some(object_ref) = to_manage.pop_front() {
-        if object_ref != "COM" {
-            let object = orbit_map.get(object_ref).unwrap();
-            let parent = object.parent.as_ref().unwrap();
-            let depth = depths.get(parent.as_str()).unwrap() + 1;
-            depths.insert(object_ref, depth);
-            ret += depth;
-        }
-        to_manage.extend(
-            orbit_map
-                .get(object_ref)
-                .unwrap()
-                .children
-                .iter()
-                .map(|s| s.as_str()),
-        );
+    if !orbit_map.contains_key("YOU") {
+        panic!("I'm missing YOU!")
+    } else if !orbit_map.contains_key("SAN") {
+        panic!("I'm missing Santa!")
     }
-    ret.to_string()
+
+    let mut youtree = get_path(&orbit_map, "YOU");
+    let mut santree = get_path(&orbit_map, "SAN");
+
+    // shrug
+    while youtree.last() == santree.last() {
+        assert_ne!(youtree.pop(), None);
+        assert_ne!(santree.pop(), None);
+    }
+
+    (youtree.len() + santree.len()).to_string()
 }
 
 inventory::submit!(crate::AoCDay {
