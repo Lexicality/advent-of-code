@@ -1,5 +1,5 @@
 pub fn main(data: crate::DataIn) -> String {
-    let ret = 0;
+    let mut ret = 0;
     ret.to_string()
 }
 
