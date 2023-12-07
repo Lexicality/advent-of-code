@@ -8,6 +8,7 @@ use crate::AoCError;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash)]
 enum Card {
+    Joker,
     Two,
     Three,
     Four,
@@ -17,7 +18,6 @@ enum Card {
     Eight,
     Nine,
     Ten,
-    Jack,
     Queen,
     King,
     Ace,
@@ -30,7 +30,7 @@ impl TryFrom<char> for Card {
             'A' => Ok(Self::Ace),
             'K' => Ok(Self::King),
             'Q' => Ok(Self::Queen),
-            'J' => Ok(Self::Jack),
+            'J' => Ok(Self::Joker),
             'T' => Ok(Self::Ten),
             '9' => Ok(Self::Nine),
             '8' => Ok(Self::Eight),
@@ -54,7 +54,7 @@ impl Display for Card {
                 Self::Ace => 'A',
                 Self::King => 'K',
                 Self::Queen => 'Q',
-                Self::Jack => 'J',
+                Self::Joker => 'J',
                 Self::Ten => 'T',
                 Self::Nine => '9',
                 Self::Eight => '8',
@@ -91,6 +91,18 @@ impl HandType {
                 }
             }
         }
+        if map.len() > 1 {
+            let num_jokers = map.remove(&Card::Joker);
+            if let Some(num_jokers) = num_jokers {
+                let wat = map
+                    .values_mut()
+                    .sorted_by_key(|value| **value)
+                    .next_back()
+                    .unwrap();
+                *wat += num_jokers;
+            }
+        }
+
         match map.len() {
             5 => Self::HighCard,
             4 => Self::OnePair,
