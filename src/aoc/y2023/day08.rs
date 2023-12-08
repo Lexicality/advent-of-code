@@ -6,6 +6,21 @@ use regex::Regex;
 
 use crate::Direction;
 
+fn navigate<'a>(
+    instruction: Direction,
+    nodes: &'a HashMap<String, (String, String)>,
+    pos: &'a str,
+) -> &'a str {
+    let node = nodes
+        .get(pos)
+        .unwrap_or_else(|| panic!("don't have a node for {pos}!!!"));
+    match instruction {
+        Direction::East => &node.0,
+        Direction::West => &node.1,
+        _ => unreachable!(),
+    }
+}
+
 pub fn main(data: crate::DataIn) -> String {
     let mut instructions = data
         .next()
@@ -41,19 +56,23 @@ pub fn main(data: crate::DataIn) -> String {
     println!("{nodes:#?}");
 
     let mut ret = 0;
-    let mut pos = "AAA";
-    while pos != "ZZZ" {
+    let mut poses = nodes
+        .keys()
+        .filter(|name| name.ends_with('A'))
+        .map(|name| name.as_str())
+        .collect_vec();
+    while !poses.iter().all(|name| name.ends_with('Z')) {
         ret += 1;
-        let node = nodes
-            .get(pos)
-            .unwrap_or_else(|| panic!("don't have a node for {pos}!!!"));
-        print!("{pos}, {node:?} ");
-        pos = match instructions.next().unwrap() {
-            Direction::East => &node.0,
-            Direction::West => &node.1,
-            _ => unreachable!(),
-        };
-        println!("=> {pos}");
+        let instruction = instructions.next().unwrap();
+        // print!("{poses:?} {instruction} => ");
+        poses = poses
+            .into_iter()
+            .map(|pos| navigate(instruction, &nodes, pos))
+            .collect();
+        // println!("{poses:?}");
+        // if ret > 10 {
+        // panic!()
+        // }
     }
     ret.to_string()
 }
