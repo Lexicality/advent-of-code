@@ -22,7 +22,7 @@ fn navigate<'a>(
 }
 
 pub fn main(data: crate::DataIn) -> String {
-    let mut instructions = data
+    let raw_instructions = data
         .next()
         .unwrap()
         .chars()
@@ -31,9 +31,11 @@ pub fn main(data: crate::DataIn) -> String {
             'R' => Direction::West,
             _ => unreachable!(),
         })
-        .collect_vec()
-        .into_iter()
-        .cycle();
+        .collect_vec();
+
+    let num_instructions = raw_instructions.len();
+
+    let mut instructions = raw_instructions.into_iter().cycle();
 
     assert_eq!(data.next(), Some("".to_owned()));
 
@@ -53,26 +55,22 @@ pub fn main(data: crate::DataIn) -> String {
         })
         .collect();
 
-    println!("{nodes:#?}");
+    let mut ret = num_instructions;
 
-    let mut ret = 0;
-    let mut poses = nodes
+    let poses = nodes
         .keys()
         .filter(|name| name.ends_with('A'))
         .map(|name| name.as_str())
         .collect_vec();
-    while !poses.iter().all(|name| name.ends_with('Z')) {
-        ret += 1;
-        let instruction = instructions.next().unwrap();
-        // print!("{poses:?} {instruction} => ");
-        poses = poses
-            .into_iter()
-            .map(|pos| navigate(instruction, &nodes, pos))
-            .collect();
-        // println!("{poses:?}");
-        // if ret > 10 {
-        // panic!()
-        // }
+    for mut pos in poses {
+        let mut num_steps: usize = 0;
+        while !pos.ends_with('Z') {
+            num_steps += 1;
+            let instruction = instructions.next().unwrap();
+            pos = navigate(instruction, &nodes, pos);
+        }
+        let num_cycles = num_steps / num_instructions;
+        ret *= num_cycles;
     }
     ret.to_string()
 }
