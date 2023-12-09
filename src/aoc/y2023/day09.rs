@@ -10,18 +10,20 @@ pub fn main(data: crate::DataIn) -> String {
 
     let mut ret = 0;
     for mut line in lines {
-        let mut lasts = vec![line.last().copied().unwrap()];
-        let mut iterations = 0;
+        let mut firsts = vec![line.first().copied().unwrap()];
         while !line.iter().all(|n| *n == 0) {
-            iterations += 1;
             line = line
                 .into_iter()
                 .tuple_windows()
                 .map(|(a, b)| b - a)
                 .collect_vec();
-            lasts.push(line.last().copied().unwrap());
+            firsts.push(line.first().copied().unwrap());
         }
-        ret += lasts.into_iter().sum::<i32>();
+        ret += firsts
+            .into_iter()
+            .rev()
+            .reduce(|acc, value| value - acc)
+            .unwrap();
     }
 
     ret.to_string()
