@@ -113,6 +113,7 @@ pub fn main(data: crate::DataIn) -> String {
     let mut ret = 0;
     for line in data {
         let game: Game = line.parse().unwrap();
+        println!("{game}");
         ret += game.power();
     }
     ret.to_string()
