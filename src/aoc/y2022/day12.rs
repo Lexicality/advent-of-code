@@ -1,4 +1,4 @@
-use crate::Coord2D;
+use crate::{Coord2D, Coordinate};
 use ansi_term::{Color, Style};
 use lazy_static::lazy_static;
 use std::cmp;

@@ -2,7 +2,7 @@ use std::{fmt::Display, str::FromStr};
 
 use itertools::Itertools;
 
-use crate::{AoCError, AoCResult, Coord2D, Direction, InfGrid};
+use crate::{AoCError, AoCResult, Coord2D, Coordinate, Direction, InfGrid};
 
 struct Instruction {
     direction: Direction,

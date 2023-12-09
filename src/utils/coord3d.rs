@@ -1,47 +1,54 @@
-use std::cmp;
 use std::fmt::Display;
 use std::ops;
 use std::str::FromStr;
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coordinate, Direction};
+use crate::{AoCError, Coordinate};
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Default)]
-pub struct Coord2D {
+pub struct Coord3D {
     pub x: i32,
     pub y: i32,
+    pub z: i32,
 }
 
-impl Coordinate for Coord2D {
+impl Coordinate for Coord3D {
     const MAX: Self = Self {
         x: i32::MAX,
         y: i32::MAX,
+        z: i32::MAX,
     };
     const MIN: Self = Self {
         x: i32::MIN,
         y: i32::MIN,
+        z: i32::MIN,
     };
 
     fn distance(&self, other: &Self) -> u32 {
-        (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
+        (self.x - other.x).unsigned_abs()
+            + (self.y - other.y).unsigned_abs()
+            + (self.z - other.z).unsigned_abs()
     }
 
     fn get_max(&self, other: &Self) -> Self {
         Self {
-            x: cmp::max(self.x, other.x),
-            y: cmp::max(self.y, other.y),
+            x: self.x.max(other.x),
+            y: self.y.max(other.y),
+            z: self.z.max(other.z),
         }
     }
 
     fn get_min(&self, other: &Self) -> Self {
         Self {
-            x: cmp::min(self.x, other.x),
-            y: cmp::min(self.y, other.y),
+            x: self.x.min(other.x),
+            y: self.y.min(other.y),
+            z: self.z.min(other.z),
         }
     }
 
     fn is_empty(&self) -> bool {
-        self.x == 0 && self.y == 0
+        self.x == 0 && self.y == 0 && self.z == 0
     }
 
     fn len(&self) -> f64 {
@@ -49,84 +56,94 @@ impl Coordinate for Coord2D {
     }
 
     fn len_sqr(&self) -> i64 {
-        self.x.pow(2) as i64 + self.y.pow(2) as i64
+        self.x.pow(2) as i64 + self.y.pow(2) as i64 + self.z.pow(2) as i64
     }
 
     fn len_manhatten(&self) -> u32 {
-        self.x.unsigned_abs() + self.y.unsigned_abs()
+        self.x.unsigned_abs() + self.y.unsigned_abs() + self.z.unsigned_abs()
     }
 }
 
-impl FromStr for Coord2D {
+impl FromStr for Coord3D {
     type Err = AoCError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (x, y) = s
+        let (x, y, z) = s
             .split(',')
             .map(|c| c.parse().map_err(AoCError::new_from_parseerror))
             .collect_tuple()
             .ok_or_else(|| {
                 AoCError::new(format!(
-                    "String '{s}' has {} commas, expected 1",
+                    "String '{s}' has {} commas, expected 2",
                     s.chars().filter(|c| *c == ',').count()
                 ))
             })?;
 
-        Ok(Self { x: x?, y: y? })
+        Ok(Self {
+            x: x?,
+            y: y?,
+            z: z?,
+        })
     }
 }
 
-impl ops::Add for Coord2D {
+impl ops::Add for Coord3D {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
+            z: self.z + rhs.z,
         }
     }
 }
 
-impl ops::AddAssign for Coord2D {
+impl ops::AddAssign for Coord3D {
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
         self.y += rhs.y;
+        self.z += rhs.z;
     }
 }
 
-impl ops::Sub for Coord2D {
+impl ops::Sub for Coord3D {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
+            z: self.z - rhs.z,
         }
     }
 }
 
-impl ops::SubAssign for Coord2D {
+impl ops::SubAssign for Coord3D {
     fn sub_assign(&mut self, rhs: Self) {
         self.x -= rhs.x;
         self.y -= rhs.y;
+        self.z -= rhs.z;
     }
 }
 
-impl ops::Mul for Coord2D {
+impl ops::Mul for Coord3D {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         Self {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
+            z: self.z * rhs.z,
         }
     }
 }
 
-impl ops::MulAssign for Coord2D {
+impl ops::MulAssign for Coord3D {
     fn mul_assign(&mut self, rhs: Self) {
         self.x *= rhs.x;
         self.y *= rhs.y;
+        self.z *= rhs.z;
     }
 }
 
-impl<T: num::NumCast> ops::Mul<T> for Coord2D {
+impl<T: num::NumCast> ops::Mul<T> for Coord3D {
     type Output = Option<Self>;
 
     fn mul(self, rhs: T) -> Self::Output {
@@ -134,11 +151,12 @@ impl<T: num::NumCast> ops::Mul<T> for Coord2D {
         Some(Self {
             x: rhs * self.x,
             y: rhs * self.y,
+            z: rhs * self.z,
         })
     }
 }
 
-impl<T: num::NumCast> ops::Div<T> for Coord2D {
+impl<T: num::NumCast> ops::Div<T> for Coord3D {
     type Output = Option<Self>;
 
     fn div(self, rhs: T) -> Self::Output {
@@ -146,38 +164,40 @@ impl<T: num::NumCast> ops::Div<T> for Coord2D {
         Some(Self {
             x: ((self.x as f64) / rhs).floor() as i32,
             y: ((self.y as f64) / rhs).floor() as i32,
+            z: ((self.z as f64) / rhs).floor() as i32,
         })
     }
 }
 
-impl ops::Neg for Coord2D {
+impl ops::Neg for Coord3D {
     type Output = Self;
     fn neg(self) -> Self::Output {
         Self {
             x: -self.x,
             y: -self.y,
+            z: -self.z,
         }
     }
 }
 
-impl Display for Coord2D {
+impl Display for Coord3D {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         self.x.fmt(f)?;
         write!(f, ",")?;
         self.y.fmt(f)?;
+        write!(f, ",")?;
+        self.z.fmt(f)?;
         write!(f, "]")
     }
 }
 
-impl From<(i32, i32)> for Coord2D {
-    fn from(tup: (i32, i32)) -> Self {
-        Self { x: tup.0, y: tup.1 }
-    }
-}
-
-impl From<Direction> for Coord2D {
-    fn from(dir: Direction) -> Self {
-        dir.to_coord()
+impl From<(i32, i32, i32)> for Coord3D {
+    fn from(tup: (i32, i32, i32)) -> Self {
+        Self {
+            x: tup.0,
+            y: tup.1,
+            z: tup.2,
+        }
     }
 }

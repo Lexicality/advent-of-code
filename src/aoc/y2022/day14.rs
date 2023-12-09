@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{Coord2D, Direction, InfGrid};
+use crate::{Coord2D, Coordinate, Direction, InfGrid};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum GridData {
@@ -65,7 +65,7 @@ pub fn main(data: crate::DataIn) -> String {
         .map(|line| {
             line.split(" -> ")
                 .map(|coord| {
-                    let coord = Coord2D::parse(coord);
+                    let coord: Coord2D = coord.parse().unwrap();
                     maxy = cmp::max(maxy, coord.y);
                     coord
                 })

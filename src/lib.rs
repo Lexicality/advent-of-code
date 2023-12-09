@@ -1,13 +1,17 @@
 pub mod aoc;
 pub mod utils {
+    pub mod coord;
     pub mod coord2d;
+    pub mod coord3d;
     pub mod direction;
     pub mod error;
     pub mod grid;
     pub mod infgrid;
 }
 
+pub use crate::utils::coord::Coordinate;
 pub use crate::utils::coord2d::Coord2D;
+pub use crate::utils::coord3d::Coord3D;
 pub use crate::utils::direction::Direction;
 pub use crate::utils::error::AoCError;
 pub use crate::utils::error::AoCResult;
