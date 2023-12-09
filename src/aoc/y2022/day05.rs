@@ -45,7 +45,9 @@ impl Yard {
                         continue;
                     }
                     let current_box = current_box.chars().nth(1).unwrap();
-                    yard.stacks.entry(stack_i).or_insert_with(|| Vec::with_capacity(NUM_BOXES));
+                    yard.stacks
+                        .entry(stack_i)
+                        .or_insert_with(|| Vec::with_capacity(NUM_BOXES));
                     yard.stacks
                         .get_mut(&stack_i)
                         .unwrap()
@@ -139,4 +141,5 @@ inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "5",
     func: main,
+    example_func: None,
 });

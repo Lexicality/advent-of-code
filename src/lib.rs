@@ -21,6 +21,7 @@ pub struct AoCDay {
     pub year: &'static str,
     pub day: &'static str,
     pub func: AoCDayFn,
+    pub example_func: Option<AoCDayFn>,
 }
 
 inventory::collect!(AoCDay);

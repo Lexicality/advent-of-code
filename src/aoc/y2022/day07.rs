@@ -211,4 +211,5 @@ inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "7",
     func: main,
+    example_func: None,
 });

@@ -5,18 +5,35 @@ use std::io::{BufRead, BufReader};
 
 use std::path::PathBuf;
 
-type DayMap = BTreeMap<&'static str, BTreeMap<&'static str, AoCDayFn>>;
+struct DayFunctions {
+    func: AoCDayFn,
+    example_func: Option<AoCDayFn>,
+}
+
+type DayMap = BTreeMap<&'static str, BTreeMap<&'static str, DayFunctions>>;
 
 fn main() {
     let mut all_days: DayMap = BTreeMap::new();
 
-    for AoCDay { day, year, func } in inventory::iter::<AoCDay> {
+    for AoCDay {
+        day,
+        year,
+        func,
+        example_func,
+    } in inventory::iter::<AoCDay>
+    {
         if !all_days.contains_key(year) {
             all_days.insert(year, BTreeMap::new());
         }
 
         let year_data = all_days.get_mut(year).unwrap();
-        year_data.insert(day, *func);
+        year_data.insert(
+            day,
+            DayFunctions {
+                func: *func,
+                example_func: *example_func,
+            },
+        );
     }
 
     let mut options = clap::command!()
@@ -31,9 +48,10 @@ fn main() {
     let matches = options.get_matches();
     let (year, year_args) = matches.subcommand().unwrap();
     let day = &year_args.get_one::<String>("day").unwrap()[..];
+    let use_example = matches.get_flag("example");
 
     let mut data_path: PathBuf = [".", "data", year].iter().collect();
-    if matches.get_flag("example") {
+    if use_example {
         data_path.push("example");
     }
     data_path.push(format!("{:0>2}", day));
@@ -51,7 +69,13 @@ fn main() {
         .lines()
         .map(|l| l.unwrap());
 
-    let func = all_days.get(year).unwrap().get(day).unwrap();
+    let funcs = all_days.get(year).unwrap().get(day).unwrap();
+
+    let func = if use_example {
+        funcs.example_func.unwrap_or(funcs.func)
+    } else {
+        funcs.func
+    };
 
     let ret = func(&mut lines);
 

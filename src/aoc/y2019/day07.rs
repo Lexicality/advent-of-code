@@ -44,6 +44,7 @@ pub fn main_example(data: crate::DataIn) -> String {
 
         let phase_settings = phase.split(',').map(|v| v.parse().unwrap()).collect_vec();
         let signal = run_amps(og_computer, &phase_settings).unwrap();
+        println!("{phase_settings:?} {signal}");
         ret = ret.max(signal);
     }
     ret.to_string()
@@ -64,4 +65,5 @@ inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "7",
     func: main,
+    example_func: Some(main_example),
 });
