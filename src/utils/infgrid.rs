@@ -1,62 +1,57 @@
-use std::{collections::HashMap, fmt::Display};
+use std::collections::HashMap;
+use std::fmt::Display;
 
-use crate::Coord2D;
+use crate::{Coord2D, Coordinate};
 
 #[derive(Debug, Default)]
-pub struct InfGrid<Item> {
-    pub grid: HashMap<Coord2D, Item>,
-    pub min: Coord2D,
-    pub max: Coord2D,
+pub struct InfGrid<Item, Key: Coordinate = Coord2D> {
+    pub grid: HashMap<Key, Item>,
+    pub min: Key,
+    pub max: Key,
 }
 
-impl<Item> InfGrid<Item> {
+impl<Key: Coordinate, Item> InfGrid<Item, Key> {
     pub fn new() -> Self {
         InfGrid {
             grid: HashMap::new(),
-            min: Coord2D {
-                x: i32::MAX,
-                y: i32::MAX,
-            },
-            max: Coord2D {
-                x: i32::MIN,
-                y: i32::MIN,
-            },
+            min: Key::MAX,
+            max: Key::MIN,
         }
     }
 
-    pub fn get(&self, k: &Coord2D) -> Option<&Item> {
+    pub fn get(&self, k: &Key) -> Option<&Item> {
         self.grid.get(k)
     }
 
-    pub fn set(&mut self, k: Coord2D, v: Item) {
+    pub fn set(&mut self, k: Key, v: Item) {
         self.min = self.min.get_min(&k);
         self.max = self.max.get_max(&k);
         self.grid.insert(k, v);
     }
 
-    pub fn get_or_set(&mut self, k: &Coord2D, default: Item) -> &Item {
+    pub fn get_or_set(&mut self, k: &Key, default: Item) -> &Item {
         if !self.grid.contains_key(k) {
-            self.set(*k, default);
+            self.set(k.to_owned(), default);
         }
         self.get(k).unwrap()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&Coord2D, &Item)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&Key, &Item)> {
         self.grid.iter()
     }
 
-    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&Coord2D, &mut Item)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&Key, &mut Item)> {
         self.grid.iter_mut()
     }
 }
 
-impl<Item: Default> InfGrid<Item> {
-    pub fn get_or_set_default(&mut self, k: &Coord2D) -> &Item {
+impl<Key: Coordinate, Item: Default> InfGrid<Item, Key> {
+    pub fn get_or_set_default(&mut self, k: &Key) -> &Item {
         self.get_or_set(k, Default::default())
     }
 }
 
-impl<Item: Display> Display for InfGrid<Item> {
+impl<Item: Display> Display for InfGrid<Item, Coord2D> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.grid.is_empty() {
             return Ok(());
