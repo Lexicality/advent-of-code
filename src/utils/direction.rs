@@ -43,9 +43,9 @@ impl Direction {
 
     pub const fn to_coord(self) -> Coord2D {
         match self {
-            Direction::North => Coord2D { x: 0, y: 1 },
+            Direction::North => Coord2D { x: 0, y: -1 },
             Direction::East => Coord2D { x: 1, y: 0 },
-            Direction::South => Coord2D { x: 0, y: -1 },
+            Direction::South => Coord2D { x: 0, y: 1 },
             Direction::West => Coord2D { x: -1, y: 0 },
         }
     }
@@ -53,9 +53,9 @@ impl Direction {
     pub const fn from_coord(value: Coord2D) -> Self {
         match value {
             Coord2D { x: 0, y: 0 } => panic!("0, 0 has no direction"),
-            Coord2D { x: 0, y } if y > 0 => Direction::North,
+            Coord2D { x: 0, y } if y < 0 => Direction::North,
             Coord2D { x, y: 0 } if x > 0 => Direction::East,
-            Coord2D { x: 0, y } if y < 0 => Direction::South,
+            Coord2D { x: 0, y } if y > 0 => Direction::South,
             Coord2D { x, y: 0 } if x < 0 => Direction::West,
             _ => panic!("Diagonals are unsupported"),
         }

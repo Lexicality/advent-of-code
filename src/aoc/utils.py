@@ -36,8 +36,8 @@ class Coord2D(NamedTuple):
 
 
 class Direction(Enum):
-    North = Coord2D(x=0, y=1)
-    South = Coord2D(x=0, y=-1)
+    North = Coord2D(x=0, y=-1)
+    South = Coord2D(x=0, y=1)
     East = Coord2D(x=1, y=0)
     West = Coord2D(x=-1, y=0)
 
