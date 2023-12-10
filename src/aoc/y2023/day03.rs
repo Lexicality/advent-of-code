@@ -41,7 +41,7 @@ pub fn main(data: crate::DataIn) -> String {
     let data = data
         .flat_map(|line| line.chars().collect_vec())
         .map(GridState::from);
-    let grid = Grid::new_from_data(data, width);
+    let grid = Grid::new_from_iter(data, width);
 
     let symbols = grid
         .iter()

@@ -2,7 +2,7 @@ use itertools::Itertools;
 use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 
-use crate::Coord2D;
+use crate::{Coord2D, Coordinate};
 
 #[derive(Debug)]
 pub struct Grid<Item> {
@@ -13,29 +13,45 @@ pub struct Grid<Item> {
 
 #[allow(dead_code)]
 impl<Item> Grid<Item> {
-    pub fn new_from_data<I>(data: I, width: u32) -> Grid<Item>
+    pub fn new_from_iter<I>(data: I, width: u32) -> Grid<Item>
     where
         I: Iterator<Item = Item>,
     {
         assert!(width <= (i32::MAX as u32), "grid is too wide!");
-        let data = data.peekable();
+        Self::new_from_lines(data.chunks(width as usize).into_iter())
+    }
 
-        let size_hint = data.size_hint();
-        let size = size_hint.1.unwrap_or(size_hint.0).max(width as usize);
-
+    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Grid<Item>
+    where
+        Inner: IntoIterator<Item = Item>,
+        Iter: Iterator<Item = Inner>,
+    {
         let mut grid = Grid::<Item> {
-            grid: HashMap::with_capacity(size),
-            width,
+            grid: data
+                .enumerate()
+                .flat_map(|(y, inner)| {
+                    inner.into_iter().enumerate().map(move |(x, item)| {
+                        (
+                            Coord2D {
+                                x: x.try_into().unwrap(),
+                                y: y.try_into().unwrap(),
+                            },
+                            item,
+                        )
+                    })
+                })
+                .collect(),
             height: 0,
+            width: 0,
         };
-        let mut y = 0;
-        for row in &data.chunks(width as usize) {
-            for (x, item) in row.enumerate() {
-                grid.grid.insert(Coord2D { x: x as i32, y }, item);
-            }
-            y += 1;
-        }
-        grid.height = y as u32;
+        let max_key = grid
+            .grid
+            .keys()
+            .copied()
+            .reduce(|a, b| a.get_max(&b))
+            .expect("must have at least one entry");
+        grid.width = max_key.x as u32 + 1;
+        grid.height = max_key.y as u32 + 1;
 
         grid
     }

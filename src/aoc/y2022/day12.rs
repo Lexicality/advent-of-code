@@ -158,7 +158,7 @@ impl Grid {
         let mut data = data.peekable();
         let width = data.peek().unwrap().len();
         let mut ret = Self {
-            grid: crate::Grid::new_from_data(
+            grid: crate::Grid::new_from_iter(
                 data.flat_map(|l| l.chars().map(Step::new).collect::<Vec<_>>()),
                 //
                 width as u32,
