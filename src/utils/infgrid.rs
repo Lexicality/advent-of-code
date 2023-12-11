@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
+use itertools::Itertools;
+use num::Signed;
+
 use crate::{Coord2D, Coordinate};
 
 #[derive(Debug, Default)]
@@ -54,7 +57,7 @@ impl<Key: Coordinate, Item: Default> InfGrid<Item, Key> {
 impl<Item: Display> Display for InfGrid<Item, Coord2D> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.grid.is_empty() {
-            return Ok(());
+            return write!(f, "[empty grid]");
         }
         let void = f.fill();
         // Iterator crimes thanks to Orman
@@ -67,12 +70,69 @@ impl<Item: Display> Display for InfGrid<Item, Coord2D> {
             forward_range = self.min.y..=self.max.y;
             &mut forward_range
         };
-        for y in yrange {
-            for x in self.min.x..=self.max.x {
-                match self.get(&(x, y).into()) {
-                    Some(item) => item.fmt(f)?,
-                    None => write!(f, "{}", void)?,
+        let mut left_pad = 0;
+        if f.alternate() {
+            let ymin = format!("{}", self.min.y).len();
+            let ymax = format!("{}", self.max.y).len();
+            left_pad = ymin.max(ymax);
+            let xmin = format!("{}", self.min.x).len();
+            let xmax = format!("{}", self.max.x).len();
+            let top_pad = xmin.max(xmax);
+            let char_iter = (self.min.x..=self.max.x).map(|x| {
+                if x >= 0 {
+                    format!("{x: >top_pad$}")
+                } else {
+                    format!("{: >top_pad$}", format!("╷{}", x.abs()))
                 }
+            });
+            // Please don't judge me
+            let x_axis: Vec<Vec<char>> = match top_pad {
+                1 => {
+                    let (a,) = char_iter
+                        .map(|s| s.chars().collect_tuple().unwrap())
+                        .multiunzip();
+                    vec![a]
+                }
+                2 => {
+                    let (a, b) = char_iter
+                        .map(|s| s.chars().collect_tuple().unwrap())
+                        .multiunzip();
+                    vec![a, b]
+                }
+                3 => {
+                    let (a, b, c) = char_iter
+                        .map(|s| s.chars().collect_tuple().unwrap())
+                        .multiunzip();
+                    vec![a, b, c]
+                }
+                _ => panic!("Can't format x axis values with more than 3 characters"),
+            };
+            for line in x_axis {
+                writeln!(
+                    f,
+                    "{: >left_pad$} {}",
+                    ' ',
+                    line.into_iter().collect::<String>()
+                )?;
+            }
+            writeln!(
+                f,
+                "{: >left_pad$}┌{:─>xlen$}",
+                ' ',
+                '─',
+                xlen = self.max.x.abs_sub(&self.min.x) as usize + 1
+            )?;
+        }
+
+        for y in yrange {
+            if f.alternate() {
+                write!(f, "{y: >left_pad$}│")?;
+            }
+            for x in self.min.x..=self.max.x {
+                self.get(&(x, y).into())
+                    .map(|i| i as &dyn Display)
+                    .unwrap_or(&void)
+                    .fmt(f)?;
             }
             writeln!(f)?;
         }
