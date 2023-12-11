@@ -1,8 +1,14 @@
 use std::fmt::Display;
+use std::io::{stdin, stdout, Stdin, Write};
 
 use itertools::Itertools;
+use termion::cursor::HideCursor;
+use termion::event::Key;
+use termion::input::{Keys, TermRead};
+use termion::raw::IntoRawMode;
+use termion::screen::IntoAlternateScreen;
 
-use crate::{AoCError, InfGrid};
+use crate::AoCError;
 
 use super::computer::{Computer, Runstate};
 
@@ -35,38 +41,108 @@ impl Display for GameScreen {
             Self::Empty => f.fill(),
             Self::Wall => '█',
             Self::Block => '▒',
-            Self::Paddle => '▃',
-            Self::Ball => '▚',
+            Self::Paddle => '═',
+            Self::Ball => '❉',
         }
         .fmt(f)
     }
 }
 
+fn run(mut computer: Computer, stdinkeys: &mut Keys<Stdin>) -> i128 {
+    let mut stdout = HideCursor::from(
+        stdout()
+            .into_raw_mode()
+            .unwrap()
+            .into_alternate_screen()
+            .unwrap(),
+    );
+    write!(stdout, "{}", termion::clear::All).unwrap();
+
+    let mut backup_computer = computer.clone();
+    let mut segment = 0;
+    loop {
+        let run_res = computer.run().unwrap();
+        for (mut x, mut y, v) in computer.output.drain(..).tuples() {
+            if x < 0 {
+                segment = v;
+                write!(stdout, "{}{}", termion::cursor::Goto(1, 1), segment).unwrap();
+            } else {
+                x += 1;
+                y += 2;
+                write!(
+                    stdout,
+                    "{}{}",
+                    termion::cursor::Goto(x as u16, y as u16),
+                    GameScreen::try_from(v).unwrap(),
+                )
+                .unwrap();
+            }
+        }
+        stdout.flush().unwrap();
+        if matches!(run_res, Runstate::Finished) {
+            break;
+        }
+        loop {
+            let res = match stdinkeys.next().unwrap().unwrap() {
+                Key::Left => -1,
+                Key::Right => 1,
+                Key::Char(' ') | Key::Char('\n') | Key::Up | Key::Down => 0,
+                Key::Ctrl('c') | Key::Esc => return -1,
+                Key::Char('s') => {
+                    backup_computer = computer.clone();
+                    continue;
+                }
+                Key::Char('r') => {
+                    computer = backup_computer.clone();
+                    break;
+                }
+                wat => {
+                    write!(
+                        stdout,
+                        "{}{}? {wat:?}",
+                        termion::cursor::Goto(0, 27),
+                        termion::clear::UntilNewline
+                    )
+                    .unwrap();
+                    stdout.flush().unwrap();
+                    continue;
+                }
+            };
+            computer.input.push_back(res);
+            break;
+        }
+    }
+
+    segment
+}
+
 pub fn main(data: crate::DataIn) -> String {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
-    let res = computer.run().unwrap();
-    assert!(matches!(res, Runstate::Finished));
+    computer.set(0, 2.into());
 
-    let screen: InfGrid<GameScreen> = computer
-        .output
-        .drain(..)
-        .tuples()
-        .map(|(x, y, v)| {
-            (
-                (x.try_into().unwrap(), y.try_into().unwrap()).into(),
-                v.try_into().unwrap(),
-            )
-        })
-        .collect();
+    let stdin = stdin();
+    let mut stdinkeys = stdin.keys();
 
-    println!("{screen}");
+    let mut segment;
+    loop {
+        segment = run(computer.clone(), &mut stdinkeys);
+        if segment == -1 {
+            return "^c".to_owned();
+        }
+        println!();
+        println!("  ┏━━━━━━━━━━━┓");
+        println!("  ┃ GAME OVER ┃");
+        println!("  ┗━━━━━━━━━━━┛");
+        println!();
+        println!("Continue? [Y]/n");
 
-    screen
-        .grid
-        .values()
-        .filter(|v| matches!(v, GameScreen::Block))
-        .count()
-        .to_string()
+        match stdinkeys.next().unwrap().unwrap() {
+            Key::Char('Y') | Key::Char('y') | Key::Char(' ') | Key::Char('\n') => (),
+            _ => break,
+        }
+    }
+
+    segment.to_string()
 }
 
 inventory::submit!(crate::AoCDay {
