@@ -155,6 +155,15 @@ impl<Item, Key: Coordinate> FromIterator<(Key, Item)> for InfGrid<Item, Key> {
     }
 }
 
+impl<Item, Key: Coordinate> IntoIterator for InfGrid<Item, Key> {
+    type Item = (Key, Item);
+    type IntoIter = std::collections::hash_map::IntoIter<Key, Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.grid.into_iter()
+    }
+}
+
 impl<Item> InfGrid<Item, Coord2D> {
     pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
     where
