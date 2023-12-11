@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::{utils::direction::RotateDirection, AoCResult, Coord2D, Direction, InfGrid};
 
-use super::computer::Computer;
+use super::computer::{Computer, Runstate};
 
 #[derive(Debug, Default, Clone, Copy)]
 enum Colour {
@@ -55,8 +55,8 @@ impl Robot {
 
     fn drive(&mut self, current_square: Colour) -> Option<(Coord2D, Colour)> {
         self.cpu.input.push_back(current_square.to_input());
-        self.cpu.run().unwrap();
-        if self.cpu.output.is_empty() {
+        let res = self.cpu.run().unwrap();
+        if matches!(res, Runstate::Finished) || self.cpu.output.is_empty() {
             return None;
         } else if self.cpu.output.len() != 2 {
             panic!("unexpected cpu output {:?}", self.cpu.output);

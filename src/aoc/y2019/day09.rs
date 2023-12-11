@@ -3,7 +3,7 @@ use super::computer::Computer;
 pub fn main(data: crate::DataIn) -> String {
     for line in data {
         let mut computer: Computer = line.parse().unwrap();
-        computer.run().unwrap();
+        computer.run_to_completion().unwrap();
         println!("---------");
     }
     "".to_string()

@@ -9,7 +9,7 @@ pub fn main(data: crate::DataIn) -> String {
             let mut computer = og_computer.clone();
             computer.set(1, noun.into());
             computer.set(2, verb.into());
-            computer.run().unwrap();
+            computer.run_to_completion().unwrap();
             let res = computer.get(&0).to_value();
             println!("{noun} {verb} {res}");
             if res == 19690720 {

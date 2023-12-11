@@ -199,6 +199,7 @@ impl Display for Computer {
     }
 }
 
+#[must_use]
 pub enum Runstate {
     NeedsInput,
     Finished,
@@ -279,6 +280,13 @@ impl Computer {
                 Opcode::End => return Ok(Runstate::Finished),
             }
             self.pc += len + 1;
+        }
+    }
+
+    pub fn run_to_completion(&mut self) -> AoCResult<()> {
+        match self.run()? {
+            Runstate::Finished => Ok(()),
+            Runstate::NeedsInput => Err(AoCError::new("Program cannot complete without input!")),
         }
     }
 
