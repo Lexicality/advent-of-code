@@ -13,7 +13,7 @@ pub struct Grid<Item> {
 
 #[allow(dead_code)]
 impl<Item> Grid<Item> {
-    pub fn new_from_iter<I>(data: I, width: u32) -> Grid<Item>
+    pub fn new_from_iter<I>(data: I, width: u32) -> Self
     where
         I: Iterator<Item = Item>,
     {
@@ -21,39 +21,31 @@ impl<Item> Grid<Item> {
         Self::new_from_lines(data.chunks(width as usize).into_iter())
     }
 
-    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Grid<Item>
+    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
     where
         Inner: IntoIterator<Item = Item>,
         Iter: Iterator<Item = Inner>,
     {
-        let mut grid = Grid::<Item> {
-            grid: data
-                .enumerate()
-                .flat_map(|(y, inner)| {
-                    inner.into_iter().enumerate().map(move |(x, item)| {
-                        (
-                            Coord2D {
-                                x: x.try_into().unwrap(),
-                                y: y.try_into().unwrap(),
-                            },
-                            item,
-                        )
-                    })
-                })
-                .collect(),
-            height: 0,
-            width: 0,
-        };
-        let max_key = grid
-            .grid
-            .keys()
-            .copied()
-            .reduce(|a, b| a.get_max(&b))
-            .expect("must have at least one entry");
-        grid.width = max_key.x as u32 + 1;
-        grid.height = max_key.y as u32 + 1;
+        data.enumerate()
+            .flat_map(|(y, inner)| {
+                inner
+                    .into_iter()
+                    .enumerate()
+                    .map(move |(x, item)| ((x, y).try_into().unwrap(), item))
+            })
+            .collect()
+    }
 
-        grid
+    pub fn new_with_initialiser<F: Fn() -> Item>(width: u32, height: u32, init: F) -> Self {
+        Self::validate_dimensions(width, height);
+        Self {
+            grid: (0..=width)
+                .zip(0..=height)
+                .map(|(x, y)| ((x, y).try_into().unwrap(), init()))
+                .collect(),
+            width,
+            height,
+        }
     }
 
     fn validate_dimensions(width: u32, height: u32) -> usize {
@@ -64,9 +56,9 @@ impl<Item> Grid<Item> {
             .expect("Grid is too big!")
     }
 
-    pub fn new_empty(width: u32, height: u32) -> Grid<Item> {
-        let size = Grid::<Item>::validate_dimensions(width, height);
-        Grid::<Item> {
+    pub fn new_empty(width: u32, height: u32) -> Self {
+        let size = Self::validate_dimensions(width, height);
+        Self {
             grid: HashMap::with_capacity(size),
             width,
             height,
@@ -138,46 +130,14 @@ impl<Item> Grid<Item> {
 }
 
 impl<Item: Clone> Grid<Item> {
-    pub fn new_filled(width: u32, height: u32, default: Item) -> Grid<Item> {
-        Grid::<Item>::validate_dimensions(width, height);
-        Grid::<Item> {
-            grid: (0..=width)
-                .zip(0..=height)
-                .map(|(x, y)| {
-                    (
-                        Coord2D {
-                            x: x as i32,
-                            y: y as i32,
-                        },
-                        default.clone(),
-                    )
-                })
-                .collect(),
-            width,
-            height,
-        }
+    pub fn new_filled(width: u32, height: u32, default: Item) -> Self {
+        Self::new_with_initialiser(width, height, || default.clone())
     }
 }
 
 impl<Item: Default + Debug> Grid<Item> {
-    pub fn new(width: u32, height: u32) -> Grid<Item> {
-        Grid::<Item>::validate_dimensions(width, height);
-        Grid::<Item> {
-            grid: (0..width)
-                .cartesian_product(0..height)
-                .map(|(x, y)| {
-                    (
-                        Coord2D {
-                            x: x as i32,
-                            y: y as i32,
-                        },
-                        Default::default(),
-                    )
-                })
-                .collect(),
-            width,
-            height,
-        }
+    pub fn new(width: u32, height: u32) -> Self {
+        Self::new_with_initialiser(width, height, Default::default)
     }
 }
 
@@ -199,5 +159,27 @@ impl<Item: Display> Display for Grid<Item> {
             writeln!(f)?;
         }
         Ok(())
+    }
+}
+
+impl<Item> FromIterator<(Coord2D, Item)> for Grid<Item> {
+    fn from_iter<T: IntoIterator<Item = (Coord2D, Item)>>(iter: T) -> Self {
+        let mut max = Coord2D::MIN;
+        let grid = iter
+            .into_iter()
+            .inspect(|(coord, _)| {
+                assert!(
+                    coord.x >= 0 && coord.y >= 0,
+                    "Negative coordinates are not allowed"
+                );
+                max = max.get_max(coord);
+            })
+            .collect();
+
+        Self {
+            grid,
+            width: max.x as u32 + 1,
+            height: max.y as u32 + 1,
+        }
     }
 }

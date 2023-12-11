@@ -171,8 +171,30 @@ impl Display for Coord2D {
 }
 
 impl From<(i32, i32)> for Coord2D {
-    fn from(tup: (i32, i32)) -> Self {
-        Self { x: tup.0, y: tup.1 }
+    fn from((x, y): (i32, i32)) -> Self {
+        Self { x, y }
+    }
+}
+
+impl TryFrom<(u32, u32)> for Coord2D {
+    type Error = std::num::TryFromIntError;
+
+    fn try_from((x, y): (u32, u32)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+        })
+    }
+}
+
+impl TryFrom<(usize, usize)> for Coord2D {
+    type Error = std::num::TryFromIntError;
+
+    fn try_from((x, y): (usize, usize)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+        })
     }
 }
 

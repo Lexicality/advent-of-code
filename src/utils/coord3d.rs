@@ -193,11 +193,31 @@ impl Display for Coord3D {
 }
 
 impl From<(i32, i32, i32)> for Coord3D {
-    fn from(tup: (i32, i32, i32)) -> Self {
-        Self {
-            x: tup.0,
-            y: tup.1,
-            z: tup.2,
-        }
+    fn from((x, y, z): (i32, i32, i32)) -> Self {
+        Self { x, y, z }
+    }
+}
+
+impl TryFrom<(u32, u32, u32)> for Coord3D {
+    type Error = std::num::TryFromIntError;
+
+    fn try_from((x, y, z): (u32, u32, u32)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+            z: z.try_into()?,
+        })
+    }
+}
+
+impl TryFrom<(usize, usize, usize)> for Coord3D {
+    type Error = std::num::TryFromIntError;
+
+    fn try_from((x, y, z): (usize, usize, usize)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+            z: z.try_into()?,
+        })
     }
 }

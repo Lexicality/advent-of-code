@@ -79,3 +79,35 @@ impl<Item: Display> Display for InfGrid<Item, Coord2D> {
         Ok(())
     }
 }
+
+impl<Item, Key: Coordinate> FromIterator<(Key, Item)> for InfGrid<Item, Key> {
+    fn from_iter<T: IntoIterator<Item = (Key, Item)>>(iter: T) -> Self {
+        let mut min = Key::MAX;
+        let mut max = Key::MIN;
+        let grid = iter
+            .into_iter()
+            .inspect(|(coord, _)| {
+                min = min.get_min(coord);
+                max = max.get_max(coord);
+            })
+            .collect();
+        Self { grid, min, max }
+    }
+}
+
+impl<Item> InfGrid<Item, Coord2D> {
+    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
+    where
+        Inner: IntoIterator<Item = Item>,
+        Iter: Iterator<Item = Inner>,
+    {
+        data.enumerate()
+            .flat_map(|(y, inner)| {
+                inner
+                    .into_iter()
+                    .enumerate()
+                    .map(move |(x, item)| ((x, y).try_into().unwrap(), item))
+            })
+            .collect()
+    }
+}
