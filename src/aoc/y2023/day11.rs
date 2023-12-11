@@ -2,7 +2,7 @@ use std::{collections::HashSet, fmt::Display};
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coordinate, InfGrid};
+use crate::{utils::bigcoord2d::BigCoord2D, AoCError, Coordinate, InfGrid};
 
 enum Space {
     Void,
@@ -32,7 +32,7 @@ impl Display for Space {
 }
 
 pub fn main(data: crate::DataIn) -> String {
-    let mut starscape: InfGrid<Space> = data
+    let mut starscape: InfGrid<Space, BigCoord2D> = data
         .enumerate()
         .flat_map(|(y, line)| {
             line.chars()
@@ -43,10 +43,10 @@ pub fn main(data: crate::DataIn) -> String {
         })
         .collect();
 
-    println!("{starscape:#}");
+    // println!("{starscape:#}");
 
-    let mut columns: HashSet<i32> = HashSet::new();
-    let mut rows: HashSet<i32> = HashSet::new();
+    let mut columns: HashSet<i64> = HashSet::new();
+    let mut rows: HashSet<i64> = HashSet::new();
     for coord in starscape.grid.keys() {
         columns.insert(coord.x);
         rows.insert(coord.y);
@@ -61,16 +61,16 @@ pub fn main(data: crate::DataIn) -> String {
     starscape = starscape
         .into_iter()
         .map(|(mut coord, value)| {
-            let expand_x = expansion_cols.iter().filter(|x| **x < coord.x).count();
-            let expand_y = expansion_rows.iter().filter(|y| **y < coord.y).count();
+            let expand_x = expansion_cols.iter().filter(|x| **x < coord.x).count() * 999_999;
+            let expand_y = expansion_rows.iter().filter(|y| **y < coord.y).count() * 999_999;
             coord += (expand_x, expand_y).try_into().unwrap();
             (coord, value)
         })
         .collect();
 
-    println!("{starscape:#}");
+    // println!("{starscape:#}");
 
-    let ret: u32 = starscape
+    let ret: u64 = starscape
         .grid
         .keys()
         .combinations(2)
