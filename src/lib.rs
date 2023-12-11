@@ -1,5 +1,6 @@
 pub mod aoc;
 pub mod utils {
+    pub mod bigcoord2d;
     pub mod coord;
     pub mod coord2d;
     pub mod coord3d;

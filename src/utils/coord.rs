@@ -1,10 +1,13 @@
 use std::hash::Hash;
 
 pub trait Coordinate: Hash + Eq + Copy {
+    type UnsignedLen;
+    type SignedLen;
+
     const MAX: Self;
     const MIN: Self;
 
-    fn distance(&self, other: &Self) -> u32;
+    fn distance(&self, other: &Self) -> Self::UnsignedLen;
 
     fn get_max(&self, other: &Self) -> Self;
 
@@ -14,7 +17,7 @@ pub trait Coordinate: Hash + Eq + Copy {
 
     fn len(&self) -> f64;
 
-    fn len_sqr(&self) -> i64;
+    fn len_sqr(&self) -> Self::SignedLen;
 
-    fn len_manhatten(&self) -> u32;
+    fn len_manhatten(&self) -> Self::UnsignedLen;
 }

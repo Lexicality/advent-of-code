@@ -13,6 +13,9 @@ pub struct Coord2D {
 }
 
 impl Coordinate for Coord2D {
+    type UnsignedLen = u32;
+    type SignedLen = i64;
+
     const MAX: Self = Self {
         x: i32::MAX,
         y: i32::MAX,
