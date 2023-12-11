@@ -1,10 +1,12 @@
 use std::fmt::Display;
-use std::io::{stdin, stdout, Stdin, Write};
+use std::io::{stdin, stdout, Write};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 use itertools::Itertools;
 use termion::cursor::HideCursor;
 use termion::event::Key;
-use termion::input::{Keys, TermRead};
+use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 use termion::screen::IntoAlternateScreen;
 
@@ -48,7 +50,7 @@ impl Display for GameScreen {
     }
 }
 
-fn run(mut computer: Computer, stdinkeys: &mut Keys<Stdin>) -> i128 {
+fn run(mut computer: Computer) -> i128 {
     let mut stdout = HideCursor::from(
         stdout()
             .into_raw_mode()
@@ -58,8 +60,19 @@ fn run(mut computer: Computer, stdinkeys: &mut Keys<Stdin>) -> i128 {
     );
     write!(stdout, "{}", termion::clear::All).unwrap();
 
-    let mut backup_computer = computer.clone();
+    let stop = Arc::new(AtomicBool::new(false));
+    let stop2 = stop.clone();
+    std::thread::spawn(move || {
+        for c in stdin().keys() {
+            if let Key::Ctrl('c') = c.unwrap() {
+                stop2.store(true, Ordering::Relaxed);
+            }
+        }
+    });
+
     let mut segment = 0;
+    let mut paddle_pos = 0;
+    let mut ball_pos = 0;
     loop {
         let run_res = computer.run().unwrap();
         for (mut x, mut y, v) in computer.output.drain(..).tuples() {
@@ -67,6 +80,11 @@ fn run(mut computer: Computer, stdinkeys: &mut Keys<Stdin>) -> i128 {
                 segment = v;
                 write!(stdout, "{}{}", termion::cursor::Goto(1, 1), segment).unwrap();
             } else {
+                if v == 3 {
+                    paddle_pos = x;
+                } else if v == 4 {
+                    ball_pos = x;
+                }
                 x += 1;
                 y += 2;
                 write!(
@@ -79,38 +97,15 @@ fn run(mut computer: Computer, stdinkeys: &mut Keys<Stdin>) -> i128 {
             }
         }
         stdout.flush().unwrap();
-        if matches!(run_res, Runstate::Finished) {
+        if stop.load(Ordering::Relaxed) || matches!(run_res, Runstate::Finished) {
             break;
         }
-        loop {
-            let res = match stdinkeys.next().unwrap().unwrap() {
-                Key::Left => -1,
-                Key::Right => 1,
-                Key::Char(' ') | Key::Char('\n') | Key::Up | Key::Down => 0,
-                Key::Ctrl('c') | Key::Esc => return -1,
-                Key::Char('s') => {
-                    backup_computer = computer.clone();
-                    continue;
-                }
-                Key::Char('r') => {
-                    computer = backup_computer.clone();
-                    break;
-                }
-                wat => {
-                    write!(
-                        stdout,
-                        "{}{}? {wat:?}",
-                        termion::cursor::Goto(0, 27),
-                        termion::clear::UntilNewline
-                    )
-                    .unwrap();
-                    stdout.flush().unwrap();
-                    continue;
-                }
-            };
-            computer.input.push_back(res);
-            break;
-        }
+        let res = match paddle_pos.cmp(&ball_pos) {
+            std::cmp::Ordering::Equal => 0,
+            std::cmp::Ordering::Greater => -1,
+            std::cmp::Ordering::Less => 1,
+        };
+        computer.input.push_back(res);
     }
 
     segment
@@ -120,29 +115,7 @@ pub fn main(data: crate::DataIn) -> String {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.set(0, 2.into());
 
-    let stdin = stdin();
-    let mut stdinkeys = stdin.keys();
-
-    let mut segment;
-    loop {
-        segment = run(computer.clone(), &mut stdinkeys);
-        if segment == -1 {
-            return "^c".to_owned();
-        }
-        println!();
-        println!("  ┏━━━━━━━━━━━┓");
-        println!("  ┃ GAME OVER ┃");
-        println!("  ┗━━━━━━━━━━━┛");
-        println!();
-        println!("Continue? [Y]/n");
-
-        match stdinkeys.next().unwrap().unwrap() {
-            Key::Char('Y') | Key::Char('y') | Key::Char(' ') | Key::Char('\n') => (),
-            _ => break,
-        }
-    }
-
-    segment.to_string()
+    run(computer).to_string()
 }
 
 inventory::submit!(crate::AoCDay {
