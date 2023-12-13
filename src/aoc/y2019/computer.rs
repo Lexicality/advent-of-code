@@ -206,13 +206,13 @@ impl Display for Computer {
 }
 
 #[must_use]
-pub enum Runstate {
+pub enum RunState {
     NeedsInput,
     Finished,
 }
 
 impl Computer {
-    pub fn run(&mut self) -> AoCResult<Runstate> {
+    pub fn run(&mut self) -> AoCResult<RunState> {
         loop {
             let instr = self.get(&self.pc);
             let opcode = instr
@@ -235,7 +235,7 @@ impl Computer {
                 Opcode::Input(target_mode) => {
                     let value = match self.input.pop_front() {
                         Some(value) => value,
-                        None => return Ok(Runstate::NeedsInput),
+                        None => return Ok(RunState::NeedsInput),
                     };
                     let target = self.get_target(&(self.pc + 1), target_mode)?;
                     self.set(target, value.into());
@@ -283,7 +283,7 @@ impl Computer {
                         .checked_add(a)
                         .ok_or(AoCError::new("Relative base overflow"))?;
                 }
-                Opcode::End => return Ok(Runstate::Finished),
+                Opcode::End => return Ok(RunState::Finished),
             }
             self.pc += len + 1;
         }
@@ -291,8 +291,8 @@ impl Computer {
 
     pub fn run_to_completion(&mut self) -> AoCResult<()> {
         match self.run()? {
-            Runstate::Finished => Ok(()),
-            Runstate::NeedsInput => Err(AoCError::new("Program cannot complete without input!")),
+            RunState::Finished => Ok(()),
+            RunState::NeedsInput => Err(AoCError::new("Program cannot complete without input!")),
         }
     }
 

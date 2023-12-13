@@ -12,7 +12,7 @@ use termion::screen::IntoAlternateScreen;
 
 use crate::AoCError;
 
-use super::computer::{Computer, Runstate};
+use super::computer::{Computer, RunState};
 
 enum GameScreen {
     Empty,
@@ -97,7 +97,7 @@ fn run(mut computer: Computer) -> i128 {
             }
         }
         stdout.flush().unwrap();
-        if stop.load(Ordering::Relaxed) || matches!(run_res, Runstate::Finished) {
+        if stop.load(Ordering::Relaxed) || matches!(run_res, RunState::Finished) {
             break;
         }
         let res = match paddle_pos.cmp(&ball_pos) {

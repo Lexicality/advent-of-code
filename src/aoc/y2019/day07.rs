@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::AoCResult;
 
-use super::computer::{Computer, Runstate};
+use super::computer::{Computer, RunState};
 
 fn run_amps(program: Computer, phase_settings: &[i128]) -> AoCResult<i128> {
     let mut loop_signals = vec![0];
@@ -24,7 +24,7 @@ fn run_amps(program: Computer, phase_settings: &[i128]) -> AoCResult<i128> {
             let ret = amp.run()?;
             loop_signals.append(&mut amp.output);
             // println!("output: {loop_signals:?}");
-            if matches!(ret, Runstate::Finished) {
+            if matches!(ret, RunState::Finished) {
                 halts += 1;
             }
         }
