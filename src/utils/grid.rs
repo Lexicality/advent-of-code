@@ -70,6 +70,26 @@ impl<Item> Grid<Item> {
             && ((coord.x as u32) < self.width && (coord.y as u32) < self.height)
     }
 
+    pub fn get_row(&self, row: u32) -> Vec<(Coord2D, &Item)> {
+        assert!(row < self.height);
+        (0..self.width)
+            .map(move |x| {
+                let coord = (x, row).try_into().unwrap();
+                (coord, self.get(&coord).unwrap())
+            })
+            .collect()
+    }
+
+    pub fn get_column(&self, column: u32) -> Vec<(Coord2D, &Item)> {
+        assert!(column < self.width);
+        (0..self.height)
+            .map(move |y| {
+                let coord = (column, y).try_into().unwrap();
+                (coord, self.get(&coord).unwrap())
+            })
+            .collect()
+    }
+
     pub fn get_neighbours(
         &self,
         coord: Coord2D,
