@@ -7,7 +7,15 @@ OR T J
 NOT C T
 OR T J
 AND D J
-WALK
+NOT E T
+AND F T
+AND A T
+AND B T
+AND J T
+AND I T
+NOT T T
+AND T J
+RUN
 ";
 
 pub fn main(data: crate::DataIn) -> String {
