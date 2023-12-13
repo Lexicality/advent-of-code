@@ -16,6 +16,9 @@ pub fn main(data: crate::DataIn) -> String {
         })
         .collect();
 
+    let mut last_nat_y = -1;
+    let mut nat = (0, 0);
+    let mut idle_timer = 0;
     loop {
         for (addr, computer) in computetrs.iter_mut().enumerate() {
             match computer.run().unwrap() {
@@ -32,7 +35,8 @@ pub fn main(data: crate::DataIn) -> String {
             assert_eq!(computer.output.len() % 3, 0);
             for (target_addr, x, y) in computer.output.drain(..).tuples() {
                 if target_addr == 255 {
-                    return y.to_string();
+                    nat = (x, y);
+                    continue;
                 } else if !(0..NUM_MACHINES as i128).contains(&target_addr) {
                     panic!("Attempted to send to unknown adddress {target_addr} ({x}/{y})")
                 }
@@ -40,6 +44,24 @@ pub fn main(data: crate::DataIn) -> String {
                 packets.push(x);
                 packets.push(y);
             }
+        }
+
+        if packets_to_go.iter().all(|packets| packets.is_empty()) {
+            idle_timer += 1;
+        } else {
+            idle_timer = 0;
+        }
+
+        if idle_timer == 5 {
+            idle_timer = 0;
+            println!("Network idle! Sending x={},y={} to 0", nat.0, nat.1);
+            if nat.1 == last_nat_y {
+                return last_nat_y.to_string();
+            }
+            let packets = packets_to_go.get_mut(0).unwrap();
+            packets.push(nat.0);
+            packets.push(nat.1);
+            last_nat_y = nat.1;
         }
     }
 }
