@@ -144,8 +144,8 @@ impl<Item> Grid<Item> {
         self.grid.get_mut(k)
     }
 
-    pub fn set(&mut self, k: Coord2D, v: Item) {
-        self.grid.insert(k, v);
+    pub fn set(&mut self, k: Coord2D, v: Item) -> Option<Item> {
+        self.grid.insert(k, v)
     }
 }
 
