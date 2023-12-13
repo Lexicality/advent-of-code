@@ -140,6 +140,12 @@ impl From<i128> for Instruction {
     }
 }
 
+impl From<char> for Instruction {
+    fn from(value: char) -> Self {
+        (u32::from(value) as i128).into()
+    }
+}
+
 impl FromStr for Instruction {
     type Err = AoCError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -339,5 +345,33 @@ impl Computer {
 
     pub fn clear_output(&mut self) {
         self.output.clear();
+    }
+
+    pub fn get_ascii_output(&self) -> Option<String> {
+        self.output
+            .iter()
+            .map(|i| {
+                let v: u32 = (*i).try_into().ok()?;
+                v.try_into()
+                    .ok()
+                    .and_then(|c: char| if c.is_ascii() { Some(c) } else { None })
+            })
+            .collect::<Option<String>>()
+    }
+
+    pub fn get_ascii_lossy(&self) -> String {
+        self.output
+            .iter()
+            .filter_map(|i| {
+                let v: u32 = (*i).try_into().ok()?;
+                char::try_from(v).ok()
+            })
+            .collect()
+    }
+
+    pub fn add_ascii_input(&mut self, input: &str) {
+        // Gonna trust you that it's ascii
+        self.input
+            .extend(input.chars().map(|c| u32::from(c) as i128))
     }
 }
