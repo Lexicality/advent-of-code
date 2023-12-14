@@ -3,6 +3,7 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 use itertools::Itertools;
+use serde::{Deserialize, Serialize};
 
 use crate::{AoCError, AoCResult};
 
@@ -67,7 +68,7 @@ impl Opcode {
     }
 }
 
-#[derive(Default, Debug, Clone, Copy)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Instruction(i64);
 
 impl Instruction {
@@ -161,7 +162,7 @@ impl Display for Instruction {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Computer {
     memory: BTreeMap<u64, Instruction>,
     pc: u64,

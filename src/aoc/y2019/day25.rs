@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::prelude::*;
+
 use text_io::read;
 
 use super::computer::{Computer, RunState};
@@ -10,9 +13,28 @@ pub fn main(data: crate::DataIn) -> String {
         print!("> ");
         let line: String = read!("{}\n");
         let line = line.trim().to_owned() + "\n";
-        computer.add_ascii_input(&line);
+        if line == "save\n" {
+            let computer_value = ron::to_string(&computer).unwrap();
+            File::options()
+                .create(true)
+                .truncate(true)
+                .write(true)
+                .open("25-memory-dump.txt")
+                .unwrap()
+                .write_all(&computer_value.into_bytes())
+                .unwrap();
+        } else if line == "load\n" {
+            let mut raw_computer = String::new();
+            File::open("25-memory-dump.txt")
+                .unwrap()
+                .read_to_string(&mut raw_computer)
+                .unwrap();
+            computer = ron::from_str(&raw_computer).unwrap();
+        } else {
+            computer.add_ascii_input(&line);
+        }
     }
-    "".to_string()
+    computer.get_ascii_output().unwrap()
 }
 
 inventory::submit!(crate::AoCDay {
