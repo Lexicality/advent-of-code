@@ -68,7 +68,7 @@ impl Opcode {
 }
 
 #[derive(Default, Debug, Clone, Copy)]
-pub struct Instruction(i128);
+pub struct Instruction(i64);
 
 impl Instruction {
     pub fn to_opcode(self) -> Option<Opcode> {
@@ -129,20 +129,20 @@ impl Instruction {
             .map_err(|e| AoCError::new_with_cause(format!("Invalid memory address {}", self.0), e))
     }
 
-    pub fn to_value(self) -> i128 {
+    pub fn to_value(self) -> i64 {
         self.0
     }
 }
 
-impl From<i128> for Instruction {
-    fn from(value: i128) -> Self {
+impl From<i64> for Instruction {
+    fn from(value: i64) -> Self {
         Instruction(value)
     }
 }
 
 impl From<char> for Instruction {
     fn from(value: char) -> Self {
-        (u32::from(value) as i128).into()
+        (u32::from(value) as i64).into()
     }
 }
 
@@ -165,9 +165,9 @@ impl Display for Instruction {
 pub struct Computer {
     memory: BTreeMap<u64, Instruction>,
     pc: u64,
-    relative_base: i128,
-    pub input: VecDeque<i128>,
-    pub output: Vec<i128>,
+    relative_base: i64,
+    pub input: VecDeque<i64>,
+    pub output: Vec<i64>,
 }
 
 impl FromStr for Computer {
@@ -372,6 +372,6 @@ impl Computer {
     pub fn add_ascii_input(&mut self, input: &str) {
         // Gonna trust you that it's ascii
         self.input
-            .extend(input.chars().map(|c| u32::from(c) as i128))
+            .extend(input.chars().map(|c| u32::from(c) as i64))
     }
 }

@@ -22,10 +22,10 @@ enum GameScreen {
     Ball,
 }
 
-impl TryFrom<i128> for GameScreen {
+impl TryFrom<i64> for GameScreen {
     type Error = AoCError;
 
-    fn try_from(value: i128) -> Result<Self, Self::Error> {
+    fn try_from(value: i64) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(Self::Empty),
             1 => Ok(Self::Wall),
@@ -50,7 +50,7 @@ impl Display for GameScreen {
     }
 }
 
-fn run(mut computer: Computer) -> i128 {
+fn run(mut computer: Computer) -> i64 {
     let mut stdout = HideCursor::from(
         stdout()
             .into_raw_mode()

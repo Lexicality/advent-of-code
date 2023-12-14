@@ -12,11 +12,11 @@ enum Colour {
 }
 
 impl Colour {
-    const fn to_input(self) -> i128 {
-        self as i128
+    const fn to_input(self) -> i64 {
+        self as i64
     }
 
-    const fn from_value(value: i128) -> Self {
+    const fn from_value(value: i64) -> Self {
         match value {
             0 => Self::Black,
             1 => Self::White,

@@ -4,7 +4,7 @@ use crate::AoCResult;
 
 use super::computer::{Computer, RunState};
 
-fn run_amps(program: Computer, phase_settings: &[i128]) -> AoCResult<i128> {
+fn run_amps(program: Computer, phase_settings: &[i64]) -> AoCResult<i64> {
     let mut loop_signals = vec![0];
     let mut amps = phase_settings
         .iter()

@@ -7,11 +7,11 @@ const NUM_MACHINES: usize = 50;
 pub fn main(data: crate::DataIn) -> String {
     let base_code: Computer = data.next().unwrap().parse().unwrap();
 
-    let mut packets_to_go: Vec<Vec<i128>> = (0..NUM_MACHINES).map(|_| Vec::new()).collect();
+    let mut packets_to_go: Vec<Vec<i64>> = (0..NUM_MACHINES).map(|_| Vec::new()).collect();
     let mut computetrs: Vec<Computer> = (0..NUM_MACHINES)
         .map(|addr| {
             let mut computer = base_code.clone();
-            computer.input.push_back(addr as i128);
+            computer.input.push_back(addr as i64);
             computer
         })
         .collect();
@@ -37,7 +37,7 @@ pub fn main(data: crate::DataIn) -> String {
                 if target_addr == 255 {
                     nat = (x, y);
                     continue;
-                } else if !(0..NUM_MACHINES as i128).contains(&target_addr) {
+                } else if !(0..NUM_MACHINES as i64).contains(&target_addr) {
                     panic!("Attempted to send to unknown adddress {target_addr} ({x}/{y})")
                 }
                 let packets = packets_to_go.get_mut(target_addr as usize).unwrap();
