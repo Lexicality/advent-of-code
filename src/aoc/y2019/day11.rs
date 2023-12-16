@@ -74,7 +74,7 @@ impl Robot {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut robot = Robot::new(data.next().unwrap()).unwrap();
     let mut hull: InfGrid<Colour> = InfGrid::new();
 
@@ -85,7 +85,7 @@ pub fn main(data: crate::DataIn) -> String {
     }
     println!("{hull:-}\n");
 
-    hull.grid.len().to_string()
+    Ok(hull.grid.len().to_string())
 }
 
 inventory::submit!(crate::AoCDay {

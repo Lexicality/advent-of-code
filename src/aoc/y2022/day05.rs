@@ -126,7 +126,7 @@ impl Move {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut yard = Yard::new(data);
     println!("{}", yard);
     for op in data.map(Move::new) {
@@ -134,7 +134,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         println!("{}", yard);
     }
 
-    yard.get_top()
+    Ok(yard.get_top())
 }
 
 inventory::submit!(crate::AoCDay {

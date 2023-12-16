@@ -123,7 +123,7 @@ impl Display for INode {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let root = INode::new_folder("/".to_string(), Weak::new());
     // let mut folders: HashMap<String, Rc<INoder>> = HashMap::new();
     let mut folders: Vec<Rc<INoder>> = Vec::new();
@@ -204,7 +204,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         .min()
         .unwrap();
 
-    format!("{}", size)
+    Ok(size.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

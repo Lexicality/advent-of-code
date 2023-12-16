@@ -35,7 +35,7 @@ fn get_path<'a>(orbit_map: &'a HashMap<String, OrbitItem>, mut obj: &'a str) -> 
     ret
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut orbit_map: HashMap<String, OrbitItem> = HashMap::with_capacity({
         let hint = data.size_hint();
         hint.1.unwrap_or(hint.0) + 1
@@ -79,7 +79,7 @@ pub fn main(data: crate::DataIn) -> String {
         assert_ne!(santree.pop(), None);
     }
 
-    (youtree.len() + santree.len()).to_string()
+    Ok((youtree.len() + santree.len()).to_string())
 }
 
 inventory::submit!(crate::AoCDay {

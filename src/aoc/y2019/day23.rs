@@ -4,7 +4,7 @@ use crate::aoc::y2019::computer::{Computer, RunState};
 
 const NUM_MACHINES: usize = 50;
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let base_code: Computer = data.next().unwrap().parse().unwrap();
 
     let mut packets_to_go: Vec<Vec<i64>> = (0..NUM_MACHINES).map(|_| Vec::new()).collect();
@@ -56,7 +56,7 @@ pub fn main(data: crate::DataIn) -> String {
             idle_timer = 0;
             println!("Network idle! Sending x={},y={} to 0", nat.0, nat.1);
             if nat.1 == last_nat_y {
-                return last_nat_y.to_string();
+                return Ok(last_nat_y.to_string());
             }
             let packets = packets_to_go.get_mut(0).unwrap();
             packets.push(nat.0);

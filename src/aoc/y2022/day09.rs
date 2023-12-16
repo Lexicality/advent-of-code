@@ -73,7 +73,7 @@ impl Coord2D {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut head_pos = Coord2D { x: 0, y: 0 };
     let mut midroll: [Coord2D; 8] = [head_pos; 8];
     let mut tail_pos = head_pos;
@@ -113,7 +113,7 @@ pub fn main(data: crate::DataIn) -> String {
             // println!("{grid}");
         }
     }
-    visited.len().to_string()
+    Ok(visited.len().to_string())
 }
 
 inventory::submit!(crate::AoCDay {

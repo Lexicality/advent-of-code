@@ -31,7 +31,7 @@ impl Display for Space {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut starscape: InfGrid<Space, BigCoord2D> = data
         .enumerate()
         .flat_map(|(y, line)| {
@@ -77,7 +77,7 @@ pub fn main(data: crate::DataIn) -> String {
         .map(|ab| ab[0].distance(ab[1]))
         .sum();
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

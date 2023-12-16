@@ -67,7 +67,7 @@ impl PipeSegment {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<PipeSegment> = Grid::new_from_lines(data.map(|line| {
         line.chars()
             .map(|c| c.try_into().unwrap())
@@ -108,7 +108,7 @@ pub fn main(data: crate::DataIn) -> String {
         }
     }
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

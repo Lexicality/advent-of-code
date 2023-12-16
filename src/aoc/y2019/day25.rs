@@ -5,7 +5,7 @@ use text_io::read;
 
 use super::computer::{Computer, RunState};
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     while let RunState::NeedsInput = computer.run().unwrap() {
         print!("{}", computer.get_ascii_output().unwrap());
@@ -34,7 +34,7 @@ pub fn main(data: crate::DataIn) -> String {
             computer.add_ascii_input(&line);
         }
     }
-    computer.get_ascii_output().unwrap()
+    Ok(computer.get_ascii_output().unwrap())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -55,7 +55,7 @@ fn game_result(you: &Result, elf: &Move) -> Move {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total_score: u32 = 0;
 
     for line in data {
@@ -73,7 +73,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         println!("{}", total_score);
     }
 
-    format!("{}", total_score)
+    Ok(total_score.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

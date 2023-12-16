@@ -142,7 +142,7 @@ fn loading(grid: &Grid<GridState>) -> u32 {
         .sum::<u32>()
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
     );
@@ -194,7 +194,7 @@ pub fn main(data: crate::DataIn) -> String {
 
     // println!("wtf {:?}", &loads[0..20]);
 
-    "".to_owned()
+    Ok("".to_owned())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -84,7 +84,7 @@ fn check_grid(grid: &Grid<char>, baseline: MirrorRes) -> MirrorRes {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let mut ret = 0;
     while data.peek().is_some() {
@@ -123,7 +123,7 @@ pub fn main(data: crate::DataIn) -> String {
             grid.set(coord, og);
         }
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

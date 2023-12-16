@@ -143,7 +143,7 @@ pub fn get_seeds(line: &str) -> Vec<Range<u64>> {
     ret
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let seeds = get_seeds(&data.next().unwrap());
     assert!(data.next().unwrap().is_empty());
@@ -167,7 +167,7 @@ pub fn main(data: crate::DataIn) -> String {
         .min()
         .unwrap();
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 #[allow(unused_variables, unused_mut)]
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let times = data.next().unwrap();
     let mut times = times.split_whitespace();
     let distances = data.next().unwrap();
@@ -24,7 +24,7 @@ pub fn main(data: crate::DataIn) -> String {
             ret += 1;
         }
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

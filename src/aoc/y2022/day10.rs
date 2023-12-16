@@ -74,14 +74,14 @@ impl Cpu {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut cpu = Cpu::new(data);
     println!(" {:>3} | {:^4} | {:^8} | {:4}", "pc", "x", "inst", "newx");
     while !cpu.done() {
         cpu.cycle();
     }
     println!();
-    String::new()
+    Ok(String::new())
 }
 
 inventory::submit!(crate::AoCDay {

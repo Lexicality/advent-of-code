@@ -28,7 +28,7 @@ fn check_num(num: u32) -> bool {
     doubles
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
     let (start, end) = line.split_once('-').unwrap();
     let (start, end) = (start.parse().unwrap(), end.parse().unwrap());
@@ -40,7 +40,7 @@ pub fn main(data: crate::DataIn) -> String {
         }
     }
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -30,7 +30,7 @@ fn get_comomn_item<L: Iterator<Item = String>>(lines: L) -> Option<char> {
     Some(*intersection[0])
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total_prio = 0;
     for lines in &data.chunks(3) {
         if let Some(common_item) = get_comomn_item(lines) {
@@ -41,7 +41,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
             panic!("sad");
         }
     }
-    format!("{}", total_prio)
+    Ok(total_prio.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

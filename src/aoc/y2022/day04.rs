@@ -17,7 +17,7 @@ impl Range {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut overlap = 0;
     for pair in data {
         let (elf1, elf2) = pair.split_once(',').unwrap();
@@ -27,7 +27,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
             overlap += 1;
         }
     }
-    format!("{}", overlap)
+    Ok(overlap.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 #[allow(unused_variables)]
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let lines = data.map(|line| {
         line.split_ascii_whitespace()
             .map(|num| num.parse::<i32>().unwrap())
@@ -26,7 +26,7 @@ pub fn main(data: crate::DataIn) -> String {
             .unwrap();
     }
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

@@ -37,7 +37,7 @@ impl Reading {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let readings: Vec<Reading> = data.map(Reading::parse).collect();
     let (min, max, maxdist) = readings.iter().fold(
         (BigCoord2D::MAX, BigCoord2D::MIN, 0),
@@ -61,7 +61,7 @@ pub fn main(data: crate::DataIn) -> String {
         })
         .count();
 
-    count.to_string()
+    Ok(count.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

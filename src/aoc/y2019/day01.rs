@@ -1,4 +1,4 @@
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret: u64 = 0;
     for line in data {
         let num: u64 = line.parse().unwrap();
@@ -14,7 +14,7 @@ pub fn main(data: crate::DataIn) -> String {
         println!("Input: {num} Required: {req}");
         ret += req;
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

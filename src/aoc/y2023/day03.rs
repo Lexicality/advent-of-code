@@ -35,7 +35,7 @@ impl Display for GridState {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let width = data.peek().unwrap().len().try_into().unwrap();
     let data = data
@@ -102,7 +102,7 @@ pub fn main(data: crate::DataIn) -> String {
         }
     }
 
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

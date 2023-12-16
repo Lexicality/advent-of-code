@@ -158,7 +158,7 @@ impl FromStr for Hand {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     let mut hands: Vec<Hand> = data.map(|line| line.parse()).try_collect().unwrap();
     hands.sort();
@@ -166,7 +166,7 @@ pub fn main(data: crate::DataIn) -> String {
         println!("{hand}");
         ret += (rank as u32 + 1) * hand.bid;
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

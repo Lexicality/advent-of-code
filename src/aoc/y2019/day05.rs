@@ -1,9 +1,9 @@
 use super::computer::Computer;
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.run_to_completion().unwrap();
-    "".to_string()
+    Ok("".to_string())
 }
 
 inventory::submit!(crate::AoCDay {

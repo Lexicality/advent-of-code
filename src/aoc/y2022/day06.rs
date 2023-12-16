@@ -23,7 +23,7 @@ impl SubRoutine {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     for line in data {
         let mut citer = line.chars();
         let mut sub = SubRoutine::new(&mut citer);
@@ -42,7 +42,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
         }
         println!("{}", i);
     }
-    "".to_string()
+    Ok("".to_string())
 }
 
 inventory::submit!(crate::AoCDay {

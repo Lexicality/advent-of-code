@@ -1,9 +1,9 @@
-use advent_of_code::{AoCDay, AoCDayFn};
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-
 use std::path::PathBuf;
+
+use advent_of_code::{AoCDay, AoCDayFn, AoCError, AoCResult};
 
 struct DayFunctions {
     func: AoCDayFn,
@@ -12,7 +12,7 @@ struct DayFunctions {
 
 type DayMap = BTreeMap<&'static str, BTreeMap<&'static str, DayFunctions>>;
 
-fn main() {
+fn main() -> AoCResult<()> {
     let mut all_days: DayMap = BTreeMap::new();
 
     for AoCDay {
@@ -57,13 +57,10 @@ fn main() {
     data_path.push(format!("{:0>2}", day));
     data_path.set_extension("txt");
     if !data_path.exists() {
-        eprintln!(
-            "Cannot read data file for {}/{}: {} does not exist!",
-            year,
-            day,
+        return Err(AoCError::new(format!(
+            "Cannot read data file for {year}/{day}: {} does not exist!",
             data_path.to_string_lossy()
-        );
-        return;
+        )));
     }
     let mut lines = BufReader::new(File::open(data_path).unwrap())
         .lines()
@@ -77,8 +74,9 @@ fn main() {
         funcs.func
     };
 
-    let ret = func(&mut lines);
+    let ret = func(&mut lines)?;
 
     println!("=== Result ===");
     println!("{}", ret);
+    Ok(())
 }

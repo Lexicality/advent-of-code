@@ -111,11 +111,11 @@ fn run(mut computer: Computer) -> i64 {
     segment
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.set(0, 2.into());
 
-    run(computer).to_string()
+    Ok(run(computer).to_string())
 }
 
 inventory::submit!(crate::AoCDay {

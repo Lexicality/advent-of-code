@@ -37,7 +37,7 @@ fn run_amps(program: Computer, phase_settings: &[i64]) -> AoCResult<i64> {
     }
 }
 
-pub fn main_example(data: crate::DataIn) -> String {
+pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     while let Some(phase) = data.next() {
         let og_computer: Computer = data.next().unwrap().parse().unwrap();
@@ -47,10 +47,10 @@ pub fn main_example(data: crate::DataIn) -> String {
         println!("{phase_settings:?} {signal}");
         ret = ret.max(signal);
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     let og_computer: Computer = data.next().unwrap().parse().unwrap();
 
@@ -58,7 +58,7 @@ pub fn main(data: crate::DataIn) -> String {
         let signal = run_amps(og_computer.clone(), &phase_setting).unwrap();
         ret = ret.max(signal);
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

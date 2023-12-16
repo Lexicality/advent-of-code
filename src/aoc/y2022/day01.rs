@@ -1,4 +1,4 @@
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut elves = vec![];
     let mut running_elf = 0;
     for line in data {
@@ -17,7 +17,7 @@ pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
     elves.sort_unstable();
     elves.reverse();
 
-    format!("{}", elves[..3].iter().sum::<i32>())
+    Ok(elves[..3].iter().sum::<i32>().to_string())
 }
 
 inventory::submit!(crate::AoCDay {

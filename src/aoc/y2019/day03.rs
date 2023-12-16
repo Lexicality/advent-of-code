@@ -111,7 +111,7 @@ fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResul
         .ok_or(AoCError::new("no crossovers?"))
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     while let Some(first) = data.next() {
         let second = data.next().expect("Lines should be paired");
@@ -130,7 +130,7 @@ pub fn main(data: crate::DataIn) -> String {
         ret = best;
         println!("best {best}");
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

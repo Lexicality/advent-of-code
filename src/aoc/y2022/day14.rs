@@ -59,7 +59,7 @@ fn settle_sand(sand_start: Coord2D, floor_y: i32, grid: &InfGrid<GridData>) -> O
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut maxy = 0;
     let rocks: Vec<Vec<Coord2D>> = data
         .map(|line| {
@@ -106,7 +106,7 @@ pub fn main(data: crate::DataIn) -> String {
 
     println!("{grid}");
 
-    i.to_string()
+    Ok(i.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

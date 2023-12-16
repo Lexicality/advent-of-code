@@ -69,7 +69,7 @@ impl<'a> Display for Sigh<'a> {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut signal = Vec::with_capacity(data.size_hint().0 + 2);
     let first_marker = json!([[2]]);
     let second_marker = json!([[6]]);
@@ -101,7 +101,7 @@ pub fn main(data: crate::DataIn) -> String {
         .map(|d| d.0)
         .expect("Can't find second marker")
         + 1;
-    format!("{}", fpos * spos)
+    Ok((fpos * spos).to_string())
 }
 
 inventory::submit!(crate::AoCDay {

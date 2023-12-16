@@ -94,7 +94,7 @@ impl Display for Moon {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let moons: Vec<Moon> = data.map(|line| line.parse()).try_collect().unwrap();
 
     let (mut io, mut europa, mut ganymede, mut callisto) =
@@ -117,7 +117,7 @@ pub fn main(data: crate::DataIn) -> String {
         // println!("after {step} steps:\n{io}\n{europa}\n{ganymede}\n{callisto}\n");
     }
 
-    (io.energy() + europa.energy() + ganymede.energy() + callisto.energy()).to_string()
+    Ok((io.energy() + europa.energy() + ganymede.energy() + callisto.energy()).to_string())
 }
 
 inventory::submit!(crate::AoCDay {

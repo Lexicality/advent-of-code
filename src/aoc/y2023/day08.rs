@@ -21,7 +21,7 @@ fn navigate<'a>(
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let raw_instructions = data
         .next()
         .unwrap()
@@ -72,7 +72,7 @@ pub fn main(data: crate::DataIn) -> String {
         let num_cycles = num_steps / num_instructions;
         ret *= num_cycles;
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

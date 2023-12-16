@@ -20,7 +20,7 @@ pub use crate::utils::grid::Grid;
 pub use crate::utils::infgrid::InfGrid;
 
 pub type DataIn<'a> = &'a mut dyn Iterator<Item = String>;
-pub type AoCDayFn = fn(DataIn) -> String;
+pub type AoCDayFn = fn(DataIn) -> AoCResult<String>;
 
 pub struct AoCDay {
     pub year: &'static str,

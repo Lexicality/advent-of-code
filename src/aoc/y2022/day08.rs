@@ -178,14 +178,14 @@ impl Display for Forest {
     }
 }
 
-pub fn main(data: &mut dyn Iterator<Item = String>) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let size = data.peek().unwrap().len();
     let mut forest = Forest::new(size, &mut data);
     println!("{}", forest);
     forest.flood();
     println!("{}", forest);
-    format!("{}", forest.get_visibilist())
+    Ok(forest.get_visibilist().to_string())
 }
 
 inventory::submit!(crate::AoCDay {

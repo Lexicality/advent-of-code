@@ -226,7 +226,7 @@ impl Display for Grid {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::new(data);
 
     println!("{}", grid);
@@ -238,7 +238,7 @@ pub fn main(data: crate::DataIn) -> String {
 
     while let Some(PotentialStep { coord, .. }) = queue.pop() {
         if grid.is_end(coord) {
-            return format!("{}", grid.get_cost(coord));
+            return Ok(grid.get_cost(coord).to_string());
         }
         let cost = grid.get_cost(coord) + 1;
         let neighbours: Vec<_> = grid.get_neighbours(coord).collect();

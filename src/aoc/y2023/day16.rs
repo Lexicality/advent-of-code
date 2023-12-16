@@ -93,7 +93,7 @@ fn energise(grid: &Grid<GridState>, first: LightStep) -> usize {
     seen.into_iter().map(|(pos, _)| pos).unique().count()
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
     );
@@ -117,13 +117,13 @@ pub fn main(data: crate::DataIn) -> String {
     }
 
     const NOT_THIS_ONE: LightStep = (Coord2D { x: 0, y: 0 }, Direction::East);
-    steps
+    Ok(steps
         .into_iter()
         .filter(|step| step != &NOT_THIS_ONE)
         .map(|step| energise(&grid, step))
         .max()
         .unwrap()
-        .to_string()
+        .to_string())
 }
 
 inventory::submit!(crate::AoCDay {

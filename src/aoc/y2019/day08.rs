@@ -3,7 +3,7 @@ use itertools::Itertools;
 const WIDTH: usize = 25;
 const HEIGHT: usize = 6;
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
     let mut base_layer: Option<Vec<char>> = None;
     for layer_iter in line.chars().rev().chunks(WIDTH * HEIGHT).into_iter() {
@@ -43,7 +43,7 @@ pub fn main(data: crate::DataIn) -> String {
         );
     }
     println!();
-    "".to_string()
+    Ok("".to_string())
 }
 
 inventory::submit!(crate::AoCDay {

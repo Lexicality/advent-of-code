@@ -93,7 +93,7 @@ impl CardQueue {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret: u64 = 0;
     let mut queue = CardQueue::new();
     for line in data {
@@ -107,7 +107,7 @@ pub fn main(data: crate::DataIn) -> String {
         }
         ret += count;
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

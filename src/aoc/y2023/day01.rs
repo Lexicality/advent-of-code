@@ -33,7 +33,7 @@ fn find_first(line: &str, nums: &[&str]) -> usize {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total = 0;
     for line in data {
         let backline: String = line.chars().rev().collect();
@@ -44,7 +44,7 @@ pub fn main(data: crate::DataIn) -> String {
         let value = first * 10 + last;
         total += value;
     }
-    format!("{total}")
+    Ok(total.to_string())
 }
 
 inventory::submit!(crate::AoCDay {

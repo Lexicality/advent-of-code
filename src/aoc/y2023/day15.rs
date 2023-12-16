@@ -15,7 +15,7 @@ fn find_target(lens: &str, target_box: &[(String, u32)]) -> Option<usize> {
         .map(|(i, _)| i)
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut boxes: Vec<Vec<(String, u32)>> = (0..=255).map(|_| Vec::new()).collect();
     for value in data.next().unwrap().split(',') {
         if value.ends_with('-') {
@@ -36,7 +36,7 @@ pub fn main(data: crate::DataIn) -> String {
         }
     }
 
-    boxes
+    Ok(boxes
         .into_iter()
         .enumerate()
         .map(|(i, data)| {
@@ -46,7 +46,7 @@ pub fn main(data: crate::DataIn) -> String {
                 .sum::<usize>()
         })
         .sum::<usize>()
-        .to_string()
+        .to_string())
 }
 
 inventory::submit!(crate::AoCDay {

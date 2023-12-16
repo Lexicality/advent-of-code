@@ -109,14 +109,14 @@ impl Game {
     }
 }
 
-pub fn main(data: crate::DataIn) -> String {
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     for line in data {
         let game: Game = line.parse().unwrap();
         println!("{game}");
         ret += game.power();
     }
-    ret.to_string()
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay {
