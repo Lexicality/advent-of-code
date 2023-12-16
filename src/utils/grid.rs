@@ -39,8 +39,8 @@ impl<Item> Grid<Item> {
     pub fn new_with_initialiser<F: Fn() -> Item>(width: u32, height: u32, init: F) -> Self {
         Self::validate_dimensions(width, height);
         Self {
-            grid: (0..=width)
-                .zip(0..=height)
+            grid: (0..width)
+                .cartesian_product(0..height)
                 .map(|(x, y)| ((x, y).try_into().unwrap(), init()))
                 .collect(),
             width,
@@ -174,7 +174,12 @@ impl<Item: Display> Display for Grid<Item> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.height as i32 {
             for x in 0..self.width as i32 {
-                self.grid.get(&(x, y).into()).unwrap().fmt(f)?;
+                self.grid
+                    .get(&(x, y).into())
+                    .unwrap_or_else(|| {
+                        panic!("Grid is missing a value at {x},{y}");
+                    })
+                    .fmt(f)?;
             }
             writeln!(f)?;
         }
@@ -201,5 +206,14 @@ impl<Item> FromIterator<(Coord2D, Item)> for Grid<Item> {
             width: max.x as u32 + 1,
             height: max.y as u32 + 1,
         }
+    }
+}
+
+impl<Item> IntoIterator for Grid<Item> {
+    type Item = (Coord2D, Item);
+    type IntoIter = std::collections::hash_map::IntoIter<Coord2D, Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.grid.into_iter()
     }
 }
