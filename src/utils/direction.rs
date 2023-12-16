@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::{AoCError, Coord2D};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Direction {
     North,
     East,
