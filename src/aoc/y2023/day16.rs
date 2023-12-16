@@ -73,14 +73,10 @@ impl GridState {
 
 type LightStep = (Coord2D, Direction);
 
-pub fn main(data: crate::DataIn) -> String {
-    let grid: Grid<GridState> = Grid::new_from_lines(
-        data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
-    );
-    println!("{grid}");
+fn energise(grid: &Grid<GridState>, first: LightStep) -> usize {
     let grid_cap = grid.grid.capacity();
     let mut big_steppe: VecDeque<LightStep> = VecDeque::with_capacity(grid_cap / 2);
-    big_steppe.push_back((Coord2D { x: 0, y: 0 }, Direction::East));
+    big_steppe.push_back(first);
     let mut seen: HashSet<LightStep> = HashSet::with_capacity(grid_cap);
     while let Some(step) = big_steppe.pop_front() {
         seen.insert(step);
@@ -94,10 +90,39 @@ pub fn main(data: crate::DataIn) -> String {
                 .filter(|step| grid.check_coord(&step.0) && !seen.contains(step)),
         )
     }
-    seen.into_iter()
-        .map(|(pos, _)| pos)
-        .unique()
-        .count()
+    seen.into_iter().map(|(pos, _)| pos).unique().count()
+}
+
+pub fn main(data: crate::DataIn) -> String {
+    let grid: Grid<GridState> = Grid::new_from_lines(
+        data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
+    );
+    println!("{grid}");
+
+    let mut steps: Vec<LightStep> =
+        Vec::with_capacity(grid.width as usize * 2 + grid.height as usize * 2);
+
+    for x in 0..grid.width as i32 {
+        let y = 0;
+        steps.push(((x, y).into(), Direction::South));
+        let y = grid.height as i32 - 1;
+        steps.push(((x, y).into(), Direction::North));
+    }
+
+    for y in 0..grid.height as i32 {
+        let x = 0;
+        steps.push(((x, y).into(), Direction::East));
+        let x = grid.width as i32 - 1;
+        steps.push(((x, y).into(), Direction::West));
+    }
+
+    const NOT_THIS_ONE: LightStep = (Coord2D { x: 0, y: 0 }, Direction::East);
+    steps
+        .into_iter()
+        .filter(|step| step != &NOT_THIS_ONE)
+        .map(|step| energise(&grid, step))
+        .max()
+        .unwrap()
         .to_string()
 }
 
