@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
+use std::time::Instant;
 
 use advent_of_code::{AoCDay, AoCDayFn, AoCError, AoCResult};
 
@@ -74,9 +75,15 @@ fn main() -> AoCResult<()> {
         funcs.func
     };
 
+    println!("=== {year} day {day} ===");
+    let start = Instant::now();
     let ret = func(&mut lines)?;
+    let end = Instant::now();
 
-    println!("=== Result ===");
+    println!(
+        "=== Result in {} ===",
+        humantime::format_duration(end.duration_since(start))
+    );
     println!("{}", ret);
     Ok(())
 }

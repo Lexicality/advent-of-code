@@ -12,6 +12,7 @@ license = "Apache-2.0"
 [dependencies]
 ansi_term = "0.12.1"
 clap = { version = "4.0.29", features = ["cargo"] }
+humantime = "2.1.0"
 inventory = "0.3.2"
 itertools = "0.10.5"
 lazy_static = "1.4.0"
