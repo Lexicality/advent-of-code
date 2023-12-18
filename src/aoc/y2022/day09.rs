@@ -1,21 +1,7 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
-use crate::{Coord2D, Direction};
-
-impl FromStr for Direction {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "U" => Ok(Direction::North),
-            "R" => Ok(Direction::East),
-            "D" => Ok(Direction::South),
-            "L" => Ok(Direction::West),
-            _ => Err(format!("Unknown direction {s}")),
-        }
-    }
-}
+use crate::{AoCError, Coord2D, Direction};
 
 struct Instruction {
     dir: Direction,
@@ -31,7 +17,7 @@ impl FromStr for Instruction {
             None => return Err(format!("Incorrectly formatted instruction {s}")),
         };
         Ok(Instruction {
-            dir: dir.parse()?,
+            dir: dir.parse().map_err(|e: AoCError| e.to_string())?,
             amt: amt.parse::<u64>().map_err(|e| e.to_string())?,
         })
     }

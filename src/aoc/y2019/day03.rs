@@ -15,13 +15,7 @@ impl FromStr for Instruction {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (dir, amt) = s.split_at(1);
         Ok(Instruction {
-            direction: match dir {
-                "U" => Direction::North,
-                "R" => Direction::East,
-                "D" => Direction::South,
-                "L" => Direction::West,
-                _ => return Err(AoCError::new(format!("Unknown direction {dir}"))),
-            },
+            direction: dir.parse()?,
             amount: amt
                 .parse::<u32>()
                 .map_err(|e| AoCError::new_with_cause("Invalid amount", e))?

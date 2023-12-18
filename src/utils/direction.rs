@@ -1,4 +1,5 @@
 use std::fmt::Display;
+use std::str::FromStr;
 
 use crate::{AoCError, Coord2D};
 
@@ -74,6 +75,25 @@ impl Display for Direction {
     }
 }
 
+impl FromStr for Direction {
+    type Err = AoCError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.len() == 1 {
+            let c = s.chars().next().unwrap();
+            c.try_into()
+        } else {
+            match s.to_lowercase().as_str() {
+                "north" => Ok(Self::North),
+                "east" => Ok(Self::East),
+                "south" => Ok(Self::South),
+                "west" => Ok(Self::West),
+                _ => Err(AoCError::new(format!("Unknown direction {s}"))),
+            }
+        }
+    }
+}
+
 impl TryFrom<Coord2D> for Direction {
     type Error = AoCError;
 
@@ -82,6 +102,20 @@ impl TryFrom<Coord2D> for Direction {
             Coord2D { x, y } if (x == 0) ^ (y == 0) => Ok(Direction::from_coord(value)),
             Coord2D { x: 0, y: 0 } => Err(AoCError::new("0, 0 has no direction")),
             _ => Err(AoCError::new("Diagonals are unsupported")),
+        }
+    }
+}
+
+impl TryFrom<char> for Direction {
+    type Error = AoCError;
+
+    fn try_from(value: char) -> Result<Self, Self::Error> {
+        match value.to_ascii_lowercase() {
+            'u' | 'n' => Ok(Direction::North),
+            'r' | 'e' => Ok(Direction::East),
+            'd' | 's' => Ok(Direction::South),
+            'l' | 'w' => Ok(Direction::West),
+            _ => Err(AoCError::new_from_char(value)),
         }
     }
 }
