@@ -217,3 +217,16 @@ impl From<Direction> for Coord2D {
         dir.to_coord()
     }
 }
+
+impl Ord for Coord2D {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        // Incredibly basic comparison - more numbers = more ord
+        (self.x + self.y).cmp(&(other.x + other.y))
+    }
+}
+
+impl PartialOrd for Coord2D {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}

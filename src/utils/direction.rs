@@ -3,7 +3,9 @@ use std::str::FromStr;
 
 use crate::{AoCError, Coord2D};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+// Implementing `ord` is meaningless because directions don't have magnitude, but
+// required for various tie-break shenanigans
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Direction {
     North,
     East,
