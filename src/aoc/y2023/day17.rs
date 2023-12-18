@@ -1,71 +1,43 @@
-use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
-use std::fmt::Display;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use itertools::Itertools;
 
-use crate::{
-    utils::direction::RotateDirection, CommonGrid, Coord2D, Coordinate, Direction, FlatGrid, Grid,
-};
+use crate::utils::astar;
+use crate::utils::direction::RotateDirection;
+use crate::{CommonGrid, Coord2D, Coordinate, Direction, FlatGrid, Grid};
 
 type NodeID = (Coord2D, Direction, u32);
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 struct Node {
     id: NodeID,
     neighbours: Vec<NodeID>,
-    cost: u32,
-    heuristic: u32,
+    cost: u64,
+    heuristic: u64,
 }
 
-impl Node {
-    fn new(id: NodeID, neighbours: Vec<NodeID>, cost: u32, heuristic: u32) -> Self {
-        Self {
-            id,
-            neighbours,
-            cost,
-            heuristic,
-        }
+struct Day17Provider {
+    all_nodes: HashMap<NodeID, Node>,
+    end: Coord2D,
+}
+
+impl astar::AStarProvider for Day17Provider {
+    type IDType = NodeID;
+
+    fn get_neighbours(&self, id: &Self::IDType) -> Box<dyn Iterator<Item = Self::IDType> + '_> {
+        Box::new(self.all_nodes.get(id).unwrap().neighbours.iter().copied())
     }
-}
 
-#[derive(Debug, PartialEq, Eq, Hash)]
-struct AStarNode<T> {
-    f_score: u32,
-    id: T,
-}
-
-impl<T: Ord> Ord for AStarNode<T> {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other
-            .f_score
-            .cmp(&self.f_score)
-            .then_with(|| self.id.cmp(&other.id))
+    fn cost(&self, id: &Self::IDType) -> u64 {
+        self.all_nodes.get(id).unwrap().cost
     }
-}
 
-impl<T: Ord> PartialOrd for AStarNode<T> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
+    fn heuristic(&self, id: &Self::IDType) -> u64 {
+        self.all_nodes.get(id).unwrap().heuristic
     }
-}
 
-enum FinalGridState {
-    Untouched(u32),
-    Trampled(Direction),
-}
-
-impl Display for FinalGridState {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Untouched(v) => v.fmt(f),
-            Self::Trampled(dir) => match dir {
-                Direction::North => '^',
-                Direction::East => '>',
-                Direction::South => 'v',
-                Direction::West => '<',
-            }
-            .fmt(f),
-        }
+    fn is_end(&self, id: &Self::IDType) -> bool {
+        id.0 == self.end
     }
 }
 
@@ -121,71 +93,27 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         .flatten()
         .filter(|(pos, _, steps)| grid.check_coord(pos) && (pos != &end || *steps >= MIN_STEPPE))
         .collect_vec();
-        let node = Node::new(
-            (pos, dir, steps),
-            next_steps,
-            grid.get(&pos).copied().unwrap(),
-            pos.distance(&end),
-        );
+        let node = Node {
+            id: (pos, dir, steps),
+            neighbours: next_steps,
+            cost: grid.get(&pos).copied().unwrap() as u64,
+            heuristic: pos.distance(&end) as u64,
+        };
         queue.extend(node.neighbours.iter().filter(|id| seen.insert(**id)));
         all_nodes.insert(node.id, node);
     }
     drop(queue);
     drop(seen);
 
-    // Thanks wikipedia
-    let capacity = all_nodes.len();
-    let mut came_from: HashMap<NodeID, NodeID> = HashMap::with_capacity(capacity);
-    let mut scores: HashMap<NodeID, u32> = HashMap::with_capacity(capacity);
-    let mut open_set: BinaryHeap<AStarNode<NodeID>> = BinaryHeap::with_capacity(capacity);
+    let provider = Day17Provider { all_nodes, end };
 
-    open_set.push(AStarNode {
-        id: start_id,
-        f_score: 0,
-    });
-    scores.insert(start_id, 0);
+    let res = astar::a_star(provider, start_id);
 
-    let mut grid: Grid<FinalGridState> = grid
+    Ok(res
         .into_iter()
-        .map(|(c, v)| (c, FinalGridState::Untouched(v)))
-        .collect();
-
-    while let Some(current) = open_set.pop() {
-        if current.id.0 == end {
-            let mut ret = 0;
-            let mut id = &current.id;
-            loop {
-                ret += all_nodes.get(id).unwrap().cost;
-                grid.set(id.0, FinalGridState::Trampled(id.1));
-                id = came_from.get(id).unwrap();
-                if id == &start_id {
-                    println!("{grid}");
-                    return Ok(ret.to_string());
-                }
-            }
-        }
-        let current_score = scores.get(&current.id).copied().unwrap();
-        for neighbour_id in all_nodes.get(&current.id).unwrap().neighbours.iter() {
-            let neighbour = all_nodes.get(neighbour_id).unwrap();
-            let maybe_score = current_score + neighbour.cost;
-            if scores
-                .get(neighbour_id)
-                .copied()
-                .is_some_and(|score| score <= maybe_score)
-            {
-                continue;
-            }
-            scores.insert(*neighbour_id, maybe_score);
-            came_from.insert(*neighbour_id, current.id);
-            let f_score = maybe_score + neighbour.heuristic;
-            open_set.push(AStarNode {
-                id: *neighbour_id,
-                f_score,
-            })
-        }
-    }
-
-    unreachable!();
+        .map(|id| grid.get(&id.0).unwrap())
+        .sum::<u32>()
+        .to_string())
 }
 
 inventory::submit!(crate::AoCDay {
