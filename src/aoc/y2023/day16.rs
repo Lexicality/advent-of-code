@@ -5,7 +5,7 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coord2D, Direction, Grid};
+use crate::{AoCError, CommonGrid, Coord2D, Direction, FlatGrid, Grid};
 
 enum GridState {
     Void,
@@ -97,7 +97,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
     );
-    println!("{grid}");
+    println!("{grid:#}");
 
     let mut steps: Vec<LightStep> =
         Vec::with_capacity(grid.width as usize * 2 + grid.height as usize * 2);

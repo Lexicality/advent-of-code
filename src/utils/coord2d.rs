@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coordinate, Direction};
+use crate::{AoCError, Coordinate, Coordinate2D, Direction};
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Default)]
 pub struct Coord2D {
     pub x: i32,
@@ -13,6 +13,7 @@ pub struct Coord2D {
 }
 
 impl Coordinate for Coord2D {
+    type Value = i32;
     type UnsignedLen = u32;
     type SignedLen = i64;
 
@@ -57,6 +58,16 @@ impl Coordinate for Coord2D {
 
     fn len_manhatten(&self) -> u32 {
         self.x.unsigned_abs() + self.y.unsigned_abs()
+    }
+}
+
+impl Coordinate2D for Coord2D {
+    fn to_tuple(self) -> (Self::Value, Self::Value) {
+        (self.x, self.y)
+    }
+
+    fn from_tuple(value: (Self::Value, Self::Value)) -> Self {
+        value.into()
     }
 }
 

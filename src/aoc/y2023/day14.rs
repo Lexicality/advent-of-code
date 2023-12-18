@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{AoCError, Grid};
+use crate::{AoCError, CommonGrid, FlatGrid, Grid};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum GridState {

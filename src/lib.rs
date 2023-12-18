@@ -1,6 +1,7 @@
 pub mod aoc;
 pub mod utils {
     pub mod bigcoord2d;
+    pub mod commongrid;
     pub mod coord;
     pub mod coord2d;
     pub mod coord3d;
@@ -10,7 +11,11 @@ pub mod utils {
     pub mod infgrid;
 }
 
+pub use crate::utils::commongrid::CommonGrid;
+pub use crate::utils::commongrid::DisplayGrid;
+pub use crate::utils::commongrid::FlatGrid;
 pub use crate::utils::coord::Coordinate;
+pub use crate::utils::coord::Coordinate2D;
 pub use crate::utils::coord2d::Coord2D;
 pub use crate::utils::coord3d::Coord3D;
 pub use crate::utils::direction::Direction;

@@ -2,7 +2,9 @@ use itertools::Itertools;
 use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 
-use crate::{Coord2D, Coordinate};
+use crate::{CommonGrid, Coord2D, Coordinate, DisplayGrid};
+
+use super::commongrid::FlatGrid;
 
 #[derive(Debug)]
 pub struct Grid<Item> {
@@ -13,29 +15,6 @@ pub struct Grid<Item> {
 
 #[allow(dead_code)]
 impl<Item> Grid<Item> {
-    pub fn new_from_iter<I>(data: I, width: u32) -> Self
-    where
-        I: Iterator<Item = Item>,
-    {
-        assert!(width <= (i32::MAX as u32), "grid is too wide!");
-        Self::new_from_lines(data.chunks(width as usize).into_iter())
-    }
-
-    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
-    where
-        Inner: IntoIterator<Item = Item>,
-        Iter: Iterator<Item = Inner>,
-    {
-        data.enumerate()
-            .flat_map(|(y, inner)| {
-                inner
-                    .into_iter()
-                    .enumerate()
-                    .map(move |(x, item)| ((x, y).try_into().unwrap(), item))
-            })
-            .collect()
-    }
-
     pub fn new_with_initialiser<F: Fn() -> Item>(width: u32, height: u32, init: F) -> Self {
         Self::validate_dimensions(width, height);
         Self {
@@ -120,32 +99,12 @@ impl<Item> Grid<Item> {
         self.grid.iter().find(predicate).map(|(coord, _)| *coord)
     }
 
-    pub fn len(&self) -> usize {
-        self.grid.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.grid.is_empty()
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = (&Coord2D, &Item)> {
         self.grid.iter()
     }
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&Coord2D, &mut Item)> {
         self.grid.iter_mut()
-    }
-
-    pub fn get(&self, k: &Coord2D) -> Option<&Item> {
-        self.grid.get(k)
-    }
-
-    pub fn get_mut(&mut self, k: &Coord2D) -> Option<&mut Item> {
-        self.grid.get_mut(k)
-    }
-
-    pub fn set(&mut self, k: Coord2D, v: Item) -> Option<Item> {
-        self.grid.insert(k, v)
     }
 }
 
@@ -172,18 +131,7 @@ impl<Item: Clone> Grid<Item> {
 
 impl<Item: Display> Display for Grid<Item> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for y in 0..self.height as i32 {
-            for x in 0..self.width as i32 {
-                self.grid
-                    .get(&(x, y).into())
-                    .unwrap_or_else(|| {
-                        panic!("Grid is missing a value at {x},{y}");
-                    })
-                    .fmt(f)?;
-            }
-            writeln!(f)?;
-        }
-        Ok(())
+        self.do_fmt(f)
     }
 }
 
@@ -215,5 +163,50 @@ impl<Item> IntoIterator for Grid<Item> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.grid.into_iter()
+    }
+}
+
+impl<Item> CommonGrid<Coord2D, Item> for Grid<Item> {
+    fn len(&self) -> usize {
+        self.grid.len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.grid.is_empty()
+    }
+
+    fn get(&self, k: &Coord2D) -> Option<&Item> {
+        self.grid.get(k)
+    }
+
+    fn get_mut(&mut self, k: &Coord2D) -> Option<&mut Item> {
+        self.grid.get_mut(k)
+    }
+
+    fn set(&mut self, k: Coord2D, v: Item) -> Option<Item> {
+        self.grid.insert(k, v)
+    }
+
+    fn get_or_set(&mut self, k: &Coord2D, default: Item) -> &Item {
+        if !self.grid.contains_key(k) {
+            self.set(k.to_owned(), default);
+        }
+        self.get(k).unwrap()
+    }
+
+    fn max_key(&self) -> Coord2D {
+        (self.width as i32 - 1, self.height as i32 - 1).into()
+    }
+
+    fn min_key(&self) -> Coord2D {
+        (0, 0).into()
+    }
+}
+
+impl<Item> FlatGrid<Coord2D, Item> for Grid<Item> {}
+
+impl<Item: Display> DisplayGrid<Coord2D, Item> for Grid<Item> {
+    fn get_for_display(&self, key: &Coord2D) -> Option<&dyn Display> {
+        self.get(key).map(|i| i as &dyn Display)
     }
 }

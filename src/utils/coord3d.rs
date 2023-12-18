@@ -14,6 +14,7 @@ pub struct Coord3D {
 }
 
 impl Coordinate for Coord3D {
+    type Value = i32;
     type UnsignedLen = u32;
     type SignedLen = i64;
 

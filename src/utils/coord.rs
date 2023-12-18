@@ -1,8 +1,14 @@
 use std::hash::Hash;
 
-pub trait Coordinate: Hash + Eq + Copy {
-    type UnsignedLen;
-    type SignedLen;
+use num::{FromPrimitive, PrimInt};
+
+pub trait Coordinate: Hash + Eq + Copy
+where
+    Self: Sized,
+{
+    type Value: PrimInt + FromPrimitive;
+    type UnsignedLen: PrimInt;
+    type SignedLen: PrimInt;
 
     const MAX: Self;
     const MIN: Self;
@@ -20,4 +26,13 @@ pub trait Coordinate: Hash + Eq + Copy {
     fn len_sqr(&self) -> Self::SignedLen;
 
     fn len_manhatten(&self) -> Self::UnsignedLen;
+}
+
+pub trait Coordinate2D: Coordinate
+where
+    Self: Sized,
+{
+    fn to_tuple(self) -> (Self::Value, Self::Value);
+
+    fn from_tuple(value: (Self::Value, Self::Value)) -> Self;
 }

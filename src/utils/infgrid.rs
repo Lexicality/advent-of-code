@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-use itertools::Itertools;
-use num::Signed;
+use crate::{CommonGrid, Coord2D, Coordinate, Coordinate2D, DisplayGrid};
 
-use crate::{Coord2D, Coordinate};
+use super::commongrid::FlatGrid;
 
 #[derive(Debug, Default, Clone)]
 pub struct InfGrid<Item, Key: Coordinate = Coord2D> {
@@ -20,23 +19,6 @@ impl<Key: Coordinate, Item> InfGrid<Item, Key> {
             min: Key::MAX,
             max: Key::MIN,
         }
-    }
-
-    pub fn get(&self, k: &Key) -> Option<&Item> {
-        self.grid.get(k)
-    }
-
-    pub fn set(&mut self, k: Key, v: Item) {
-        self.min = self.min.get_min(&k);
-        self.max = self.max.get_max(&k);
-        self.grid.insert(k, v);
-    }
-
-    pub fn get_or_set(&mut self, k: &Key, default: Item) -> &Item {
-        if !self.grid.contains_key(k) {
-            self.set(k.to_owned(), default);
-        }
-        self.get(k).unwrap()
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&Key, &Item)> {
@@ -56,87 +38,7 @@ impl<Key: Coordinate, Item: Default> InfGrid<Item, Key> {
 
 impl<Item: Display> Display for InfGrid<Item, Coord2D> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.grid.is_empty() {
-            return write!(f, "[empty grid]");
-        }
-        let void = f.fill();
-        // Iterator crimes thanks to Orman
-        let mut forward_range;
-        let mut back_range;
-        let yrange: &mut dyn Iterator<Item = i32> = if f.sign_minus() {
-            back_range = (self.min.y..=self.max.y).rev();
-            &mut back_range
-        } else {
-            forward_range = self.min.y..=self.max.y;
-            &mut forward_range
-        };
-        let mut left_pad = 0;
-        if f.alternate() {
-            let ymin = format!("{}", self.min.y).len();
-            let ymax = format!("{}", self.max.y).len();
-            left_pad = ymin.max(ymax);
-            let xmin = format!("{}", self.min.x).len();
-            let xmax = format!("{}", self.max.x).len();
-            let top_pad = xmin.max(xmax);
-            let char_iter = (self.min.x..=self.max.x).map(|x| {
-                if x >= 0 {
-                    format!("{x: >top_pad$}")
-                } else {
-                    format!("{: >top_pad$}", format!("╷{}", x.abs()))
-                }
-            });
-            // Please don't judge me
-            let x_axis: Vec<Vec<char>> = match top_pad {
-                1 => {
-                    let (a,) = char_iter
-                        .map(|s| s.chars().collect_tuple().unwrap())
-                        .multiunzip();
-                    vec![a]
-                }
-                2 => {
-                    let (a, b) = char_iter
-                        .map(|s| s.chars().collect_tuple().unwrap())
-                        .multiunzip();
-                    vec![a, b]
-                }
-                3 => {
-                    let (a, b, c) = char_iter
-                        .map(|s| s.chars().collect_tuple().unwrap())
-                        .multiunzip();
-                    vec![a, b, c]
-                }
-                _ => panic!("Can't format x axis values with more than 3 characters"),
-            };
-            for line in x_axis {
-                writeln!(
-                    f,
-                    "{: >left_pad$} {}",
-                    ' ',
-                    line.into_iter().collect::<String>()
-                )?;
-            }
-            writeln!(
-                f,
-                "{: >left_pad$}┌{:─>xlen$}",
-                ' ',
-                '─',
-                xlen = self.max.x.abs_sub(&self.min.x) as usize + 1
-            )?;
-        }
-
-        for y in yrange {
-            if f.alternate() {
-                write!(f, "{y: >left_pad$}│")?;
-            }
-            for x in self.min.x..=self.max.x {
-                self.get(&(x, y).into())
-                    .map(|i| i as &dyn Display)
-                    .unwrap_or(&void)
-                    .fmt(f)?;
-            }
-            writeln!(f)?;
-        }
-        Ok(())
+        self.do_fmt(f)
     }
 }
 
@@ -178,5 +80,58 @@ impl<Item> InfGrid<Item, Coord2D> {
                     .map(move |(x, item)| ((x, y).try_into().unwrap(), item))
             })
             .collect()
+    }
+}
+
+impl<Item, Key: Coordinate> CommonGrid<Key, Item> for InfGrid<Item, Key> {
+    fn get(&self, k: &Key) -> Option<&Item> {
+        self.grid.get(k)
+    }
+
+    fn get_mut(&mut self, k: &Key) -> Option<&mut Item> {
+        self.grid.get_mut(k)
+    }
+
+    fn set(&mut self, k: Key, v: Item) -> Option<Item> {
+        self.min = self.min.get_min(&k);
+        self.max = self.max.get_max(&k);
+        self.grid.insert(k, v)
+    }
+
+    fn get_or_set(&mut self, k: &Key, default: Item) -> &Item {
+        if !self.grid.contains_key(k) {
+            self.set(k.to_owned(), default);
+        }
+        self.get(k).unwrap()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.grid.is_empty()
+    }
+
+    fn len(&self) -> usize {
+        self.grid.len()
+    }
+
+    fn max_key(&self) -> Key {
+        self.max
+    }
+
+    fn min_key(&self) -> Key {
+        self.min
+    }
+}
+
+impl<Item, Key: Coordinate2D> FlatGrid<Key, Item> for InfGrid<Item, Key> {}
+
+// impl<Item, Key: Coordinate2D> DisplayGrid<Key, Item> for InfGrid<Item, Key> {
+//     fn get_for_display(&self, key: &Key) -> Option<&dyn Display> {
+//         self.get(key).map(&'#')
+//     }
+// }
+
+impl<Item: Display, Key: Coordinate2D> DisplayGrid<Key, Item> for InfGrid<Item, Key> {
+    fn get_for_display(&self, key: &Key) -> Option<&dyn Display> {
+        self.get(key).map(|i| i as &dyn Display)
     }
 }

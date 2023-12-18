@@ -1,4 +1,4 @@
-use crate::{Coord2D, Coordinate};
+use crate::{CommonGrid, Coord2D, Coordinate, FlatGrid};
 use ansi_term::{Color, Style};
 use lazy_static::lazy_static;
 use std::cmp;
@@ -160,8 +160,7 @@ impl Grid {
         let mut ret = Self {
             grid: crate::Grid::new_from_iter(
                 data.flat_map(|l| l.chars().map(Step::new).collect::<Vec<_>>()),
-                //
-                width as u32,
+                width as i32,
             ),
             end: Default::default(),
         };

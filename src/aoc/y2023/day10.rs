@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coord2D, Direction, Grid};
+use crate::{AoCError, CommonGrid, Coord2D, Direction, FlatGrid, Grid};
 
 #[derive(Debug)]
 enum PipeSegment {

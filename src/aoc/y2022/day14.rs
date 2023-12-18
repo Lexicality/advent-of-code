@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{Coord2D, Coordinate, Direction, InfGrid};
+use crate::{CommonGrid, Coord2D, Coordinate, Direction, InfGrid};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum GridData {
@@ -97,7 +97,9 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     loop {
         let sandpos = settle_sand(sand_start, floor_y, &grid);
         match sandpos {
-            Some(pos) => grid.set(pos, GridData::Sand),
+            Some(pos) => {
+                grid.set(pos, GridData::Sand);
+            }
             None => break,
         }
         i += 1;

@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use itertools::Itertools;
 
-use crate::Grid;
+use crate::{CommonGrid, FlatGrid, Grid};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum MirrorRes {

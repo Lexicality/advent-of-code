@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{AoCError, AoCResult, Coord2D, Direction, InfGrid};
+use crate::{AoCError, AoCResult, CommonGrid, Coord2D, Direction, InfGrid};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(dead_code)]

@@ -1,6 +1,8 @@
 use std::fmt::Display;
 
-use crate::{utils::direction::RotateDirection, AoCResult, Coord2D, Direction, InfGrid};
+use crate::{
+    utils::direction::RotateDirection, AoCResult, CommonGrid, Coord2D, Direction, InfGrid,
+};
 
 use super::computer::{Computer, RunState};
 
