@@ -2,6 +2,7 @@ use std::{collections::HashSet, fmt::Display};
 
 use crate::{AoCError, CharGrid, CommonGrid, Coord2D, Grid};
 
+#[allow(dead_code)]
 enum GridState {
     Start,
     Garden,
