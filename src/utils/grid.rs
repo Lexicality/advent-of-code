@@ -2,9 +2,7 @@ use itertools::Itertools;
 use std::collections::HashMap;
 use std::fmt::{Debug, Display};
 
-use crate::{CommonGrid, Coord2D, Coordinate, DisplayGrid};
-
-use super::commongrid::FlatGrid;
+use crate::{CharGrid, CommonGrid, Coord2D, Coordinate, DisplayGrid, FlatGrid};
 
 #[derive(Debug)]
 pub struct Grid<Item> {
@@ -85,6 +83,19 @@ impl<Item> Grid<Item> {
             })
             .map(move |c| c + coord)
             .filter(|c| self.check_coord(c))
+    }
+
+    pub fn get_neighbours_filtered<'a, P>(
+        &'a self,
+        coord: Coord2D,
+        diagonal: bool,
+        predicate: P,
+    ) -> impl Iterator<Item = Coord2D> + 'a
+    where
+        P: Fn(&Coord2D, &Item) -> bool + 'a,
+    {
+        self.get_neighbours(coord, diagonal)
+            .filter(move |coord| predicate(coord, self.get(coord).unwrap()))
     }
 
     pub fn keys(&self) -> impl Iterator<Item = Coord2D> {
@@ -204,6 +215,7 @@ impl<Item> CommonGrid<Coord2D, Item> for Grid<Item> {
 }
 
 impl<Item> FlatGrid<Coord2D, Item> for Grid<Item> {}
+impl<Item: TryFrom<char>> CharGrid<Coord2D, Item> for Grid<Item> {}
 
 impl<Item: Display> DisplayGrid<Coord2D, Item> for Grid<Item> {
     fn get_for_display(&self, key: &Coord2D) -> Option<&dyn Display> {

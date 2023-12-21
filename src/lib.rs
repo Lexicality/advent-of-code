@@ -12,6 +12,7 @@ pub mod utils {
     pub mod infgrid;
 }
 
+pub use crate::utils::commongrid::CharGrid;
 pub use crate::utils::commongrid::CommonGrid;
 pub use crate::utils::commongrid::DisplayGrid;
 pub use crate::utils::commongrid::FlatGrid;

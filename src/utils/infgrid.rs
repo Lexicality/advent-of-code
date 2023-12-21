@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-use crate::{CommonGrid, Coord2D, Coordinate, Coordinate2D, DisplayGrid};
+use crate::{CharGrid, CommonGrid, Coord2D, Coordinate, Coordinate2D, DisplayGrid};
 
 use super::commongrid::FlatGrid;
 
@@ -123,6 +123,7 @@ impl<Item, Key: Coordinate> CommonGrid<Key, Item> for InfGrid<Item, Key> {
 }
 
 impl<Item, Key: Coordinate2D> FlatGrid<Key, Item> for InfGrid<Item, Key> {}
+impl<Item: TryFrom<char>, Key: Coordinate2D> CharGrid<Key, Item> for InfGrid<Item, Key> {}
 
 // impl<Item, Key: Coordinate2D> DisplayGrid<Key, Item> for InfGrid<Item, Key> {
 //     fn get_for_display(&self, key: &Key) -> Option<&dyn Display> {

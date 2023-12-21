@@ -51,6 +51,19 @@ where
     }
 }
 
+pub trait CharGrid<Key, Item>: FlatGrid<Key, Item>
+where
+    Key: Coordinate2D,
+    Item: TryFrom<char>,
+{
+    fn new_from_chars(data: crate::DataIn) -> Result<Self, Item::Error> {
+        let lines: Vec<Vec<Item>> = data
+            .map(|line| line.chars().map(|c| c.try_into()).try_collect())
+            .try_collect()?;
+        Ok(Self::new_from_lines(lines.into_iter()))
+    }
+}
+
 pub trait DisplayGrid<Key: Coordinate2D, Item>: CommonGrid<Key, Item> {
     fn get_for_display(&self, key: &Key) -> Option<&dyn Display>;
 
