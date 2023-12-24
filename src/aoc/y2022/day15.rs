@@ -9,7 +9,7 @@ use crate::{utils::bigcoord2d::BigCoord2D, Coordinate};
 struct Reading {
     sensor: BigCoord2D,
     beacon: BigCoord2D,
-    distance: u64,
+    distance: i64,
 }
 
 impl Reading {
@@ -45,7 +45,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             (
                 min.get_min(&reading.sensor).get_min(&reading.beacon),
                 max.get_max(&reading.sensor).get_max(&reading.beacon),
-                cmp::max(maxdist, reading.distance as i64),
+                cmp::max(maxdist, reading.distance),
             )
         },
     );

@@ -14,9 +14,7 @@ pub struct Coord3D {
 }
 
 impl Coordinate for Coord3D {
-    type Value = i32;
-    type UnsignedLen = u32;
-    type SignedLen = i64;
+    type Type = i32;
 
     const MAX: Self = Self {
         x: i32::MAX,
@@ -29,10 +27,8 @@ impl Coordinate for Coord3D {
         z: i32::MIN,
     };
 
-    fn distance(&self, other: &Self) -> u32 {
-        (self.x - other.x).unsigned_abs()
-            + (self.y - other.y).unsigned_abs()
-            + (self.z - other.z).unsigned_abs()
+    fn distance(&self, other: &Self) -> Self::Type {
+        (self.x - other.x).abs() + (self.y - other.y).abs() + (self.z - other.z).abs()
     }
 
     fn get_max(&self, other: &Self) -> Self {
@@ -59,14 +55,15 @@ impl Coordinate for Coord3D {
         (self.len_sqr() as f64).sqrt()
     }
 
-    fn len_sqr(&self) -> i64 {
-        self.x.pow(2) as i64 + self.y.pow(2) as i64 + self.z.pow(2) as i64
+    fn len_sqr(&self) -> Self::Type {
+        self.x.pow(2) + self.y.pow(2) + self.z.pow(2)
     }
 
-    fn len_manhatten(&self) -> u32 {
-        self.x.unsigned_abs() + self.y.unsigned_abs() + self.z.unsigned_abs()
+    fn len_manhatten(&self) -> Self::Type {
+        self.x.abs() + self.y.abs() + self.z.abs()
     }
 }
+type CoordType = <Coord3D as Coordinate>::Type;
 
 impl FromStr for Coord3D {
     type Err = AoCError;
@@ -151,7 +148,7 @@ impl<T: num::NumCast> ops::Mul<T> for Coord3D {
     type Output = Option<Self>;
 
     fn mul(self, rhs: T) -> Self::Output {
-        let rhs: i32 = num::NumCast::from(rhs)?;
+        let rhs: CoordType = num::NumCast::from(rhs)?;
         Some(Self {
             x: rhs * self.x,
             y: rhs * self.y,
@@ -166,9 +163,9 @@ impl<T: num::NumCast> ops::Div<T> for Coord3D {
     fn div(self, rhs: T) -> Self::Output {
         let rhs: f64 = num::NumCast::from(rhs)?;
         Some(Self {
-            x: ((self.x as f64) / rhs).floor() as i32,
-            y: ((self.y as f64) / rhs).floor() as i32,
-            z: ((self.z as f64) / rhs).floor() as i32,
+            x: ((self.x as f64) / rhs).floor() as CoordType,
+            y: ((self.y as f64) / rhs).floor() as CoordType,
+            z: ((self.z as f64) / rhs).floor() as CoordType,
         })
     }
 }

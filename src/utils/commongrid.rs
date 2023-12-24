@@ -31,10 +31,10 @@ where
     {
         data.enumerate()
             .flat_map(|(y, inner)| {
-                let y = Key::Value::from_usize(y).expect("Too many lines");
+                let y = Key::Type::from_usize(y).expect("Too many lines");
                 inner.into_iter().enumerate().map(move |(x, item)| {
                     (
-                        Key::from_tuple((Key::Value::from_usize(x).expect("Row is too big"), y)),
+                        Key::from_tuple((Key::Type::from_usize(x).expect("Row is too big"), y)),
                         item,
                     )
                 })
@@ -42,7 +42,7 @@ where
             .collect()
     }
 
-    fn new_from_iter<I>(data: I, width: Key::Value) -> Self
+    fn new_from_iter<I>(data: I, width: Key::Type) -> Self
     where
         I: Iterator<Item = Item>,
     {
@@ -160,8 +160,8 @@ pub trait DisplayGrid<Key: Coordinate2D, Item>: CommonGrid<Key, Item> {
             }
             for x in min.x..=max.x {
                 self.get_for_display(&Key::from_tuple((
-                    Key::Value::from_i64(x).expect("Key cannot go out of bounds"),
-                    Key::Value::from_i64(y).expect("Key cannot go out of bounds"),
+                    Key::Type::from_i64(x).expect("Key cannot go out of bounds"),
+                    Key::Type::from_i64(y).expect("Key cannot go out of bounds"),
                 )))
                 .unwrap_or(&void)
                 .fmt(f)?;

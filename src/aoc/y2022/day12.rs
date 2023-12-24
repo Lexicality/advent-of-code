@@ -73,7 +73,7 @@ impl StepHeight {
 
 struct Step {
     height: StepHeight,
-    cost: u32,
+    cost: i32,
     parent: Option<Coord2D>,
     visited: bool,
 }
@@ -82,7 +82,7 @@ impl Step {
     fn new(step: char) -> Self {
         Step {
             height: StepHeight::new(step),
-            cost: u32::MAX,
+            cost: i32::MAX,
             parent: None,
             visited: false,
         }
@@ -123,7 +123,7 @@ impl Display for Step {
 }
 
 struct PotentialStep {
-    heuristic: u32,
+    heuristic: i32,
     coord: Coord2D,
 }
 
@@ -176,7 +176,7 @@ impl Grid {
         ret
     }
 
-    fn get_start(&self) -> impl Iterator<Item = (Coord2D, u32)> + '_ {
+    fn get_start(&self) -> impl Iterator<Item = (Coord2D, i32)> + '_ {
         self.grid
             .iter()
             .filter(|(_, step)| step.is_start())
@@ -195,7 +195,7 @@ impl Grid {
         self.grid.len()
     }
 
-    fn get_cost(&self, coord: Coord2D) -> u32 {
+    fn get_cost(&self, coord: Coord2D) -> i32 {
         self.get(&coord).unwrap().cost
     }
 
@@ -214,7 +214,7 @@ impl Grid {
             .filter(|coord| step.can_move_to(self.get(coord).unwrap()))
     }
 
-    fn heuristic(&self, coord: &Coord2D) -> u32 {
+    fn heuristic(&self, coord: &Coord2D) -> i32 {
         self.end.distance(coord)
     }
 }

@@ -70,7 +70,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 
     // println!("{starscape:#}");
 
-    let ret: u64 = starscape
+    let ret: i64 = starscape
         .grid
         .keys()
         .combinations(2)

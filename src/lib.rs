@@ -2,6 +2,7 @@ pub mod aoc;
 pub mod utils {
     pub mod astar;
     pub mod bigcoord2d;
+    pub mod bigcoord3d;
     pub mod commongrid;
     pub mod coord;
     pub mod coord2d;
@@ -12,6 +13,8 @@ pub mod utils {
     pub mod infgrid;
 }
 
+pub use crate::utils::bigcoord2d::BigCoord2D;
+pub use crate::utils::bigcoord3d::BigCoord3D;
 pub use crate::utils::commongrid::CharGrid;
 pub use crate::utils::commongrid::CommonGrid;
 pub use crate::utils::commongrid::DisplayGrid;

@@ -13,9 +13,7 @@ pub struct Coord2D {
 }
 
 impl Coordinate for Coord2D {
-    type Value = i32;
-    type UnsignedLen = u32;
-    type SignedLen = i64;
+    type Type = i32;
 
     const MAX: Self = Self {
         x: i32::MAX,
@@ -26,8 +24,8 @@ impl Coordinate for Coord2D {
         y: i32::MIN,
     };
 
-    fn distance(&self, other: &Self) -> u32 {
-        (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
+    fn distance(&self, other: &Self) -> Self::Type {
+        (self.x - other.x).abs() + (self.y - other.y).abs()
     }
 
     fn get_max(&self, other: &Self) -> Self {
@@ -52,21 +50,22 @@ impl Coordinate for Coord2D {
         (self.len_sqr() as f64).sqrt()
     }
 
-    fn len_sqr(&self) -> i64 {
-        self.x.pow(2) as i64 + self.y.pow(2) as i64
+    fn len_sqr(&self) -> Self::Type {
+        self.x.pow(2) + self.y.pow(2)
     }
 
-    fn len_manhatten(&self) -> u32 {
-        self.x.unsigned_abs() + self.y.unsigned_abs()
+    fn len_manhatten(&self) -> Self::Type {
+        self.x.abs() + self.y.abs()
     }
 }
+type CoordType = <Coord2D as Coordinate>::Type;
 
 impl Coordinate2D for Coord2D {
-    fn to_tuple(self) -> (Self::Value, Self::Value) {
+    fn to_tuple(self) -> (Self::Type, Self::Type) {
         (self.x, self.y)
     }
 
-    fn from_tuple(value: (Self::Value, Self::Value)) -> Self {
+    fn from_tuple(value: (Self::Type, Self::Type)) -> Self {
         value.into()
     }
 }
@@ -144,7 +143,7 @@ impl<T: num::NumCast> ops::Mul<T> for Coord2D {
     type Output = Option<Self>;
 
     fn mul(self, rhs: T) -> Self::Output {
-        let rhs: i32 = num::NumCast::from(rhs)?;
+        let rhs: CoordType = num::NumCast::from(rhs)?;
         Some(Self {
             x: rhs * self.x,
             y: rhs * self.y,
@@ -158,8 +157,8 @@ impl<T: num::NumCast> ops::Div<T> for Coord2D {
     fn div(self, rhs: T) -> Self::Output {
         let rhs: f64 = num::NumCast::from(rhs)?;
         Some(Self {
-            x: ((self.x as f64) / rhs).floor() as i32,
-            y: ((self.y as f64) / rhs).floor() as i32,
+            x: ((self.x as f64) / rhs).floor() as CoordType,
+            y: ((self.y as f64) / rhs).floor() as CoordType,
         })
     }
 }
@@ -184,8 +183,8 @@ impl Display for Coord2D {
     }
 }
 
-impl From<(i32, i32)> for Coord2D {
-    fn from((x, y): (i32, i32)) -> Self {
+impl From<(CoordType, CoordType)> for Coord2D {
+    fn from((x, y): (CoordType, CoordType)) -> Self {
         Self { x, y }
     }
 }

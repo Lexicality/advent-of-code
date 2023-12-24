@@ -71,8 +71,8 @@ fn wire_it_up(
     Ok(())
 }
 
-fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResult<u32> {
-    let mut retdata = InfGrid::<u32>::new();
+fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResult<i32> {
+    let mut retdata = InfGrid::<i32>::new();
     for instructions in [first, second].iter() {
         let instructions: Vec<Instruction> = instructions
             .split(',')
