@@ -1,3 +1,5 @@
+use itertools::{FoldWhile, Itertools};
+
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(data
         .next()
@@ -8,7 +10,17 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             ')' => -1,
             _ => unreachable!(),
         })
-        .sum::<i32>()
+        .enumerate()
+        .fold_while((0, 0), |(_, sum), (i, v)| {
+            let res = sum + v;
+            if res >= 0 {
+                FoldWhile::Continue((0, res))
+            } else {
+                FoldWhile::Done((i + 1, 0))
+            }
+        })
+        .into_inner()
+        .0
         .to_string())
 }
 
