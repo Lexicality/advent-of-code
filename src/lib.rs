@@ -40,3 +40,12 @@ pub struct AoCDay {
 }
 
 inventory::collect!(AoCDay);
+
+pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
+    for line in data {
+        println!("Example: {line}");
+        let res = main(&mut vec![line].into_iter())?;
+        println!("Result: {res}\n===");
+    }
+    Ok("".to_owned())
+}

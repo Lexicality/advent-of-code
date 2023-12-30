@@ -113,10 +113,10 @@ impl TryFrom<char> for Direction {
 
     fn try_from(value: char) -> Result<Self, Self::Error> {
         match value.to_ascii_lowercase() {
-            'u' | 'n' => Ok(Direction::North),
-            'r' | 'e' => Ok(Direction::East),
-            'd' | 's' => Ok(Direction::South),
-            'l' | 'w' => Ok(Direction::West),
+            'u' | 'n' | '^' => Ok(Direction::North),
+            'r' | 'e' | '>' => Ok(Direction::East),
+            'd' | 's' | 'v' => Ok(Direction::South),
+            'l' | 'w' | '<' => Ok(Direction::West),
             _ => Err(AoCError::new_from_char(value)),
         }
     }
