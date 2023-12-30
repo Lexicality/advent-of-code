@@ -11,11 +11,20 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut seen = HashSet::with_capacity(dirs.len());
     let start: Coord2D = Default::default();
     seen.insert(start);
-    let _pos = dirs.into_iter().fold(start, |mut pos, dir| {
+    dirs.iter().step_by(2).fold(start, |mut pos, dir| {
         pos += dir.to_coord();
         seen.insert(pos);
         pos
     });
+
+    dirs.into_iter()
+        .skip(1)
+        .step_by(2)
+        .fold(start, |mut pos, dir| {
+            pos += dir.to_coord();
+            seen.insert(pos);
+            pos
+        });
 
     Ok(seen.len().to_string())
 }
