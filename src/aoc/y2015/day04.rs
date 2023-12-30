@@ -8,7 +8,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         let mut hasher = hasher.clone();
         hasher.update(&i);
         let result = hasher.finalize();
-        if result[0] == 0 && result[1] == 0 && result[2] < 0x10 {
+        if result[0] == 0 && result[1] == 0 && result[2] == 0 {
             return Ok(i);
         }
     }
