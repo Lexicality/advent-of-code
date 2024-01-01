@@ -1,19 +1,30 @@
-use itertools::Itertools;
+use std::collections::HashSet;
 
-const NAUGHTY_STRINGS: [&str; 4] = ["ab", "cd", "pq", "xy"];
-const VOWELS: [char; 5] = ['a', 'o', 'e', 'u', 'i'];
+use itertools::Itertools;
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret = data
         .filter(|line| {
-            for naughty in NAUGHTY_STRINGS.iter() {
-                if line.contains(naughty) {
-                    return false;
+            let trips = line.chars().tuple_windows().any(|(a, _, c)| a == c);
+            if !trips {
+                return false;
+            }
+            let unique_pairs: HashSet<_> = line
+                .chars()
+                .tuple_windows()
+                .map(|(a, b)| format!("{a}{b}"))
+                .collect();
+
+            for pair in unique_pairs.into_iter() {
+                let a = line.find(&pair);
+                let b = line.rfind(&pair);
+                if let (Some(first), Some(last)) = (a, b) {
+                    if last > first + 1 {
+                        return true;
+                    }
                 }
             }
-            let vowels = line.chars().filter(|c| VOWELS.contains(c)).count() >= 3;
-            let doubles = line.chars().tuple_windows().any(|(a, b)| a == b);
-            vowels && doubles
+            false
         })
         .count();
     Ok(ret.to_string())
