@@ -181,7 +181,7 @@ struct Part {
 }
 
 impl Part {
-    fn to_rating(self) -> u32 {
+    fn to_rating(&self) -> u32 {
         self.x + self.m + self.a + self.s
     }
 }
