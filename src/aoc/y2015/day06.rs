@@ -25,11 +25,11 @@ impl FromStr for Action {
 }
 
 impl Action {
-    fn act(&self, value: bool) -> bool {
+    fn act(&self, value: u32) -> u32 {
         match self {
-            Self::TurnOn => true,
-            Self::TurnOff => false,
-            Self::Toggle => !value,
+            Self::TurnOn => value.checked_add(1).expect("u32 overflow!!"),
+            Self::TurnOff => value.saturating_sub(1),
+            Self::Toggle => value.checked_add(2).expect("u32 overflow!!"),
         }
     }
 }
@@ -59,7 +59,7 @@ impl FromStr for Command {
 }
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut grid = Grid::<bool>::new_filled(1000, 1000, false);
+    let mut grid = Grid::<u32>::new_filled(1000, 1000, 0);
     for command in data.map(|line| line.parse()) {
         let command: Command = command?;
         for x in command.start.x..=command.end.x {
@@ -69,7 +69,11 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             }
         }
     }
-    Ok(grid.into_iter().filter(|(_, v)| *v).count().to_string())
+    Ok(grid
+        .into_iter()
+        .map(|(_, v)| v as u64)
+        .sum::<u64>()
+        .to_string())
 }
 
 inventory::submit!(crate::AoCDay::mew("2015", "6", main));
