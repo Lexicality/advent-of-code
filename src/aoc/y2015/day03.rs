@@ -33,9 +33,9 @@ pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
     crate::multi_line_example(data, main)
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2015",
-    day: "3",
-    func: main,
-    example_func: Some(main_example),
-});
+inventory::submit!(crate::AoCDay::mew_with_example(
+    "2015",
+    "3",
+    main,
+    main_example
+));

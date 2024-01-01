@@ -102,9 +102,4 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(visited.len().to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2022",
-    day: "9",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2022", "9", main));

@@ -172,9 +172,4 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(volcano.pressure_released.to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2022",
-    day: "16",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2022", "16", main));

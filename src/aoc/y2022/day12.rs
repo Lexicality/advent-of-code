@@ -262,9 +262,4 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     panic!("no path to exit");
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2022",
-    day: "12",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2022", "12", main));

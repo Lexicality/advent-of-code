@@ -75,9 +75,9 @@ pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
     submain(data, 6)
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2023",
-    day: "21",
-    func: main,
-    example_func: Some(main_example),
-});
+inventory::submit!(crate::AoCDay::mew_with_example(
+    "2023",
+    "21",
+    main,
+    main_example
+));

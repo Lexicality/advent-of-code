@@ -9,9 +9,4 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2019",
-    day: "9",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2019", "9", main));

@@ -223,9 +223,9 @@ pub fn main_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2023",
-    day: "10",
-    func: main,
-    example_func: Some(main_example),
-});
+inventory::submit!(crate::AoCDay::mew_with_example(
+    "2023",
+    "10",
+    main,
+    main_example
+));

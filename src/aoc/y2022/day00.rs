@@ -3,9 +3,4 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2022",
-    day: "0",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::new("2022", "0", main));

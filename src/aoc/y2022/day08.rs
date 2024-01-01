@@ -188,9 +188,4 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(forest.get_visibilist().to_string())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2022",
-    day: "8",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2022", "8", main));

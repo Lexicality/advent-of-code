@@ -37,9 +37,4 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(computer.get_ascii_output().unwrap())
 }
 
-inventory::submit!(crate::AoCDay {
-    year: "2019",
-    day: "25",
-    func: main,
-    example_func: None,
-});
+inventory::submit!(crate::AoCDay::mew("2019", "25", main));

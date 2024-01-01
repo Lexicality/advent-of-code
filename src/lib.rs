@@ -42,6 +42,43 @@ pub struct AoCDay {
     pub example_func: Option<AoCDayFn>,
 }
 
+const ZERO: u8 = "0".as_bytes()[0];
+
+impl AoCDay {
+    const fn mew(year: &'static str, day: &'static str, main: AoCDayFn) -> AoCDay {
+        assert!(day.is_ascii(), "Day must be an ASCII number");
+        if day.len() == 1 && day.as_bytes()[0] == ZERO {
+            panic!("Zero is not a valid day");
+        }
+
+        Self {
+            year,
+            day,
+            func: main,
+            example_func: None,
+        }
+    }
+
+    const fn mew_with_example(
+        year: &'static str,
+        day: &'static str,
+        main: AoCDayFn,
+        example: AoCDayFn,
+    ) -> AoCDay {
+        assert!(day.is_ascii(), "Day must be an ASCII number");
+        if day.len() == 1 && day.as_bytes()[0] == ZERO {
+            panic!("Zero is not a valid day");
+        }
+
+        Self {
+            year,
+            day,
+            func: main,
+            example_func: Some(example),
+        }
+    }
+}
+
 inventory::collect!(AoCDay);
 
 pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
