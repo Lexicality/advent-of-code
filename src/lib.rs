@@ -13,6 +13,8 @@ pub mod utils {
     pub mod infgrid;
 }
 
+use std::iter::IntoIterator;
+
 pub use crate::utils::bigcoord2d::BigCoord2D;
 pub use crate::utils::bigcoord3d::BigCoord3D;
 pub use crate::utils::commongrid::CharGrid;
@@ -29,7 +31,8 @@ pub use crate::utils::error::AoCResult;
 pub use crate::utils::grid::Grid;
 pub use crate::utils::infgrid::InfGrid;
 
-pub type DataIn<'a> = &'a mut dyn Iterator<Item = String>;
+pub type DataIter<'a> = &'a mut dyn Iterator<Item = String>;
+pub type DataIn = <Vec<String> as IntoIterator>::IntoIter;
 pub type AoCDayFn = fn(DataIn) -> AoCResult<String>;
 
 pub struct AoCDay {
@@ -44,7 +47,7 @@ inventory::collect!(AoCDay);
 pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
     for line in data {
         println!("Example: {line}");
-        let res = main(&mut vec![line].into_iter())?;
+        let res = main(vec![line.to_owned()].into_iter())?;
         println!("Result: {res}\n===");
     }
     Ok("".to_owned())

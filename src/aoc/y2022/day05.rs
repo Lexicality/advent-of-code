@@ -126,8 +126,8 @@ impl Move {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut yard = Yard::new(data);
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut yard = Yard::new(&mut data);
     println!("{}", yard);
     for op in data.map(Move::new) {
         yard.perform_move(&op);

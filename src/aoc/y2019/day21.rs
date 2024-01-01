@@ -18,7 +18,7 @@ AND T J
 RUN
 ";
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.add_ascii_input(SPRINGCODE.trim_start());
     computer.run_to_completion().unwrap();

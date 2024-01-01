@@ -105,7 +105,7 @@ fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResul
         .ok_or(AoCError::new("no crossovers?"))
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     while let Some(first) = data.next() {
         let second = data.next().expect("Lines should be paired");

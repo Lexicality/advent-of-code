@@ -50,7 +50,7 @@ struct Mapping {
 }
 
 impl Mapping {
-    fn parse(data: crate::DataIn) -> AoCResult<Self> {
+    fn parse(data: crate::DataIter) -> AoCResult<Self> {
         lazy_static! {
             static ref NAME_RE: Regex = Regex::new(r"^(.+)-to-(.+) map:$").unwrap();
         }

@@ -1,6 +1,6 @@
 use itertools::{FoldWhile, Itertools};
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(data
         .next()
         .unwrap()
@@ -25,11 +25,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 }
 
 pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    for line in data {
-        let res = main(&mut vec![line].into_iter())?;
-        println!("=== {res} ===");
-    }
-    Ok("".to_owned())
+    crate::multi_line_example(data, main)
 }
 
 inventory::submit!(crate::AoCDay {

@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use std::time::Instant;
 
 use advent_of_code::{AoCDay, AoCDayFn, AoCError, AoCResult};
+use itertools::Itertools;
 
 struct DayFunctions {
     func: AoCDayFn,
@@ -63,7 +64,7 @@ fn main() -> AoCResult<()> {
             data_path.to_string_lossy()
         )));
     }
-    let mut lines = BufReader::new(File::open(data_path).unwrap())
+    let lines = BufReader::new(File::open(data_path).unwrap())
         .lines()
         .map(|l| l.unwrap());
 
@@ -77,7 +78,7 @@ fn main() -> AoCResult<()> {
 
     println!("=== {year} day {day} ===");
     let start = Instant::now();
-    let ret = func(&mut lines)?;
+    let ret = func(lines.collect_vec().into_iter())?;
     let end = Instant::now();
 
     println!(

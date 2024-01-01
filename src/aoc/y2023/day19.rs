@@ -206,8 +206,9 @@ impl FromStr for Part {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let workflows: HashMap<String, Workflow> = data
+        .by_ref()
         .take_while(|l| !l.is_empty())
         .map(|l| l.parse())
         .map_ok(|w: Workflow| (w.name.clone(), w))

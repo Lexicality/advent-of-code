@@ -5,7 +5,7 @@ use text_io::read;
 
 use super::computer::{Computer, RunState};
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     while let RunState::NeedsInput = computer.run().unwrap() {
         print!("{}", computer.get_ascii_output().unwrap());

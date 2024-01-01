@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 #[allow(unused_variables, unused_mut)]
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let times = data.next().unwrap();
     let mut times = times.split_whitespace();
     let distances = data.next().unwrap();

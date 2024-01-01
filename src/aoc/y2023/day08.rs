@@ -21,7 +21,7 @@ fn navigate<'a>(
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let raw_instructions = data
         .next()
         .unwrap()

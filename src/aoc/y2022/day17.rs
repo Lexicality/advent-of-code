@@ -152,7 +152,7 @@ fn drop_shape(
     }
 }
 
-pub fn main(data: crate::DataIn) -> AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> AoCResult<String> {
     let instructions: Vec<Direction> = data
         .next()
         .unwrap()

@@ -37,7 +37,7 @@ fn run_amps(program: Computer, phase_settings: &[i64]) -> AoCResult<i64> {
     }
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     while let Some(phase) = data.next() {
         let og_computer: Computer = data.next().unwrap().parse().unwrap();
@@ -50,7 +50,7 @@ pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     let og_computer: Computer = data.next().unwrap().parse().unwrap();
 

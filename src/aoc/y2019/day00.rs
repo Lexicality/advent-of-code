@@ -1,4 +1,4 @@
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     Ok(ret.to_string())
 }

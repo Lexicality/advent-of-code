@@ -74,8 +74,8 @@ impl Cpu {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut cpu = Cpu::new(data);
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut cpu = Cpu::new(&mut data);
     println!(" {:>3} | {:^4} | {:^8} | {:4}", "pc", "x", "inst", "newx");
     while !cpu.done() {
         cpu.cycle();

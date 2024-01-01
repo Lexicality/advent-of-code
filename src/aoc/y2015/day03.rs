@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use crate::{Coord2D, Direction};
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
 
     let dirs: Vec<Direction> = line.chars().map(|c| c.try_into()).try_collect()?;

@@ -6,7 +6,7 @@ type MonkeyID = usize;
 type Item = u32;
 type MonkeyYeet = (Item, MonkeyID);
 
-fn get_data(data: crate::DataIn, text: &'static str) -> String {
+fn get_data(data: crate::DataIter, text: &'static str) -> String {
     let line = data.next().unwrap();
     let line = line.trim();
     assert!(line.starts_with(text));
@@ -86,7 +86,7 @@ struct Operation {
 }
 
 impl Operation {
-    fn new(data: crate::DataIn) -> Operation {
+    fn new(data: crate::DataIter) -> Operation {
         let line = get_data(data, "Operation: new = ");
         let (first, action, second) = line.split(' ').collect_tuple().unwrap();
         Operation {
@@ -114,7 +114,7 @@ struct Test {
 }
 
 impl Test {
-    fn new(data: crate::DataIn) -> Test {
+    fn new(data: crate::DataIter) -> Test {
         Test {
             testor: get_data(data, "Test: divisible by ").parse().unwrap(),
             success: get_data(data, "If true: throw to monkey ").parse().unwrap(),
@@ -152,7 +152,7 @@ struct Monke {
 }
 
 impl Monke {
-    fn new(data: crate::DataIn) -> Monke {
+    fn new(data: crate::DataIter) -> Monke {
         let line = get_data(data, "Monkey ");
         Monke {
             id: line[..1].parse().unwrap(),

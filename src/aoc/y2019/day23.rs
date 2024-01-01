@@ -4,7 +4,7 @@ use crate::aoc::y2019::computer::{Computer, RunState};
 
 const NUM_MACHINES: usize = 50;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let base_code: Computer = data.next().unwrap().parse().unwrap();
 
     let mut packets_to_go: Vec<Vec<i64>> = (0..NUM_MACHINES).map(|_| Vec::new()).collect();

@@ -1,6 +1,6 @@
 use md5::{Digest, Md5};
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let input = data.next().unwrap();
     let mut hasher = Md5::new();
     hasher.update(input);

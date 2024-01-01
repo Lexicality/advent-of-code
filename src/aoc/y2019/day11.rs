@@ -76,7 +76,7 @@ impl Robot {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut robot = Robot::new(data.next().unwrap()).unwrap();
     let mut hull: InfGrid<Colour> = InfGrid::new();
 
