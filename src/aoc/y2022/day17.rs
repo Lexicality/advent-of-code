@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{collections::HashSet, fmt::Display};
 
 use itertools::Itertools;
 
@@ -61,35 +61,17 @@ impl Shape {
             Self::Square => Self::Horizontal,
         }
     }
-
-    // fn draw(&self, pos: Coord2D, mut grid: InfGrid<GridState>, temp: bool) {
-    //     for coord in self.to_coords().into_iter() {
-    //         grid.set(
-    //             pos + coord,
-    //             if temp {
-    //                 GridState::TempRock
-    //             } else {
-    //                 GridState::Rock
-    //             },
-    //         );
-    //     }
-    //     println!("{grid:·>-#}");
-    // }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum GridState {
-    // Void,
     Rock,
-    // TempRock,
 }
 
 impl Display for GridState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            // Self::Void => f.fill(),
             Self::Rock => '█',
-            // Self::TempRock => '▒',
         }
         .fmt(f)
     }
@@ -123,32 +105,21 @@ fn drop_shape(
 
     let mut pos: Coord2D =
         Coord2D::from((2, floor + 3)) + instructions.next().unwrap().to_coord() + DOWN;
-    // let mut pos: Coord2D = Coord2D::from((2, floor + 3));
-    // shape.draw(pos, grid.clone(), true);
-    // pos += instructions.next().unwrap().to_coord();
-    // shape.draw(pos, grid.clone(), true);
-    // pos += DOWN;
-    // shape.draw(pos, grid.clone(), true);
     let mut ret = pos;
     loop {
         let instr = instructions.next().unwrap();
-        // println!("Moving {instr}");
         pos += instr.to_coord();
         if check_collision(grid, pos, shape) {
-            // println!("Can't slide");
             pos = ret;
         } else {
             ret = pos;
         }
-        // shape.draw(pos, grid.clone(), true);
         pos += DOWN;
         if check_collision(grid, pos, shape) {
-            // println!("Can't drop");
             return ret;
         } else {
             ret = pos;
         }
-        // shape.draw(pos, grid.clone(), true);
     }
 }
 
@@ -169,17 +140,93 @@ pub fn main(mut data: crate::DataIn) -> AoCResult<String> {
     let mut floor = 0;
     let mut shape = Shape::Horizontal;
 
-    for _ in 0..2022 {
+    let mut heights = Vec::with_capacity(300);
+
+    for _ in 0..2000 {
         let dropped = drop_shape(floor, shape, &grid, &mut instructions);
 
         for coord in shape.to_coords().into_iter() {
             grid.set(dropped + coord, GridState::Rock);
         }
-        floor = grid.iter().map(|(coord, _)| coord.y).max().unwrap() + 1;
+        let newfloor = grid.iter().map(|(coord, _)| coord.y).max().unwrap() + 1;
+        heights.push((newfloor - floor) as u64);
+        floor = newfloor;
         shape = shape.to_next();
     }
 
-    Ok(floor.to_string())
+    let mut seen = HashSet::new();
+
+    let (end_of_loop, loop_data) = heights
+        .iter()
+        .copied()
+        .tuple_windows()
+        .enumerate()
+        .skip(888)
+        .find(|(_, window): &(_, (_, _, _, _, _, _, _, _, _, _, _, _))| !seen.insert(*window))
+        .unwrap();
+
+    let (start_of_loop, _) = heights
+        .iter()
+        .copied()
+        .tuple_windows()
+        .enumerate()
+        .skip(888)
+        .find(|(_, window): &(_, (_, _, _, _, _, _, _, _, _, _, _, _))| window == &loop_data)
+        .unwrap();
+
+    println!("{} -> {}", start_of_loop, end_of_loop);
+
+    let loop_data = &heights[start_of_loop..end_of_loop];
+    let loop_len = loop_data.len();
+    println!(
+        "{:?} {} {}",
+        loop_data,
+        loop_len,
+        loop_data.iter().sum::<u64>()
+    );
+
+    let formatter = locale::Numeric::load_user_locale().unwrap();
+
+    // const DOOM: usize = 1_000_000_000_000;
+    const DOOM: usize = 2022;
+
+    let doom = DOOM - start_of_loop;
+
+    let mut ret = heights[..start_of_loop].iter().sum::<u64>() as usize;
+    println!("{}", formatter.format_int(ret));
+
+    let loop_contents = loop_data.iter().sum::<u64>() as usize;
+
+    let loop_times = doom / loop_len;
+    println!("{}", loop_times);
+
+    ret += loop_contents * loop_times;
+    println!("{}", formatter.format_int(ret));
+
+    let loop_times = doom % loop_len;
+    println!("{}", loop_times);
+    ret += loop_data.iter().cycle().take(loop_times).sum::<u64>() as usize;
+    println!("{}", formatter.format_int(ret));
+
+    // const CORRECT_ANSWER: usize = 1_514_285_714_288;
+    const CORRECT_ANSWER: usize = 3092;
+
+    println!(
+        "{} {} {}",
+        formatter.format_int(ret),
+        formatter.format_int(CORRECT_ANSWER),
+        formatter.format_int(ret.abs_diff(CORRECT_ANSWER))
+    );
+
+    const CURRENT_WRONG_ANSWER: usize = 3187;
+    println!(
+        "{} {} {}",
+        formatter.format_int(ret),
+        formatter.format_int(CURRENT_WRONG_ANSWER),
+        formatter.format_int(ret.abs_diff(CURRENT_WRONG_ANSWER))
+    );
+
+    Ok(ret.to_string())
 }
 
 inventory::submit!(crate::AoCDay::mew("2022", "17", main));
