@@ -1,11 +1,11 @@
-from typing import Iterable
+from typing import Iterator
 
 import pandas as pd
 
 SIMULATION_DAYS = 256
 
 
-def main(data: Iterable[str]) -> None:
+def main(data: Iterator[str]) -> None:
     fische = pd.DataFrame([[i, 0] for i in range(9)], columns=("gen", "count"))
 
     for gen in next(data).split(","):

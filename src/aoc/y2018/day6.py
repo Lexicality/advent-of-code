@@ -12,8 +12,8 @@ def _get_coords(data: Iterable[str]) -> Iterable[Coord2D]:
 
 def main(data: Iterable[str]):
     coords = sorted(_get_coords(data), key=lambda c: c[0] * c[1])
-    gridmin = Coord2D(math.inf, math.inf)
-    gridmax = Coord2D(-math.inf, -math.inf)
+    gridmin = Coord2D(math.inf, math.inf)  # type: ignore
+    gridmax = Coord2D(-math.inf, -math.inf)  # type: ignore
 
     for coord in coords:
         gridmin = Coord2D(x=min(gridmin.x, coord.x), y=min(gridmin.y, coord.y))

@@ -1,7 +1,9 @@
-from typing import Iterable, List, Literal, Union
+from typing import Iterable, Literal, TypeAlias
+
+BusContent: TypeAlias = int | Literal["x"]
 
 
-def bus_party(timestamp: int, busses: List[Union[int, Literal["x"]]]) -> bool:
+def bus_party(timestamp: int, busses: list[BusContent]) -> bool:
     for i in range(len(busses)):
         timestamp += 1
         bus = busses[i]
@@ -15,14 +17,16 @@ def bus_party(timestamp: int, busses: List[Union[int, Literal["x"]]]) -> bool:
 
 def main(data: Iterable[str]):
     _, schedule = data
-    busses = [int(bus) if bus != "x" else "x" for bus in schedule.split(",")]
+    busses: list[BusContent] = [
+        int(bus) if bus != "x" else "x" for bus in schedule.split(",")
+    ]
     print(len(busses))
-    print(busses[busses[0]])
+    print(busses[busses[0]])  # type: ignore
 
     first_prime = busses.pop(0)
     assert isinstance(first_prime, int)
     second_prime = busses[first_prime - 1]
-    assert isinstance(first_prime, int)
+    assert isinstance(second_prime, int)
     itr_value = first_prime * second_prime
 
     timestamp = -first_prime

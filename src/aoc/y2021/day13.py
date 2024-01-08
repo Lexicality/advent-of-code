@@ -7,7 +7,7 @@ from aoc.utils import Coord2D, Grid
 
 class Transparency(Grid[bool]):
     @classmethod
-    def parse(cls, data: Iterator[str]) -> Grid:
+    def parse(cls, data: Iterator[str]) -> Transparency:
         ret = Transparency()
 
         for line in data:

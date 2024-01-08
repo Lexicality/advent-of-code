@@ -1,6 +1,6 @@
 from typing import Iterable, Set
 
-ALL_SEGS = set(("a", "b", "c", "d", "e", "f", "g"))
+ALL_SEGS: set[str] = set(("a", "b", "c", "d", "e", "f", "g"))
 
 
 class Display:

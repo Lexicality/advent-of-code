@@ -3,17 +3,17 @@ import importlib
 import inspect
 import os
 import pathlib
-from typing import Iterable
+from typing import Iterator
 
 
-def read_file(path: pathlib.Path) -> Iterable[str]:
+def read_file(path: pathlib.Path) -> Iterator[str]:
     with open(path, "r") as f:
         for line in f:
             yield line.strip()
 
 
 def main():
-    filename = inspect.getframeinfo(inspect.currentframe()).filename
+    filename = inspect.getframeinfo(inspect.currentframe()).filename  # type: ignore
     path = os.path.dirname(os.path.abspath(filename))
     here = pathlib.Path(path)
 

@@ -13,13 +13,13 @@ class Coord2D(NamedTuple):
         x, y = data.split(",")
         return Coord2D(x=int(x), y=int(y))
 
-    def __add__(self, other: Coord2D) -> Coord2D:
+    def __add__(self, other: Coord2D) -> Coord2D:  # type: ignore
         return Coord2D(x=self.x + other.x, y=self.y + other.y)
 
     def __sub__(self, other: Coord2D) -> Coord2D:
         return Coord2D(x=self.x - other.x, y=self.y - other.y)
 
-    def __mul__(self, other: int) -> Coord2D:
+    def __mul__(self, other: int) -> Coord2D:  # type: ignore
         return Coord2D(x=self.x * other, y=self.y * other)
 
     def __str__(self):
@@ -52,13 +52,13 @@ class Coord3D(NamedTuple):
         x, y, z = data.split(",")
         return Coord3D(x=int(x), y=int(y), z=int(z))
 
-    def __add__(self, other: Coord3D) -> Coord3D:
+    def __add__(self, other: Coord3D) -> Coord3D:  # type: ignore
         return Coord3D(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
 
     def __sub__(self, other: Coord3D) -> Coord3D:
         return Coord3D(x=self.x - other.x, y=self.y - other.y, z=self.z - other.z)
 
-    def __mul__(self, other: int) -> "Coord3D":
+    def __mul__(self, other: int) -> "Coord3D":  # type: ignore
         return Coord3D(x=self.x * other, y=self.y * other, z=self.z * other)
 
     def __str__(self):
@@ -94,6 +94,7 @@ class Grid(Dict[Coord2D, T]):
         """
 
         y = 0
+        x = 0
         for row in data:
             x = 0
             for item in row:

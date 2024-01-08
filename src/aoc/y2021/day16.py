@@ -24,7 +24,7 @@ class Packet:
         return self.version
 
     def part2(self) -> int:
-        return self.value
+        return self.value  # type: ignore # ????
 
 
 class PacketLiteral(Packet):
@@ -119,7 +119,9 @@ def _get_packet_class(type: int) -> Type[Packet]:
 
 
 def _parse_packet(data: ConstBitStream) -> Packet:
-    version, type = data.readlist("3, 3")
+    version: int
+    type: int
+    version, type = data.readlist("3, 3")  # type: ignore
 
     PacketClass = _get_packet_class(type)
     packet = PacketClass(version, type)

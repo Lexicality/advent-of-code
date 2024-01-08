@@ -1,13 +1,13 @@
-from typing import Iterable
+from typing import Iterator
 
 import pandas as pd
 
 
-def fuelify(n: int) -> int:
+def fuelify(n: int) -> float:
     return (n * (n + 1)) / 2
 
 
-def main(data: Iterable[str]) -> None:
+def main(data: Iterator[str]) -> None:
     crabpos = pd.Series([int(num) for num in next(data).split(",")])
 
     # brute force because while I got almost the correct mean, I apparently

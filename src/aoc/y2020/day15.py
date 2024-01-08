@@ -13,7 +13,7 @@ class Listicle(List[Optional[int]]):
     def get_value(self) -> int:
         if self[0] is None:
             return 0
-        return self[1] - self[0]
+        return self[1] - self[0]  # type: ignore
 
     def get_logging(self) -> str:
         if self[0] is None:

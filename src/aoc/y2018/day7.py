@@ -70,7 +70,7 @@ def main(data: Iterable[str]):
         step.dependencies.add(dep_step)
         dep_step.dependants.add(step)
 
-    workers = [Worker(i + 1) for i in range(NUM_WORKERS)]
+    workers = [Worker(str(i + 1)) for i in range(NUM_WORKERS)]
 
     order = ""
     time = 0
@@ -129,7 +129,7 @@ def main(data: Iterable[str]):
 
             step = all_steps[name]
 
-            step.worker.job = None
+            step.worker.job = None  # type: ignore
 
             for dep in step.dependants:
                 dep.dependencies.remove(step)

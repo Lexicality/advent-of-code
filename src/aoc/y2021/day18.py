@@ -83,7 +83,8 @@ class Pair:
                 self._check_explode("right", depth)
             )
 
-        self.parent.explode_upwards(self, (self.left, self.right))
+        assert self.parent is not None
+        self.parent.explode_upwards(self, (self.left, self.right))  # type: ignore
         self.parent._explode_me(self)
         return True
 
@@ -167,10 +168,10 @@ class Pair:
     def _readside(cls, input: List[str]) -> PairValue:
         val = input.pop(0)
         if val == "[":
-            ret = cls.parse(input)
+            pair = cls.parse(input)
             # Always going to be something after a pair, either a `]` or `,`
             input.pop(0)
-            return ret
+            return pair
         ret = val
         while (val := input.pop(0)) not in (",", "]"):
             ret += val

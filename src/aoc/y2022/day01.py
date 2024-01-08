@@ -4,7 +4,7 @@ from typing import Iterable, List
 
 
 def main(data: Iterable[str]) -> None:
-    elves: List[str] = []
+    elves: List[int] = []
     running_elf = 0
     for line in data:
         line = line.strip()

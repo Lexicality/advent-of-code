@@ -23,7 +23,7 @@ DIRECTIONS = [
 
 
 class Grid(Dict[Coord2D, GridCell]):
-    _max: Coord2D(-1, -1)
+    _max = Coord2D(-1, -1)
 
     def read_data(self, data: Iterable[str]):
         y = 0

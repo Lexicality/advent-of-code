@@ -66,7 +66,8 @@ def main(data: Iterator[str]) -> None:
         print()
         print(board)
 
-    winning_board: pd.DataFrame = None
+    winning_board: pd.DataFrame | None = None
+    num = -1
     for num in draws:
         print("Drawing #", num)
         # crimes
@@ -92,6 +93,7 @@ def main(data: Iterator[str]) -> None:
         #     pdb.set_trace()
 
     print(winning_board)
+    assert winning_board is not None
     score = winning_board.sum().sum()
     print(score)
     print(score * num)
