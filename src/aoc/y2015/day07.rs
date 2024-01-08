@@ -200,6 +200,14 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 
     drain_updates(&gates, &mut wire_data, &mut updates);
 
+    let ret = wire_data.get("a").expect("wire a must exist");
+    assert!(ret.is_some(), "a must have a value");
+    updates.extend(init_updates(&gates));
+    updates.insert("b".to_owned(), *ret);
+    wire_data.iter_mut().for_each(|(_, value)| *value = None);
+
+    drain_updates(&gates, &mut wire_data, &mut updates);
+
     let ret = wire_data
         .get("a")
         .expect("wire a must exist")
