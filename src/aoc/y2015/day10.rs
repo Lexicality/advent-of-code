@@ -20,10 +20,8 @@ fn look_and_say(line: String) -> String {
 
 pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut line = data.next().unwrap();
-    println!("{line}");
-    for _ in 0..40 {
+    for _ in 0..50 {
         line = look_and_say(line);
-        println!("{line}");
     }
     Ok(line.len().to_string())
 }
