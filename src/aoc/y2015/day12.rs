@@ -5,7 +5,13 @@ fn recursive_sum(value: JSONValue) -> i64 {
         JSONValue::Bool(_) | JSONValue::Null | JSONValue::String(_) => 0,
         JSONValue::Number(i) => i.as_i64().unwrap(),
         JSONValue::Array(arr) => arr.into_iter().map(recursive_sum).sum(),
-        JSONValue::Object(obj) => obj.into_iter().map(|(_, v)| v).map(recursive_sum).sum(),
+        JSONValue::Object(obj) => {
+            if obj.values().any(|v| v == "red") {
+                0
+            } else {
+                obj.into_iter().map(|(_, v)| v).map(recursive_sum).sum()
+            }
+        }
     }
 }
 
