@@ -373,4 +373,11 @@ impl Computer {
         self.input
             .extend(input.chars().map(|c| u32::from(c) as i64))
     }
+
+    /// Resets the PC without resetting anything else
+    ///
+    /// Not the wisest idea if the program mutates itself
+    pub fn reset(&mut self) {
+        self.pc = 0;
+    }
 }
