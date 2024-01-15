@@ -200,6 +200,17 @@ impl TryFrom<(u32, u32)> for Coord2D {
     }
 }
 
+impl TryFrom<(i64, i64)> for Coord2D {
+    type Error = std::num::TryFromIntError;
+
+    fn try_from((x, y): (i64, i64)) -> Result<Self, Self::Error> {
+        Ok(Self {
+            x: x.try_into()?,
+            y: y.try_into()?,
+        })
+    }
+}
+
 impl TryFrom<(usize, usize)> for Coord2D {
     type Error = std::num::TryFromIntError;
 
