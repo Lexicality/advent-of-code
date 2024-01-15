@@ -353,9 +353,7 @@ impl Computer {
             .iter()
             .map(|i| {
                 let v: u32 = (*i).try_into().ok()?;
-                v.try_into()
-                    .ok()
-                    .and_then(|c: char| if c.is_ascii() { Some(c) } else { None })
+                v.try_into().ok().filter(|c: &char| c.is_ascii())
             })
             .collect::<Option<String>>()
     }
@@ -365,7 +363,7 @@ impl Computer {
             .iter()
             .filter_map(|i| {
                 let v: u32 = (*i).try_into().ok()?;
-                char::try_from(v).ok()
+                char::try_from(v).ok().filter(|c| c.is_ascii())
             })
             .collect()
     }
