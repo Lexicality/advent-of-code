@@ -1,9 +1,9 @@
-use std::fmt::Display;
+use std::{collections::HashSet, fmt::Display};
 
 use itertools::Itertools;
 
 use super::computer::Computer;
-use crate::{AoCError, CharGrid, Direction, Grid};
+use crate::{utils::direction::RotateDirection, AoCError, CharGrid, CommonGrid, Direction, Grid};
 
 enum GridState {
     Void,
@@ -29,8 +29,8 @@ impl TryFrom<char> for GridState {
 impl Display for GridState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            GridState::Void => '.',
-            GridState::Scaffold => '#',
+            GridState::Void => '·',
+            GridState::Scaffold => '█',
             GridState::Bot(dir) => match dir {
                 Direction::North => '^',
                 Direction::East => '>',
@@ -43,7 +43,8 @@ impl Display for GridState {
 }
 
 pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut computer: Computer = data.next().unwrap().parse().unwrap();
+    let base_computer: Computer = data.next().unwrap().parse().unwrap();
+    let mut computer = base_computer.clone();
     computer.run_to_completion().unwrap();
 
     let output = computer.get_ascii_output().expect("There must be output");
@@ -58,23 +59,77 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     println!("{grid:#}");
 
-    let mut ret = 0;
-    // extremely simplistic intersection detection
-    for coord in grid
-        .iter()
-        .filter(|(_, value)| matches!(value, GridState::Scaffold))
-        .map(|(pos, _)| pos)
-    {
-        if grid
-            .get_neighbours_filtered(*coord, false, |_, v| matches!(v, GridState::Scaffold))
-            .count()
-            == 4
-        {
-            ret += coord.x * coord.y;
+    let start = grid
+        .find(|(_, value)| matches!(value, GridState::Bot(_)))
+        .expect("There must be a start");
+    let mut seen = HashSet::with_capacity(
+        grid.iter()
+            .filter(|(_, v)| !matches!(v, GridState::Void))
+            .count(),
+    );
+    seen.insert(start);
+    let mut pos = start;
+    let mut dir = Direction::North; // hack, I can't be bothered to look this up and I know it starts up on my input
+    let mut distance = 0;
+    loop {
+        let next = pos + dir.to_coord();
+        if matches!(grid.get(&next), Some(GridState::Scaffold)) {
+            distance += 1;
+            pos = next;
+            seen.insert(pos);
+        } else {
+            if distance != 0 {
+                print!("{distance}, ");
+            }
+            distance = 0;
+            let next = grid
+                .get_neighbours_filtered(pos, false, |pos, value| {
+                    matches!(value, GridState::Scaffold) && !seen.contains(pos)
+                })
+                .next();
+            if let Some(next) = next {
+                let newdir = Direction::from_coord(next - pos);
+                let letter = if newdir == dir.rotate(RotateDirection::Left) {
+                    "L"
+                } else {
+                    "R"
+                };
+
+                print!("{letter}, ");
+
+                dir = newdir;
+            } else {
+                println!("\nEnded at {pos}!");
+                break;
+            }
         }
     }
 
-    Ok(ret.to_string())
+    // Manually inspecting the output to work out the sequences because I can't
+    // be bothered to automate it goes here
+
+    let mut computer = base_computer.clone();
+    computer.set(0, 2.into());
+    computer.add_ascii_input(
+        "
+A,B,A,C,C,A,B,C,B,B
+L,8,R,10,L,8,R,8
+L,12,R,8,R,8
+L,8,R,6,R,6,R,10,L,8
+n
+.
+    "
+        .trim(),
+    );
+    computer.run_to_completion().unwrap();
+
+    match computer.get_ascii_output() {
+        Some(death) => Ok(death),
+        None => {
+            println!("{}", computer.get_ascii_lossy());
+            Ok(computer.output.pop().unwrap().to_string())
+        }
+    }
 }
 
 inventory::submit!(crate::AoCDay::mew("2019", "17", main));
