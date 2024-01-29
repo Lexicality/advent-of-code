@@ -117,7 +117,7 @@ impl Volcano {
         } else if current >= best.1 {
             Some(pos.to_owned())
         } else {
-            best.2.get(0).or(Some(&best.0)).map(|a| a.to_owned())
+            best.2.first().or(Some(&best.0)).map(|a| a.to_owned())
         }
     }
 

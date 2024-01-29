@@ -84,7 +84,7 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let left_ = mode(&left).unwrap();
     // let left_ = left.iter().sum::<f64>() / left.len() as f64;
     let left = 1.0 / left_;
-    let right = 1.0 / mode(&right).unwrap();
+    let _right = 1.0 / mode(&right).unwrap();
 
     let left_yes: HashSet<_> = left_side.into_iter().collect();
 
