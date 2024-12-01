@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use crate::{AoCError, AoCResult, CharGrid, CommonGrid, Coord2D, Coordinate2D, InfGrid};
 
-const NUM_ITERATIONS: usize = 2;
+const NUM_ITERATIONS: usize = 50;
 
 #[derive(Debug, Clone, Copy)]
 enum PixelState {
