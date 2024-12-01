@@ -81,12 +81,12 @@ impl INode {
             Self::File { .. } => panic!("I'm a file!"),
             Self::Folder { children, .. } => children,
         };
-        return children
+        children
             .iter()
             // .filter(|c| Borrow::<INoder>::borrow(c).borrow().name() == name);
             .find(|c| Borrow::<INoder>::borrow(*c).borrow().name() == name)
             .unwrap()
-            .clone();
+            .clone()
     }
 
     fn depth(&self) -> usize {
@@ -197,9 +197,8 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             size
         })
         .filter(|s| s >= &needed)
-        .map(|s| {
+        .inspect(|&s| {
             println!("{}", s);
-            s
         })
         .min()
         .unwrap();

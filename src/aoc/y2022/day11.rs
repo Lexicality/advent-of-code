@@ -168,7 +168,7 @@ impl Monke {
 
     fn round(&mut self) -> impl Iterator<Item = MonkeyYeet> + '_ {
         // println!("Monkey {}:", self.id);
-        return self.items.drain(..).map(|item| {
+        self.items.drain(..).map(|item| {
             // println!(" Inspects item {}", item);
             let item = self.operation.run(item);
             self.inspections += 1;
@@ -178,7 +178,7 @@ impl Monke {
             let target = self.test.test(item);
             // println!("  Yeets to: {}", target);
             (item, target)
-        });
+        })
     }
 }
 

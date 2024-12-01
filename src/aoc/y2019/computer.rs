@@ -118,9 +118,8 @@ impl Instruction {
             "99" => Some(Opcode::End),
             _ => None,
         }
-        .map(|opcode| {
+        .inspect(|opcode| {
             opcode.validate().unwrap();
-            opcode
         })
     }
 

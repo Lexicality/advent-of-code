@@ -59,7 +59,7 @@ fn actual_check_order(left: &Value, right: &Value) -> Option<Order> {
 
 struct Sigh<'a>(&'a Vec<Value>);
 
-impl<'a> Display for Sigh<'a> {
+impl Display for Sigh<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for line in self.0 {
             line.fmt(f)?;

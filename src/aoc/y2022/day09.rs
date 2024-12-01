@@ -31,13 +31,7 @@ impl Instruction {
 }
 
 fn magic_clamp(val: i32) -> i32 {
-    if val > 1 {
-        1
-    } else if val < -1 {
-        -1
-    } else {
-        val
-    }
+    val.clamp(-1, 1)
 }
 
 impl Coord2D {
