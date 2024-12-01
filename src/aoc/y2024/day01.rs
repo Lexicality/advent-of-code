@@ -1,18 +1,16 @@
 use itertools::Itertools;
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    let (mut a, mut b): (Vec<_>, Vec<_>) = data
+    let (a, b): (Vec<_>, Vec<_>) = data
         .map(|line| -> (u64, u64) {
             let (a, b) = line.split_once(' ').expect("line must be splittable");
             (a.trim().parse().unwrap(), b.trim().parse().unwrap())
         })
         .unzip();
-    a.sort();
-    b.sort();
-    assert_eq!(a.len(), b.len(), "lists must have the same length!");
+
+    let counts = b.into_iter().counts();
     Ok(a.into_iter()
-        .zip_eq(b)
-        .map(|(a, b)| a.abs_diff(b))
+        .map(|a| a * counts.get(&a).map(|b| *b as u64).unwrap_or_default())
         .reduce(u64::saturating_add)
         .unwrap()
         .to_string())
