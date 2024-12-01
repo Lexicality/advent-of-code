@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-use crate::{CharGrid, CommonGrid, Coord2D, Coordinate, Coordinate2D, DisplayGrid};
+use itertools::Itertools;
 
-use super::commongrid::FlatGrid;
+use crate::{CharGrid, CommonGrid, Coord2D, Coordinate, Coordinate2D, DisplayGrid, FlatGrid};
 
 #[derive(Debug, Default, Clone)]
 pub struct InfGrid<Item, Key: Coordinate = Coord2D> {
@@ -66,7 +66,7 @@ impl<Item, Key: Coordinate> IntoIterator for InfGrid<Item, Key> {
     }
 }
 
-impl<Item> InfGrid<Item, Coord2D> {
+impl<Item, Key: Coordinate2D + std::ops::Add<Output = Key>> InfGrid<Item, Key> {
     pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
     where
         Inner: IntoIterator<Item = Item>,
@@ -77,9 +77,33 @@ impl<Item> InfGrid<Item, Coord2D> {
                 inner
                     .into_iter()
                     .enumerate()
-                    .map(move |(x, item)| ((x, y).try_into().unwrap(), item))
+                    .map(move |(x, item)| (Key::try_from_tuple((x, y)).unwrap(), item))
             })
             .collect()
+    }
+
+    pub fn get_neighbour_coords(
+        &self,
+        coord: Key,
+        diagonal: bool,
+    ) -> impl Iterator<Item = Key> + '_ {
+        (-1..=1)
+            .cartesian_product(-1..=1)
+            .filter(move |(x, y)| {
+                // TODO: Can I make this more readable? :/
+                !((*x == 0 && *y == 0) || (!diagonal && *x != 0 && *y != 0))
+            })
+            .filter_map(Key::try_from_tuple)
+            .map(move |offset| offset + coord)
+    }
+
+    pub fn get_neighbours(
+        &self,
+        coord: Key,
+        diagonal: bool,
+    ) -> impl Iterator<Item = (Key, Option<&Item>)> + '_ {
+        self.get_neighbour_coords(coord, diagonal)
+            .map(move |target| (target, self.get(&target)))
     }
 }
 

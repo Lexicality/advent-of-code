@@ -51,7 +51,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 
     for (symbol_coord, _symbol) in symbols {
         let surrounding_numbers = grid
-            .get_neighbours(symbol_coord.to_owned(), true)
+            .get_neighbour_coords(symbol_coord.to_owned(), true)
             .filter_map(|coord| {
                 let state = grid.get(&coord).unwrap();
                 match state {

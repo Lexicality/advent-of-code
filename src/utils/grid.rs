@@ -67,7 +67,7 @@ impl<Item> Grid<Item> {
             .collect()
     }
 
-    pub fn get_neighbours(
+    pub fn get_neighbour_coords(
         &self,
         coord: Coord2D,
         diagonal: bool,
@@ -85,7 +85,16 @@ impl<Item> Grid<Item> {
             .filter(|c| self.check_coord(c))
     }
 
-    pub fn get_neighbours_filtered<'a, P>(
+    pub fn get_neighbours(
+        &self,
+        coord: Coord2D,
+        diagonal: bool,
+    ) -> impl Iterator<Item = (Coord2D, &Item)> + '_ {
+        self.get_neighbour_coords(coord, diagonal)
+            .map(move |target| (target, self.get(&target).unwrap()))
+    }
+
+    pub fn get_neighbour_coords_filtered<'a, P>(
         &'a self,
         coord: Coord2D,
         diagonal: bool,
@@ -95,7 +104,8 @@ impl<Item> Grid<Item> {
         P: Fn(&Coord2D, &Item) -> bool + 'a,
     {
         self.get_neighbours(coord, diagonal)
-            .filter(move |coord| predicate(coord, self.get(coord).unwrap()))
+            .filter(move |(coord, value)| predicate(coord, value))
+            .map(|(coord, _)| coord)
     }
 
     pub fn keys(&self) -> impl Iterator<Item = Coord2D> {

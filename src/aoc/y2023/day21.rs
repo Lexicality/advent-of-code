@@ -40,7 +40,9 @@ fn big_steppe(grid: &Grid<GridState>, steps: HashSet<Coord2D>) -> HashSet<Coord2
     steps
         .into_iter()
         .flat_map(|coord| {
-            grid.get_neighbours_filtered(coord, false, |_, item| matches!(item, GridState::Garden))
+            grid.get_neighbour_coords_filtered(coord, false, |_, item| {
+                matches!(item, GridState::Garden)
+            })
         })
         .collect()
 }

@@ -83,7 +83,7 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
             }
             distance = 0;
             let next = grid
-                .get_neighbours_filtered(pos, false, |pos, value| {
+                .get_neighbour_coords_filtered(pos, false, |pos, value| {
                     matches!(value, GridState::Scaffold) && !seen.contains(pos)
                 })
                 .next();

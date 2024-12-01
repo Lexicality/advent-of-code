@@ -100,7 +100,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         .expect("Must have a starting position");
 
     let mut queue: VecDeque<Coord2D> = grid
-        .get_neighbours(start, false)
+        .get_neighbour_coords(start, false)
         .filter(|coord| {
             grid.get(coord)
                 .unwrap()
@@ -189,7 +189,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 
         grid.set(coord, Pipe2::Outside);
         queue.extend(
-            grid.get_neighbours(coord, false)
+            grid.get_neighbour_coords(coord, false)
                 .filter(|coord| !seen.contains(coord)),
         );
     }

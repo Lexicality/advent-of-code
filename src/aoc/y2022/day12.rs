@@ -210,7 +210,7 @@ impl Grid {
     fn get_neighbours(&self, coord: Coord2D) -> impl Iterator<Item = Coord2D> + '_ {
         let step = self.get(&coord).unwrap();
         self.grid
-            .get_neighbours(coord, false)
+            .get_neighbour_coords(coord, false)
             .filter(|coord| step.can_move_to(self.get(coord).unwrap()))
     }
 

@@ -33,4 +33,8 @@ where
     fn to_tuple(self) -> (Self::Type, Self::Type);
 
     fn from_tuple(value: (Self::Type, Self::Type)) -> Self;
+
+    fn try_from_tuple<V: PrimInt>(value: (V, V)) -> Option<Self> {
+        Some(Self::from_tuple((num::cast(value.0)?, num::cast(value.1)?)))
+    }
 }
