@@ -86,12 +86,14 @@ impl<Item, Key: Coordinate2D + std::ops::Add<Output = Key>> InfGrid<Item, Key> {
         &self,
         coord: Key,
         diagonal: bool,
+        include_centre: bool,
     ) -> impl Iterator<Item = Key> + '_ {
         (-1..=1)
             .cartesian_product(-1..=1)
+            .map(|(y, x)| (x, y))
             .filter(move |(x, y)| {
                 // TODO: Can I make this more readable? :/
-                !((*x == 0 && *y == 0) || (!diagonal && *x != 0 && *y != 0))
+                !((!include_centre && *x == 0 && *y == 0) || (!diagonal && *x != 0 && *y != 0))
             })
             .filter_map(Key::try_from_tuple)
             .map(move |offset| offset + coord)
@@ -101,8 +103,9 @@ impl<Item, Key: Coordinate2D + std::ops::Add<Output = Key>> InfGrid<Item, Key> {
         &self,
         coord: Key,
         diagonal: bool,
+        include_centre: bool,
     ) -> impl Iterator<Item = (Key, Option<&Item>)> + '_ {
-        self.get_neighbour_coords(coord, diagonal)
+        self.get_neighbour_coords(coord, diagonal, include_centre)
             .map(move |target| (target, self.get(&target)))
     }
 }
