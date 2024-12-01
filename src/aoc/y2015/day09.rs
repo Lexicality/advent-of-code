@@ -38,7 +38,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
                 .map(|(from, to)| routes[from][to])
                 .sum()
         })
-        .min()
+        .max()
         .unwrap();
 
     Ok(ret.to_string())
