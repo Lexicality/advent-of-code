@@ -54,12 +54,12 @@ fn main() -> Result<(), String> {
         .create(true)
         .truncate(true)
         .write(true)
-        .open(format!("./data/{year}/{day}.txt"))
+        .open(format!("./data/{year}/{day:02}.txt"))
         .map_err(|e| e.to_string())?;
 
     f.write_all(&data).map_err(|e| e.to_string())?;
 
-    println!("Written to data/{year}/{day}.txt!");
+    println!("Written to data/{year}/{day:02}.txt!");
 
     Ok(())
 }
