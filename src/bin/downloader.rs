@@ -3,6 +3,7 @@ use std::io::prelude::*;
 
 use clap::Parser;
 use reqwest::blocking::Client;
+use reqwest::header;
 use reqwest::StatusCode;
 
 #[derive(Debug, Parser)]
@@ -33,7 +34,11 @@ fn main() -> Result<(), String> {
     let client = Client::new();
     let res = client
         .get(format!("https://adventofcode.com/{year}/day/{day}/input"))
-        .header("cookie", format!("session={}", args.session_token))
+        .header(header::COOKIE, format!("session={}", args.session_token))
+        .header(
+            header::USER_AGENT,
+            "github.com/lexicality/advent-of-code by lexi@lexi.org.uk",
+        )
         .send()
         .map_err(|e| e.to_string())?;
 
