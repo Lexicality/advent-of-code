@@ -4,55 +4,25 @@ enum Direction {
     Decreasing,
 }
 
-fn check_line(line: &str, mut dampening: bool) -> bool {
-    print!("{line} || ");
+fn check_line(mut results: impl Iterator<Item = u32>) -> bool {
     let mut dir = Direction::Mystery;
-    let mut results = line.split(' ').map(|c| c.parse::<u32>().unwrap());
-
     let mut a = results.next().unwrap();
-    print!("{a} ");
-
     for b in results {
-        print!("{b} ");
         if a.abs_diff(b) > 3 {
-            print!("(ERR |{a} - {b}| == {} > 3!) ", a.abs_diff(b));
-            if !dampening {
-                print!("damp! ");
-                dampening = true;
-                continue;
-            }
             return false;
         }
         match a.cmp(&b) {
             std::cmp::Ordering::Less => {
                 if matches!(dir, Direction::Increasing) {
-                    print!("(ERR {a} < {b}!) ");
-                    if !dampening {
-                        print!("damp! ");
-                        dampening = true;
-                        continue;
-                    }
                     return false;
                 }
                 dir = Direction::Decreasing
             }
             std::cmp::Ordering::Equal => {
-                print!("(ERR {a} == {b}!) ");
-                if !dampening {
-                    print!("damp! ");
-                    dampening = true;
-                    continue;
-                }
                 return false;
             }
             std::cmp::Ordering::Greater => {
                 if matches!(dir, Direction::Decreasing) {
-                    print!("(ERR {a} > {b}!) ");
-                    if !dampening {
-                        print!("damp! ");
-                        dampening = true;
-                        continue;
-                    }
                     return false;
                 }
                 dir = Direction::Increasing
@@ -65,20 +35,25 @@ fn check_line(line: &str, mut dampening: bool) -> bool {
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
-    for line in data {
-        if check_line(&line, false) {
-            ret += 1;
-            println!("safe!");
-            continue;
-        }
-        println!("RETRY");
-        let (_, line) = line.split_once(' ').unwrap();
-        if check_line(line, true) {
-            println!("safe!");
+    'lines: for line in data {
+        let results: Vec<u32> = line.split(' ').map(|c| c.parse().unwrap()).collect();
+        if check_line(results.iter().copied()) {
             ret += 1;
             continue;
         }
-        println!("UNSAFE");
+        for to_remove in 0..results.len() {
+            if check_line(
+                results
+                    .iter()
+                    .enumerate()
+                    .filter(|(index, _)| *index != to_remove)
+                    .map(|(_, v)| v)
+                    .copied(),
+            ) {
+                ret += 1;
+                continue 'lines;
+            }
+        }
     }
     Ok(ret.to_string())
 }
