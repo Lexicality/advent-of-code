@@ -29,6 +29,26 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             },
         );
 
+    fn find_bads(
+        pages: &[u32],
+        dependencies: &HashMap<u32, HashSet<u32>>,
+    ) -> Option<(usize, usize)> {
+        for (i, page) in pages.iter().enumerate() {
+            let Some(bads) = dependencies.get(page) else {
+                continue;
+            };
+            if let Some((j, _)) = pages
+                .iter()
+                .enumerate()
+                .skip(i + 1)
+                .find(|(_, page)| bads.contains(page))
+            {
+                return Some((i, j));
+            }
+        }
+        None
+    }
+
     let ret: u32 = puzzle
         .map(|line| -> Vec<u32> {
             line.split(',')
@@ -37,16 +57,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
                 .map_err(AoCError::new_from_parseerror)
                 .unwrap()
         })
-        .filter(|pages| {
-            for (i, page) in pages.iter().enumerate() {
-                let Some(bads) = dependencies.get(page) else {
-                    continue;
-                };
-                if pages.iter().skip(i + 1).any(|page| bads.contains(page)) {
-                    return false;
-                }
+        .filter(|pages| find_bads(pages, &dependencies).is_some())
+        .map(|mut pages| {
+            while let Some((i, j)) = find_bads(&pages, &dependencies) {
+                pages.swap(i, j);
             }
-            true
+            pages
         })
         .map(|pages| pages[pages.len() / 2])
         .sum();
