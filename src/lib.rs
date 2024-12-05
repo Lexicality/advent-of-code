@@ -89,3 +89,16 @@ pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
     }
     Ok("".to_owned())
 }
+
+pub fn partition_input(data: DataIn) -> (DataIn, DataIn) {
+    let mut swappo = true;
+    let (a, mut b): (Vec<_>, Vec<_>) = data.partition(|line| {
+        if swappo && line.is_empty() {
+            swappo = false;
+        }
+        swappo
+    });
+    // remove the blank line
+    b.remove(0);
+    (a.into_iter(), b.into_iter())
+}
