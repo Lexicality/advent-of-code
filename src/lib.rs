@@ -12,6 +12,7 @@ pub mod utils {
     pub mod grid;
     pub mod infgrid;
 }
+pub mod symbols;
 
 use std::iter::IntoIterator;
 

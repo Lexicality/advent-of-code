@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+use crate::symbols;
 use crate::{AoCError, Coord2D};
 
 // Implementing `ord` is meaningless because directions don't have magnitude, but
@@ -67,13 +68,23 @@ impl Direction {
 
 impl Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Direction::North => "North",
-            Direction::East => "East",
-            Direction::South => "South",
-            Direction::West => "West",
+        if f.alternate() {
+            match self {
+                Direction::North => symbols::ARROW_UP,
+                Direction::East => symbols::ARROW_RIGHT,
+                Direction::South => symbols::ARROW_DOWN,
+                Direction::West => symbols::ARROW_LEFT,
+            }
+            .fmt(f)
+        } else {
+            match self {
+                Direction::North => "North",
+                Direction::East => "East",
+                Direction::South => "South",
+                Direction::West => "West",
+            }
+            .fmt(f)
         }
-        .fmt(f)
     }
 }
 
