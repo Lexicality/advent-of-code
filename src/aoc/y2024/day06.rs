@@ -14,7 +14,6 @@ enum GridState {
     Guard,
     Visited(Direction),
     Crossover,
-    NewBlock,
 }
 
 impl TryFrom<char> for GridState {
@@ -37,7 +36,6 @@ impl Display for GridState {
             GridState::Guard => '^'.fmt(f),
             GridState::Visited(direction) => format!("{direction:#}").fmt(f),
             GridState::Crossover => symbols::CROSSOVER.fmt(f),
-            GridState::NewBlock => 'O'.fmt(f),
         }
     }
 }
@@ -48,21 +46,16 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         .find(|(_, v)| matches!(v, GridState::Guard))
         .expect("Guard must exist");
     let starting_position = guardpos;
+
     let mut guard_direction = Direction::North;
-    grid.set(guardpos, GridState::Visited(guard_direction));
-    let starting_grid = grid.clone();
-    let mut visitations = HashSet::new();
-    let mut unacceptable = HashSet::new();
+
     loop {
         let nextpos = guardpos + guard_direction.to_coord();
         let Some(nextstate) = grid.get(&nextpos) else {
-            unacceptable.insert((guardpos, guard_direction));
             break;
         };
         match nextstate {
             GridState::Obstacle => {
-                // Don't try inserting an obstacle where one can't fit
-                unacceptable.insert((guardpos, guard_direction));
                 // Pivot on the spot
                 guard_direction = guard_direction.rotate(RotateDirection::Right);
                 // Try again
@@ -77,43 +70,27 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             _ => (),
         }
         guardpos = nextpos;
-        visitations.insert((guardpos, guard_direction));
     }
 
-    // println!("{grid:#}");
-
-    let ret = visitations
+    let ret = grid
         .iter()
-        .filter(|(coord, dir)| (*coord + dir.to_coord()) != starting_position)
-        .filter(|step| !unacceptable.contains(step))
-        .filter_map(|(pos, direction)| {
+        .filter(|(_, v)| matches!(v, GridState::Visited(_) | GridState::Crossover))
+        .filter(|(coord, _)| **coord != starting_position)
+        .filter_map(|(pos, _)| {
             let mut guardpos = starting_position;
             let mut guard_direction = Direction::North;
 
             let mut visitations = HashSet::new();
 
-            let mut grid = starting_grid.clone();
-            let collide_pos = *pos + direction.to_coord();
-            grid.set(collide_pos, GridState::NewBlock);
             loop {
                 let nextpos = guardpos + guard_direction.to_coord();
                 if visitations.contains(&(nextpos, guard_direction)) {
-                    // println!("{grid:#}");
-                    return Some(collide_pos);
+                    return Some(*pos);
                 }
                 let nextstate = grid.get(&nextpos)?;
-                match nextstate {
-                    GridState::Obstacle | GridState::NewBlock => {
-                        guard_direction = guard_direction.rotate(RotateDirection::Right);
-                        continue;
-                    }
-                    // GridState::Empty => {
-                    //     grid.set(nextpos, GridState::Visited(guard_direction));
-                    // }
-                    // GridState::Visited(_) => {
-                    //     grid.set(nextpos, GridState::Crossover);
-                    // }
-                    _ => (),
+                if nextpos == *pos || matches!(nextstate, GridState::Obstacle) {
+                    guard_direction = guard_direction.rotate(RotateDirection::Right);
+                    continue;
                 }
                 guardpos = nextpos;
                 visitations.insert((guardpos, guard_direction));
