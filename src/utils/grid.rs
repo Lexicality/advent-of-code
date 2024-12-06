@@ -4,7 +4,7 @@ use std::fmt::{Debug, Display};
 
 use crate::{CharGrid, CommonGrid, Coord2D, Coordinate, DisplayGrid, FlatGrid};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid<Item> {
     pub grid: HashMap<Coord2D, Item>,
     pub width: u32,
