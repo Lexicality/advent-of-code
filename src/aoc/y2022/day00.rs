@@ -1,5 +1,5 @@
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut ret = 0;
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+    let ret = data.count();
     Ok(ret.to_string())
 }
 
