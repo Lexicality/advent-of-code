@@ -68,18 +68,22 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         //     let a = coords[0];
         //     let b = coords[1];
         let coords: Vec<_> = coords.map(|(coord, _)| coord).collect();
+        // silly
+        for coord in coords.iter() {
+            antinodes.push(**coord);
+        }
         for (a, b) in coords.into_iter().tuple_combinations() {
-            let first = *a + (a - b);
-            let second = *b + (b - a);
-            // println!("{a},{b} results in {first} and {second}");
-            if grid.check_coord(&first) {
+            let step1 = a - b;
+            let mut first = *a + step1;
+            while grid.check_coord(&first) {
                 antinodes.push(first);
-            } else {
-                // println!("Invalid coord {first}!");
+                first += step1;
             }
-            if grid.check_coord(&second) {
+            let step2 = b - a;
+            let mut second = *b + step2;
+            while grid.check_coord(&second) {
                 antinodes.push(second);
-                // println!("Invalid coord {second}!");
+                second += step2;
             }
         }
     }
