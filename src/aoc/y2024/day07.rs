@@ -4,11 +4,13 @@ use itertools::Itertools;
 
 use crate::AoCError;
 
-const OPERATIONS: [fn(u64, u64) -> u64; 2] = [
+const OPERATIONS: [fn(u64, u64) -> u64; 3] = [
     // Add
     |a: u64, b: u64| a + b,
     // Multiply
     |a: u64, b: u64| a * b,
+    // Concat
+    |a: u64, b: u64| format!("{a}{b}").parse().unwrap(),
 ];
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
