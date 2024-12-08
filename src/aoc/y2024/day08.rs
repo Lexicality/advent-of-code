@@ -1,0 +1,105 @@
+use std::collections::HashMap;
+use std::fmt::Display;
+
+use itertools::Itertools;
+
+use crate::symbols;
+use crate::AoCError;
+use crate::CharGrid;
+use crate::CommonGrid;
+use crate::Coord2D;
+use crate::Grid;
+
+enum GridState {
+    Empty,
+    Antenna(char),
+    Antinode,
+}
+
+impl TryFrom<char> for GridState {
+    type Error = AoCError;
+    fn try_from(value: char) -> Result<Self, Self::Error> {
+        Ok(match value {
+            '.' => Self::Empty,
+            c if c.is_ascii_alphanumeric() => Self::Antenna(c),
+            _ => return Err(AoCError::new_from_char(value)),
+        })
+    }
+}
+
+impl Display for GridState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GridState::Empty => symbols::VOID,
+            GridState::Antenna(c) => *c,
+            GridState::Antinode => '#',
+        }
+        .fmt(f)
+    }
+}
+
+pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid: Grid<GridState> = Grid::new_from_chars(data)?;
+    println!("{grid:#}");
+    let mut antinodes: HashMap<char, Vec<Coord2D>> = grid
+        .iter()
+        .filter_map(|(_, s)| match s {
+            GridState::Antenna(c) => Some(c),
+            _ => None,
+        })
+        .unique()
+        .map(|c| (*c, vec![]))
+        .collect();
+
+    let tmp = grid
+        .iter()
+        .filter_map(|(coord, s)| match s {
+            GridState::Antenna(c) => Some((coord, c)),
+            _ => None,
+        })
+        .sorted_by_cached_key(|(_, c)| *c)
+        .chunk_by(|(_, c)| *c);
+
+    for (signal, coords) in tmp.into_iter() {
+        let antinodes = antinodes
+            .get_mut(signal)
+            .expect("we already prefilled this");
+        // for coords in coords.map(|(coord, _)| coord).permutations(2) {
+        //     let a = coords[0];
+        //     let b = coords[1];
+        let coords: Vec<_> = coords.map(|(coord, _)| coord).collect();
+        for (a, b) in coords.into_iter().tuple_combinations() {
+            let first = *a + (a - b);
+            let second = *b + (b - a);
+            // println!("{a},{b} results in {first} and {second}");
+            if grid.check_coord(&first) {
+                antinodes.push(first);
+            } else {
+                // println!("Invalid coord {first}!");
+            }
+            if grid.check_coord(&second) {
+                antinodes.push(second);
+                // println!("Invalid coord {second}!");
+            }
+        }
+    }
+
+    // decorate the grid
+    for coord in antinodes.values().flatten() {
+        let current = grid.get_mut(coord).unwrap();
+        if matches!(current, GridState::Empty) {
+            *current = GridState::Antinode;
+        }
+    }
+
+    println!("{grid:#}");
+
+    let ret = antinodes
+        .into_iter()
+        .flat_map(|(_, nodes)| nodes.into_iter())
+        .unique()
+        .count();
+    Ok(ret.to_string())
+}
+
+inventory::submit!(crate::AoCDay::mew("2024", "8", main));
