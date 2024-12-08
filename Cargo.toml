@@ -14,7 +14,7 @@ clap = { version = "4.0.29", features = ["cargo", "derive", "env"] }
 hex = "0.4.3"
 humantime = "2.1.0"
 inventory = "0.3.2"
-itertools = "0.10.5"
+itertools = "0.13.0"
 lazy_static = "1.4.0"
 md-5 = "0.10.6"
 num = "0.4.1"

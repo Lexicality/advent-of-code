@@ -51,7 +51,7 @@ impl Display for SpringState {
 }
 
 fn check_valid(state1: &[SpringState], state2: &[u32]) -> bool {
-    let groups = state1.iter().group_by(|v| *v);
+    let groups = state1.iter().chunk_by(|v| *v);
     groups
         .into_iter()
         .filter(|(key, _)| matches!(key, SpringState::Damaged))
