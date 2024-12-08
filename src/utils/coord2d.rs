@@ -98,6 +98,13 @@ impl ops::Add for Coord2D {
     }
 }
 
+impl ops::Add for &Coord2D {
+    type Output = Coord2D;
+    fn add(self, rhs: Self) -> Self::Output {
+        *self + *rhs
+    }
+}
+
 impl ops::AddAssign for Coord2D {
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
@@ -115,6 +122,13 @@ impl ops::Sub for Coord2D {
     }
 }
 
+impl ops::Sub for &Coord2D {
+    type Output = Coord2D;
+    fn sub(self, rhs: Self) -> Self::Output {
+        *self - *rhs
+    }
+}
+
 impl ops::SubAssign for Coord2D {
     fn sub_assign(&mut self, rhs: Self) {
         self.x -= rhs.x;
@@ -129,6 +143,13 @@ impl ops::Mul for Coord2D {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
         }
+    }
+}
+
+impl ops::Mul for &Coord2D {
+    type Output = Coord2D;
+    fn mul(self, rhs: Self) -> Self::Output {
+        *self * *rhs
     }
 }
 
