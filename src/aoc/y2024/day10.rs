@@ -1,7 +1,5 @@
-use std::{
-    collections::{HashSet, VecDeque},
-    fmt::Display,
-};
+use std::collections::VecDeque;
+use std::fmt::Display;
 
 use crate::{AoCError, CharGrid, CommonGrid, Grid};
 
@@ -55,20 +53,14 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         let mut options = VecDeque::with_capacity(grid.len());
         options.push_front(trailhead);
 
-        let mut seen = HashSet::with_capacity(grid.len());
         while let Some(coord) = options.pop_front() {
-            if !seen.insert(coord) {
-                continue;
-            }
             let value = grid.get(&coord).unwrap();
             if value.is_end() {
                 ret += 1;
                 continue;
             }
             options.extend(
-                grid.get_neighbour_coords_filtered(coord, false, |coord, next| {
-                    next.can_walk(value) && !seen.contains(coord)
-                }),
+                grid.get_neighbour_coords_filtered(coord, false, |_, next| next.can_walk(value)),
             );
         }
     }
