@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use itertools::Itertools;
 use num::Integer;
 
@@ -5,40 +7,44 @@ use crate::AoCError;
 
 type Aa = u64;
 
-const ITERATIONS: usize = 25;
+const ITERATIONS: usize = 75;
 
 pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut stones: Vec<Aa> = data
+    let mut stones: HashMap<Aa, usize> = data
         .next()
         .unwrap()
         .split(" ")
         .map(str::parse)
+        .map_ok(|v| (v, 1))
         .try_collect()
         .map_err(AoCError::new_from_parseerror)?;
 
     println!("{stones:?}");
 
     for _ in 0..ITERATIONS {
+        let stlen = stones.len();
         stones = stones
             .into_iter()
-            .flat_map(|num| {
+            .fold(HashMap::with_capacity(stlen), |mut acc, (num, count)| {
                 if num == 0 {
-                    return vec![Ok(1)].into_iter();
-                }
-                let strval = num.to_string();
-                if strval.len().is_even() {
-                    let (a, b) = strval.split_at(strval.len() / 2);
-                    vec![a.parse(), b.parse()].into_iter()
+                    *acc.entry(1).or_default() += count;
                 } else {
-                    vec![Ok(num * 2024)].into_iter()
+                    let strval = num.to_string();
+                    if strval.len().is_even() {
+                        let (a, b) = strval.split_at(strval.len() / 2);
+                        let a = a.parse().unwrap();
+                        let b = b.parse().unwrap();
+                        *acc.entry(a).or_default() += count;
+                        *acc.entry(b).or_default() += count;
+                    } else {
+                        *acc.entry(num * 2024).or_default() += count;
+                    }
                 }
-            })
-            .try_collect()
-            .map_err(AoCError::new_from_parseerror)?;
-        println!("{stones:?}");
+                acc
+            });
     }
 
-    let ret = stones.len();
+    let ret: usize = stones.values().sum();
     Ok(ret.to_string())
 }
 
