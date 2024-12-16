@@ -36,6 +36,7 @@ pub use crate::utils::coord::Coordinate2D;
 pub use crate::utils::coord2d::Coord2D;
 pub use crate::utils::coord3d::Coord3D;
 pub use crate::utils::direction::Direction;
+pub use crate::utils::direction::RotateDirection;
 pub use crate::utils::error::AoCError;
 pub use crate::utils::error::AoCResult;
 pub use crate::utils::grid::Grid;

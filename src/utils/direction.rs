@@ -23,8 +23,10 @@ pub enum Direction {
     West,
 }
 
-#[derive(Debug, Clone, Copy)]
+// As above, comparing rotations makes no sense but a* needs it
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RotateDirection {
+    None,
     Left,
     Right,
     Backwards,
@@ -33,6 +35,7 @@ pub enum RotateDirection {
 impl Direction {
     pub const fn rotate(&self, direction: RotateDirection) -> Direction {
         match direction {
+            RotateDirection::None => *self,
             RotateDirection::Left => match self {
                 Self::North => Self::West,
                 Self::East => Self::North,

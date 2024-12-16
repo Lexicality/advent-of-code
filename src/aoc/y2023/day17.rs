@@ -12,8 +12,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use itertools::Itertools;
 
 use crate::utils::astar;
-use crate::utils::direction::RotateDirection;
-use crate::{CommonGrid, Coord2D, Coordinate, Direction, FlatGrid, Grid};
+use crate::{CommonGrid, Coord2D, Coordinate, Direction, FlatGrid, Grid, RotateDirection};
 
 type NodeID = (Coord2D, Direction, u32);
 

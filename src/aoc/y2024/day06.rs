@@ -13,8 +13,7 @@ use std::fmt::Display;
 use itertools::Itertools;
 
 use crate::symbols;
-use crate::utils::direction::RotateDirection;
-use crate::{AoCError, CharGrid, CommonGrid, Direction, Grid};
+use crate::{AoCError, CharGrid, CommonGrid, Direction, Grid, RotateDirection};
 
 #[derive(Debug, Clone, Copy)]
 enum GridState {

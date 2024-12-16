@@ -12,7 +12,7 @@ use std::{collections::HashSet, fmt::Display};
 use itertools::Itertools;
 
 use super::computer::Computer;
-use crate::{utils::direction::RotateDirection, AoCError, CharGrid, CommonGrid, Direction, Grid};
+use crate::{AoCError, CharGrid, CommonGrid, Direction, Grid, RotateDirection};
 
 enum GridState {
     Void,

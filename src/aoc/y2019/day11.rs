@@ -9,9 +9,7 @@
 
 use std::fmt::Display;
 
-use crate::{
-    utils::direction::RotateDirection, AoCResult, CommonGrid, Coord2D, Direction, InfGrid,
-};
+use crate::{AoCResult, CommonGrid, Coord2D, Direction, InfGrid, RotateDirection};
 
 use super::computer::{Computer, RunState};
 
