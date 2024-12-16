@@ -13,11 +13,15 @@ use regex::Regex;
 
 use crate::{AoCError, AoCResult};
 
+type Stupid = i128;
+
+const WAT: Stupid = 10000000000000;
+
 #[derive(Debug)]
 struct ClawMachine {
-    a: [i64; 2],
-    b: [i64; 2],
-    prize: [i64; 2],
+    a: [Stupid; 2],
+    b: [Stupid; 2],
+    prize: [Stupid; 2],
 }
 
 impl ClawMachine {
@@ -67,27 +71,31 @@ impl ClawMachine {
         })
     }
 
-    fn factorio(&self) -> Option<(i64, i64)> {
+    fn factorio(&self) -> Option<(Stupid, Stupid)> {
         let a_1 = self.a[0] * self.b[1];
-        let p_1 = self.prize[0] * self.b[1];
+        let p_1 = (WAT + self.prize[0]) * self.b[1];
         let a_2 = self.a[1] * self.b[0];
-        let p_2 = self.prize[1] * self.b[0];
+        let p_2 = (WAT + self.prize[1]) * self.b[0];
         let a = a_1 - a_2;
         let p = p_1 - p_2;
         if p % a != 0 {
+            println!("Uneven division p % a = {}", p % a);
             return None;
         }
         let a = p / a;
         if a < 0 {
+            println!("A is negative! {a}");
             return None;
         }
-        let b = self.prize[0] - a * self.a[0];
+        let b = (WAT + self.prize[0]) - a * self.a[0];
         let b_c = self.b[0];
         if b % b_c != 0 {
+            println!("Uneven division b % b_c = {}", b % b_c);
             return None;
         }
         let b = b / b_c;
         if b < 0 {
+            println!("B is negative! {b}");
             return None;
         }
         Some((a, b))
@@ -103,10 +111,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         println!("{claw:?}");
         if let Some((a, b)) = claw.factorio() {
             println!("a: {a} b: {b}");
-
-            if a <= 100 && b <= 100 {
-                ret += b + a * 3;
-            }
+            ret += b + a * 3;
         }
         if !data.next().is_none_or(|line| line.is_empty()) {
             return Err(AoCError::new("Got out of sync with the claws!"));
