@@ -14,6 +14,8 @@ pub const SHADE_MID: char = '▒';
 pub const SHADE_DARK: char = '▓';
 pub const VOID: char = '·';
 pub const INVALID: char = '╳';
+pub const BOX: char = '▢';
+pub const ROBOT: char = '✪';
 // Arrows etc
 pub const ARROW_UP: char = '↑';
 pub const ARROW_RIGHT: char = '→';
