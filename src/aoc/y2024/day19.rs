@@ -39,40 +39,35 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     assert!(data.next().unwrap().is_empty());
 
-    let ret = data
-        .filter(|line| {
+    let ret: usize = data
+        .filter_map(|line| {
             let mut current_options: Vec<&[char]> =
                 towels.iter().map(|towel| &towel.letters[..]).collect();
             for char in line.chars() {
-                let mut add_new = false;
                 current_options = current_options
                     .into_iter()
-                    .filter_map(|stripes| match stripes.split_first() {
-                        Some((c, ret)) if *c == char => Some(ret),
-                        Some(_) => None,
-                        None => {
-                            add_new = true;
-                            None
-                        }
-                    })
-                    .collect();
-                if add_new {
-                    current_options.extend(
-                        towels
+                    .flat_map(|stripes| match stripes.split_first() {
+                        Some((c, ret)) if *c == char => vec![ret],
+                        Some(_) => vec![],
+                        None => towels
                             .iter()
                             .filter(|towel| towel.starts_with == char)
-                            .map(|towel| &towel.letters[1..]),
-                    );
-                }
+                            .map(|towel| &towel.letters[1..])
+                            .collect(),
+                    })
+                    .collect();
                 if current_options.is_empty() {
-                    return false;
+                    return None;
                 }
             }
-            current_options
-                .into_iter()
-                .any(|stripes| stripes.is_empty())
+            Some(
+                current_options
+                    .into_iter()
+                    .filter(|stripes| stripes.is_empty())
+                    .count(),
+            )
         })
-        .count();
+        .sum();
 
     // let ret = data.count();
     Ok(ret.to_string())
