@@ -1,5 +1,7 @@
 use std::fmt::Display;
 
+use itertools::Itertools;
+
 // Copyright (c) 2024 Lexi Robinson
 //
 // Licensed under the EUPL, Version 1.2
@@ -11,7 +13,7 @@ use std::fmt::Display;
 use crate::utils::astar::{a_star, AStarProvider};
 use crate::{symbols, AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid};
 
-const TIME_TO_SAVE: usize = 100;
+const TIME_TO_SAVE: usize = 74;
 
 type AStarID = Coord2D;
 
@@ -118,10 +120,27 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
                 .iter()
                 .enumerate()
                 .skip(i + TIME_TO_SAVE)
-                .filter(|(_, other)| coord.distance(other) == 2)
+                .filter_map(|(j, other)| {
+                    let distance = coord.distance(other);
+                    if (2..=20).contains(&distance) {
+                        // Some((j, distance))
+                        Some(j - i - (distance as usize))
+                    } else {
+                        None
+                    }
+                })
+                .sorted()
+                .inspect(|v| println!("{v}"))
+                .filter(|v| *v >= TIME_TO_SAVE)
+                // .inspect(|(j, distance)| println!("{}", j - i - (*distance as usize)))
                 // I'm not entirely sure why this is necessary but it is
-                .filter(|(j, _)| (j - i - 2) >= TIME_TO_SAVE)
+                // .filter(|(j, distance)| (j - i - (*distance as usize)) + 1 >= TIME_TO_SAVE)
                 .count()
+        })
+        .inspect(|v| {
+            if *v > 0 {
+                println!("   {v}")
+            }
         })
         .sum();
     Ok(ret.to_string())
