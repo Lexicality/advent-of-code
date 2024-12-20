@@ -7,7 +7,7 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 
 use itertools::Itertools;
 
@@ -41,21 +41,27 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     let ret: usize = data
         .filter_map(|line| {
-            let mut current_options: Vec<&[char]> =
-                towels.iter().map(|towel| &towel.letters[..]).collect();
+            let mut current_options: HashMap<&[char], usize> =
+                towels.iter().map(|towel| (&towel.letters[..], 1)).collect();
             for char in line.chars() {
                 current_options = current_options
                     .into_iter()
-                    .flat_map(|stripes| match stripes.split_first() {
-                        Some((c, ret)) if *c == char => vec![ret],
+                    .flat_map(|(stripes, counts)| match stripes.split_first() {
+                        Some((c, ret)) if *c == char => vec![(ret, counts)],
                         Some(_) => vec![],
                         None => towels
                             .iter()
                             .filter(|towel| towel.starts_with == char)
-                            .map(|towel| &towel.letters[1..])
+                            .map(|towel| (&towel.letters[1..], counts))
                             .collect(),
                     })
-                    .collect();
+                    .fold(
+                        HashMap::with_capacity(towels.len()),
+                        |mut acc, (stripes, count)| {
+                            *acc.entry(stripes).or_default() += count;
+                            acc
+                        },
+                    );
                 if current_options.is_empty() {
                     return None;
                 }
@@ -63,8 +69,9 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
             Some(
                 current_options
                     .into_iter()
-                    .filter(|stripes| stripes.is_empty())
-                    .count(),
+                    .filter(|(stripes, _)| stripes.is_empty())
+                    .map(|(_, count)| count)
+                    .sum::<usize>(),
             )
         })
         .sum();
