@@ -98,10 +98,30 @@ lazy_static! {
         m.insert((KB::Left, KB::Up), vec![KB::Right, KB::Up, KB::A]);
         m
     };
-    static ref EXPANDED_KEYPAD_MOVEMENTS: HashMap<(KB, KB), Vec<KB>> = {
+    static ref EXPANDED_KEYPAD_MOVEMENTS: HashMap<(KB, KB), u64> = {
         KEYPAD_MOVEMENTS
             .iter()
-            .map(|(key, moves)| (*key, expandinate(expandinate(moves.clone()))))
+            .map(|(key, moves)| {
+                (
+                    *key,
+                    expandinate(expandinate(
+                        moves
+                            .iter()
+                            .copied()
+                            .chain(
+                                KEYPAD_MOVEMENTS
+                                    .get(&(key.1, KB::A))
+                                    .unwrap()
+                                    .iter()
+                                    .copied(),
+                            )
+                            .collect(),
+                    ))
+                    .len()
+                    .try_into()
+                    .unwrap(),
+                )
+            })
             .collect()
     };
 }
@@ -211,10 +231,8 @@ impl AStarProvider for AStarImpl<'_> {
     fn cost(&self, id: &Self::IDType) -> u64 {
         EXPANDED_KEYPAD_MOVEMENTS
             .get(&(id.last_key, id.key_to_get_here))
+            .copied()
             .expect("all of these are defined")
-            .len()
-            .try_into()
-            .unwrap()
     }
 
     fn is_end(&self, id: &Self::IDType) -> bool {
@@ -277,11 +295,11 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
             movements.extend(route.into_iter().rev().map(|v| v.key_to_get_here));
             movements.push(KB::A);
         }
-        println!("{line}: {}", movements.iter().join(""));
+        // println!("{line}: {}", movements.iter().join(""));
         movements = expandinate(movements);
-        println!("{line}: {}", movements.iter().join(""));
+        // println!("{line}: {}", movements.iter().join(""));
         movements = expandinate(movements);
-        println!("{line}: {}", movements.iter().join(""));
+        // println!("{line}: {}", movements.iter().join(""));
         let num_moves = movements.len();
         let keypad_num: usize = line[..3].parse().unwrap();
         println!("{line}: {}*{}", num_moves, keypad_num,);
