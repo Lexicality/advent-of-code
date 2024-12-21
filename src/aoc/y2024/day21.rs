@@ -92,14 +92,17 @@ lazy_static! {
         m.insert((KB::Down, KB::Right), vec![KB::Right, KB::A]);
         m.insert((KB::Down, KB::Left), vec![KB::Left, KB::A]);
         m.insert((KB::Down, KB::Up), vec![KB::Up, KB::A]);
-        m.insert(
-            (KB::Left, KB::A),
-            vec![KB::Right, KB::Right, KB::Right, KB::Up, KB::A],
-        );
+        m.insert((KB::Left, KB::A), vec![KB::Right, KB::Right, KB::Up, KB::A]);
         m.insert((KB::Left, KB::Right), vec![KB::Right, KB::Right, KB::A]);
         m.insert((KB::Left, KB::Down), vec![KB::Right, KB::A]);
         m.insert((KB::Left, KB::Up), vec![KB::Right, KB::Up, KB::A]);
         m
+    };
+    static ref EXPANDED_KEYPAD_MOVEMENTS: HashMap<(KB, KB), Vec<KB>> = {
+        KEYPAD_MOVEMENTS
+            .iter()
+            .map(|(key, moves)| (*key, expandinate(expandinate(moves.clone()))))
+            .collect()
     };
 }
 
@@ -206,7 +209,7 @@ impl AStarProvider for AStarImpl<'_> {
     }
 
     fn cost(&self, id: &Self::IDType) -> u64 {
-        KEYPAD_MOVEMENTS
+        EXPANDED_KEYPAD_MOVEMENTS
             .get(&(id.last_key, id.key_to_get_here))
             .expect("all of these are defined")
             .len()
@@ -254,6 +257,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
 
     let starter = [NumericKeypad::A];
 
+    let mut ret = 0;
     for line in data {
         let mut movements = Vec::new();
         for (a, b) in starter
@@ -267,55 +271,22 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
                 start: a.into(),
                 end: b.into(),
             };
-            // println!(
-            //     "Going from {a:?}({}) to {b:?}({})",
-            //     provider.start, provider.end
-            // );
             let start = provider.get_start();
             let route = a_star(provider, start);
             assert!(!route.is_empty());
             movements.extend(route.into_iter().rev().map(|v| v.key_to_get_here));
             movements.push(KB::A);
-
-            // route.reverse();
-            // for v in route {
-            //     // println!(
-            //     //     "Pos {} going from {} to {}",
-            //     //     v.pos, v.last_key, v.key_to_get_here
-            //     // );
-            //     print!("{}", v.key_to_get_here);
-            // }
-            // // println!("???");
-            // print!("A");
         }
+        println!("{line}: {}", movements.iter().join(""));
         movements = expandinate(movements);
+        println!("{line}: {}", movements.iter().join(""));
         movements = expandinate(movements);
+        println!("{line}: {}", movements.iter().join(""));
         let num_moves = movements.len();
-        println!(
-            "{line}: {} (should be {}) {}",
-            num_moves,
-            {
-                match line.as_str() {
-                    "029A" => {
-                        "<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A".len()
-                    }
-                    "980A" => "<v<A>>^AAAvA^A<vA<AA>>^AvAA<^A>A<v<A>A>^AAAvA<^A>A<vA>^A<A>A".len(),
-                    "179A" => {
-                        "<v<A>>^A<vA<A>>^AAvAA<^A>A<v<A>>^AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A".len()
-                    }
-                    "456A" => {
-                        "<v<A>>^AA<vA<A>>^AAvAA<^A>A<vA>^A<A>A<vA>^A<A>A<v<A>A>^AAvA<^A>A".len()
-                    }
-                    "379A" => {
-                        "<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A".len()
-                    }
-                    _ => 0,
-                }
-            },
-            movements.into_iter().join("")
-        );
+        let keypad_num: usize = line[..3].parse().unwrap();
+        println!("{line}: {}*{}", num_moves, keypad_num,);
+        ret += num_moves * keypad_num;
     }
-    let ret = "";
     Ok(ret.to_string())
 }
 
