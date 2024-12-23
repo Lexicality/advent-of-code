@@ -9,14 +9,9 @@
 
 use std::collections::{HashMap, HashSet};
 
-type ComputerID = String;
-type HashKey = [ComputerID; 3];
+use itertools::Itertools;
 
-fn hash_key(a: &ComputerID, b: &ComputerID, c: &ComputerID) -> HashKey {
-    let mut ret = [a, b, c];
-    ret.sort();
-    ret.map(String::to_owned)
-}
+type ComputerID = String;
 
 pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     let computers: HashMap<ComputerID, HashSet<ComputerID>> = {
@@ -31,27 +26,33 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         })
     };
 
-    let mut seen: HashSet<HashKey> = HashSet::with_capacity(computers.len());
-
-    let ret: usize = computers
+    let ret = computers
         .iter()
-        .filter(|(key, friends)| key.starts_with('t') && friends.len() >= 2)
-        .map(|(me, friends)| {
-            let mut to_compare = friends.clone();
-            friends
-                .iter()
-                .map(|friend| {
-                    to_compare.remove(friend);
-                    let friend_friends = &computers[friend];
-                    friend_friends
-                        .intersection(&to_compare)
-                        .filter(|ff| seen.insert(hash_key(me, friend, *ff)))
-                        .inspect(|ff| println!("{me},{friend},{ff}"))
-                        .count()
-                })
-                .sum::<usize>()
+        .permutations(2)
+        .map(|v| {
+            let (key_a, friends_a) = v[0];
+            let (key_b, friends_b) = v[1];
+            let mut common_friends: HashSet<_> = friends_a.intersection(friends_b).collect();
+            common_friends.insert(key_a);
+            common_friends.insert(key_b);
+            common_friends
         })
-        .sum();
+        .filter(|cf| !cf.is_empty())
+        .unique_by(|cf| cf.iter().sorted().join(","))
+        .sorted_by_cached_key(|cf| cf.len())
+        .filter(|common_friends| {
+            let owned_friends: HashSet<_> =
+                common_friends.iter().map(|v| (*v).to_owned()).collect();
+            common_friends.iter().all(|key| {
+                let mut argh: HashSet<_> = computers[*key].intersection(&owned_friends).collect();
+                argh.insert(key);
+                argh == *common_friends
+            })
+        })
+        .map(|cf| cf.into_iter().sorted().join(","))
+        .next_back()
+        .unwrap();
+
     Ok(ret.to_string())
 }
 
