@@ -64,70 +64,70 @@ fn main() -> Result<(), Box<dyn Error>> {
     });
 
     println!("strict digraph {{");
-    #[allow(clippy::single_element_loop)]
-    for (key, value) in [
-        // global settings
-        ("rankdir", "LR"),
-        ("ordering", "in"),
-        // ("newrank", "true"),
-    ] {
-        println!("\t{key}=\"{value}\";");
-    }
-    println!("\tsubgraph cluster_input {{ X; Y;");
-    println!("\t\tgraph [label=\"Input\"];");
-
-    println!("\t\tsubgraph cluster_x {{");
-    println!("\t\t\tgraph [label=\"X\"]; ");
 
     let x_inputs: Vec<_> = input_map
         .keys()
         .filter(|k| k.starts_with("x"))
         .sorted()
         .collect();
-
-    // print!(
-    //     "\t\t\t{{ edge [style=invis]; {}; }}",
-    //     x_inputs.iter().join(" -> ")
-    // );
-
-    for input in x_inputs.into_iter() {
-        println!("\t\t\tX -> {input}; {input} [label=\"{input}\"];");
-    }
-
-    println!("\t\t}}");
-
-    println!("\t\tsubgraph cluster_y {{");
-
-    println!("\t\t\tgraph [label=\"Y\", ordering=in];");
     let y_inputs: Vec<_> = input_map
         .keys()
         .filter(|k| k.starts_with("y"))
         .sorted()
         .collect();
 
-    // print!(
-    //     "\t\t\t{{ edge [style=invis]; {}; }}",
-    //     y_inputs.iter().join(" -> ")
-    // );
+    println!(
+        "{{ edge[style=invis]; rank=same {} }}",
+        x_inputs
+            .iter()
+            .zip(y_inputs.iter())
+            .flat_map(|(a, b)| [a, b])
+            .join("->")
+    );
 
+    for input in x_inputs {
+        println!("\t\t\t{input}; {input} [label=\"{input}\",style=filled,fillcolor=\"#7CA982\"];");
+    }
     for input in y_inputs {
-        println!("\t\t\tY -> {input}; {input} [label=\"{input}\"];");
+        println!("\t\t\t{input}; {input} [label=\"{input}\",style=filled,fillcolor=\"#C2A83E\"];");
     }
-    println!("\t\t}}");
-    // println!("\t\t{{ rank=same; cluster_x; cluster_y; }}");
-    println!("\t}}");
-    println!("\tsubgraph cluster_output {{ graph [label=\"Output\"]; Z; }}");
-    println!("\tsubgraph cluster_gates {{ graph [label=\"Gates\"];");
+
     for node in nodes.iter() {
-        println!("\t\t{} [label=\"{}\"];", node.output, node.label);
+        println!(
+            "\t\t{} [label=\"{}\",style=filled,fillcolor=\"{}\"];",
+            node.output,
+            node.label,
+            {
+                match node.label.as_str() {
+                    "AND" => "#084C61",
+                    "XOR" => "#DB3A34",
+                    "OR" => "#FFC857",
+                    _ => "blue",
+                }
+            }
+        );
     }
-    println!("\t}}");
+    // println!("\t}}");
     for (input, target) in input_map
         .into_iter()
         .flat_map(|(input, targets)| targets.into_iter().map(move |target| (input, target)))
         .sorted()
     {
-        println!("\t{} -> {} [label=\"{}\"];", input, target, input);
+        println!(
+            "\t{} -> {} [label=\"{}\", style=\"{}\"];",
+            input,
+            target,
+            input,
+            {
+                if input.starts_with('x') {
+                    "dotted"
+                } else if input.starts_with('y') {
+                    "dashed"
+                } else {
+                    "solid"
+                }
+            }
+        );
     }
 
     for output in nodes
@@ -136,8 +136,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         .filter(|output| output.starts_with("z"))
         .sorted()
     {
-        println!("\t{} -> Z [label=\"{}\"];", output, output);
+        println!("\t{output} -> Z [taillabel=\"{output}\",label=\"{output}\", color=\"#243E36\", style=bold];",);
     }
+
+    println!("edge [labelfloat=true];");
 
     println!("}}");
     Ok(())
