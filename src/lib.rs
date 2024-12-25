@@ -20,6 +20,7 @@ pub mod utils {
     pub mod error;
     pub mod grid;
     pub mod infgrid;
+    pub mod input_partitioner;
 }
 pub mod symbols;
 
@@ -41,6 +42,7 @@ pub use crate::utils::error::AoCError;
 pub use crate::utils::error::AoCResult;
 pub use crate::utils::grid::Grid;
 pub use crate::utils::infgrid::InfGrid;
+pub use crate::utils::input_partitioner::InputPartitioner;
 
 pub type DataIter<'a> = &'a mut dyn Iterator<Item = String>;
 pub type DataIn = <Vec<String> as IntoIterator>::IntoIter;
@@ -101,15 +103,21 @@ pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
     Ok("".to_owned())
 }
 
+pub fn partitioned_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
+    for (i, lines) in InputPartitioner::new(data, |line| !line.is_empty()).enumerate() {
+        println!("Example #{i}");
+        let res = main(lines.into_iter())?;
+        println!("Result: {res}\n===");
+    }
+    Ok("".to_owned())
+}
+
 pub fn partition_input(data: DataIn) -> (DataIn, DataIn) {
-    let mut swappo = true;
-    let (a, mut b): (Vec<_>, Vec<_>) = data.partition(|line| {
-        if swappo && line.is_empty() {
-            swappo = false;
-        }
-        swappo
-    });
-    // remove the blank line
-    b.remove(0);
+    let mut partitioner = InputPartitioner::new(data, |line| !line.is_empty());
+
+    let a = partitioner
+        .next()
+        .expect("There must be data in the input!");
+    let b = partitioner.next().unwrap_or_default();
     (a.into_iter(), b.into_iter())
 }
