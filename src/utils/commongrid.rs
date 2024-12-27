@@ -65,8 +65,11 @@ where
     Key: Coordinate2D,
     Item: TryFrom<char>,
 {
-    fn new_from_chars(data: crate::DataIn) -> Result<Self, Item::Error> {
+    fn new_from_chars<Input: IntoIterator<Item = String>>(
+        data: Input,
+    ) -> Result<Self, Item::Error> {
         let lines: Vec<Vec<Item>> = data
+            .into_iter()
             .map(|line| line.chars().map(|c| c.try_into()).try_collect())
             .try_collect()?;
         Ok(Self::new_from_lines(lines.into_iter()))

@@ -8,13 +8,9 @@
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
 use std::collections::BTreeMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use std::path::PathBuf;
 use std::time::Instant;
 
-use advent_of_code::{AoCDay, AoCDayFn, AoCError, AoCResult};
-use itertools::Itertools;
+use advent_of_code::{AoCData, AoCDay, AoCDayFn, AoCResult};
 
 struct DayFunctions {
     func: AoCDayFn,
@@ -61,21 +57,7 @@ fn main() -> AoCResult<()> {
     let day = &year_args.get_one::<String>("day").unwrap()[..];
     let use_example = matches.get_flag("example");
 
-    let mut data_path: PathBuf = [".", "data", year].iter().collect();
-    if use_example {
-        data_path.push("example");
-    }
-    data_path.push(format!("{:0>2}", day));
-    data_path.set_extension("txt");
-    if !data_path.exists() {
-        return Err(AoCError::new(format!(
-            "Cannot read data file for {year}/{day}: {} does not exist!",
-            data_path.to_string_lossy()
-        )));
-    }
-    let lines = BufReader::new(File::open(data_path).unwrap())
-        .lines()
-        .map(|l| l.unwrap());
+    let data = AoCData::new_from_file(year, day, use_example)?;
 
     let funcs = all_days.get(year).unwrap().get(day).unwrap();
 
@@ -87,7 +69,7 @@ fn main() -> AoCResult<()> {
 
     println!("=== {year} day {day} ===");
     let start = Instant::now();
-    let ret = func(lines.collect_vec().into_iter())?;
+    let ret = func(data.into_iter())?;
     let end = Instant::now();
 
     println!(

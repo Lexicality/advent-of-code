@@ -16,6 +16,7 @@ pub mod utils {
     pub mod coord;
     pub mod coord2d;
     pub mod coord3d;
+    pub mod data;
     pub mod direction;
     pub mod error;
     pub mod grid;
@@ -23,8 +24,6 @@ pub mod utils {
     pub mod input_partitioner;
 }
 pub mod symbols;
-
-use std::iter::IntoIterator;
 
 pub use crate::utils::bigcoord2d::BigCoord2D;
 pub use crate::utils::bigcoord3d::BigCoord3D;
@@ -36,6 +35,7 @@ pub use crate::utils::coord::Coordinate;
 pub use crate::utils::coord::Coordinate2D;
 pub use crate::utils::coord2d::Coord2D;
 pub use crate::utils::coord3d::Coord3D;
+pub use crate::utils::data::AoCData;
 pub use crate::utils::direction::Direction;
 pub use crate::utils::direction::RotateDirection;
 pub use crate::utils::error::AoCError;
@@ -45,7 +45,7 @@ pub use crate::utils::infgrid::InfGrid;
 pub use crate::utils::input_partitioner::InputPartitioner;
 
 pub type DataIter<'a> = &'a mut dyn Iterator<Item = String>;
-pub type DataIn = <Vec<String> as IntoIterator>::IntoIter;
+pub type DataIn = utils::data::AoCDataIterator;
 pub type AoCDayFn = fn(DataIn) -> AoCResult<String>;
 
 pub struct AoCDay {
@@ -97,14 +97,14 @@ inventory::collect!(AoCDay);
 pub fn multi_line_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
     for line in data {
         println!("Example: {line}");
-        let res = main(vec![line.to_owned()].into_iter())?;
+        let res = main(AoCData::new_from_line(line).into_iter())?;
         println!("Result: {res}\n===");
     }
     Ok("".to_owned())
 }
 
 pub fn partitioned_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
-    for (i, lines) in InputPartitioner::new(data, |line| !line.is_empty()).enumerate() {
+    for (i, lines) in data.partition().enumerate() {
         println!("Example #{i}");
         let res = main(lines.into_iter())?;
         println!("Result: {res}\n===");
@@ -113,11 +113,13 @@ pub fn partitioned_example(data: DataIn, main: AoCDayFn) -> AoCResult<String> {
 }
 
 pub fn partition_input(data: DataIn) -> (DataIn, DataIn) {
-    let mut partitioner = InputPartitioner::new(data, |line| !line.is_empty());
+    let mut partitioner = data.partition();
 
-    let a = partitioner
-        .next()
-        .expect("There must be data in the input!");
-    let b = partitioner.next().unwrap_or_default();
-    (a.into_iter(), b.into_iter())
+    (
+        partitioner
+            .next()
+            .expect("There must be data in the input!")
+            .into_iter(),
+        partitioner.next().unwrap_or_default().into_iter(),
+    )
 }
