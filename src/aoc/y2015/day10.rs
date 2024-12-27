@@ -36,12 +36,7 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
 }
 
 pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    for line in data {
-        println!("Input: {line}");
-        let ret = look_and_say(line);
-        println!("Output: {ret}");
-    }
-    Ok("".to_string())
+    crate::multi_line_example(data, |mut lines| Ok(look_and_say(lines.next().unwrap())))
 }
 
 inventory::submit!(crate::AoCDay::mew_with_example(

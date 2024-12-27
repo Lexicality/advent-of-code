@@ -205,17 +205,8 @@ pub fn main_example2(data: crate::DataIn) -> crate::AoCResult<String> {
     ))
 }
 
-pub fn main_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
-    let data = data.by_ref();
-    loop {
-        let mut crimes = data.take_while(|line| !line.is_empty()).peekable();
-        if crimes.peek().is_none() {
-            break;
-        }
-        let res = main_example2(crimes.collect_vec().into_iter())?;
-        println!("=== {res} ===\n");
-    }
-    Ok("".to_string())
+pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
+    crate::partitioned_example(data, main_example2)
 }
 
 inventory::submit!(crate::AoCDay::mew_with_example(
