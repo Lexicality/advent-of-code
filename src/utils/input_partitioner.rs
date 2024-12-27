@@ -18,9 +18,12 @@ pub struct InputPartitioner<Iter: Iterator> {
 }
 
 impl<Iter: Iterator> InputPartitioner<Iter> {
-    pub fn new(iter: Iter, pred: fn(&Iter::Item) -> bool) -> Self {
+    pub fn new<Input>(iter: Input, pred: fn(&Iter::Item) -> bool) -> Self
+    where
+        Input: IntoIterator<IntoIter = Iter>,
+    {
         Self {
-            inner: iter.peekable(),
+            inner: iter.into_iter().peekable(),
             pred,
         }
     }
