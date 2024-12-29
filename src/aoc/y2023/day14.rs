@@ -151,7 +151,7 @@ fn loading(grid: &Grid<GridState>) -> u32 {
         .sum::<u32>()
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
     );
@@ -206,4 +206,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_owned())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "14", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "14",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

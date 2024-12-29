@@ -24,7 +24,7 @@ fn find_target(lens: &str, target_box: &[(String, u32)]) -> Option<usize> {
         .map(|(i, _)| i)
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut boxes: Vec<Vec<(String, u32)>> = (0..=255).map(|_| Vec::new()).collect();
     for value in data.next().unwrap().split(',') {
         if value.ends_with('-') {
@@ -58,4 +58,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
         .to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "15", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "15",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

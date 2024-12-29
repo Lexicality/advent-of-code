@@ -52,7 +52,7 @@ impl Pinnable {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let (locks, keys): (Vec<_>, Vec<_>) = InputPartitioner::new(data, |line| !line.is_empty())
         .map(|lines| Pinnable::new(lines).unwrap())
         .partition_map(|pinnable| match pinnable {
@@ -75,4 +75,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "25", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "25",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

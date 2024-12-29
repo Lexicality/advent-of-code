@@ -67,7 +67,7 @@ impl FromStr for Command {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::<u32>::new_filled(1000, 1000, 0);
     for command in data.map(|line| line.parse()) {
         let command: Command = command?;
@@ -85,4 +85,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         .to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2015", "6", main));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "6",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

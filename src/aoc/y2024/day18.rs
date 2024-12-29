@@ -109,7 +109,7 @@ impl AStarProvider for AStarImpl {
     }
 }
 
-fn puzzle(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<String> {
+fn part_2(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<String> {
     let provider = AStarImpl::new(data, width, iterations)?;
     let start = provider.get_start();
 
@@ -143,17 +143,12 @@ fn puzzle(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<Strin
     unreachable!()
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    puzzle(data, 71, 1024)
-}
-
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    puzzle(data, 7, 12)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2024",
-    "18",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "18",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: |data| part_2(data, 71, 1024),
+        example: |data| part_2(data, 7, 12)
+    }),
+});

@@ -27,7 +27,7 @@ AND T J
 RUN
 ";
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.add_ascii_input(SPRINGCODE.trim_start());
     computer.run_to_completion().unwrap();
@@ -40,4 +40,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     }
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "21", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "21",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

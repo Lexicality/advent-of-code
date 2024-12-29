@@ -42,7 +42,7 @@ fn find_first(line: &str, nums: &[&str]) -> usize {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total = 0;
     for line in data {
         let backline: String = line.chars().rev().collect();
@@ -56,4 +56,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(total.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "1", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "1",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

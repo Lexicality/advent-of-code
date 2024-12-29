@@ -96,7 +96,7 @@ impl PipeSegment {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<PipeSegment> = Grid::new_from_lines(data.map(|line| {
         line.chars()
             .map(|c| c.try_into().unwrap())
@@ -219,13 +219,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::partitioned_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2023",
-    "10",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "10",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::partitioned_example(data, part_2)
+    }),
+});

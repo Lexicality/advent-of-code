@@ -93,7 +93,7 @@ fn check_grid(grid: &Grid<char>, baseline: MirrorRes) -> MirrorRes {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let mut ret = 0;
     while data.peek().is_some() {
@@ -135,4 +135,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "13", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "13",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

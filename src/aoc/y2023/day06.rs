@@ -10,7 +10,7 @@
 use itertools::Itertools;
 
 #[allow(unused_variables, unused_mut)]
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let times = data.next().unwrap();
     let mut times = times.split_whitespace();
     let distances = data.next().unwrap();
@@ -36,4 +36,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "6", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "6",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

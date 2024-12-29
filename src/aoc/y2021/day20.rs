@@ -77,7 +77,7 @@ impl Enhancer {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let enhancer = Enhancer::parse(data.next().unwrap())?;
 
     data.next().unwrap();
@@ -115,4 +115,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2021", "20", main));
+inventory::submit!(crate::AoCDay {
+    year: "2021",
+    day: "20",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

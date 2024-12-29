@@ -47,7 +47,7 @@ impl Display for GridState {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<GridState> = Grid::new_from_chars(data)?;
     println!("{grid:#}");
     let mut antinodes: HashMap<char, Vec<Coord2D>> = grid
@@ -115,4 +115,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "8", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "8",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -120,11 +120,19 @@ fn run(mut computer: Computer) -> i64 {
     segment
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     computer.set(0, 2.into());
 
     Ok(run(computer).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "13", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "13",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

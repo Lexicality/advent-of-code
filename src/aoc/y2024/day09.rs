@@ -22,7 +22,7 @@ fn printarr(values: &[(usize, Vec<usize>)]) {
     println!();
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut blanks: Vec<(usize, usize)> = Vec::new();
     let mut block_id = 0_usize;
     let mut arr: Vec<(usize, Vec<usize>)> = data
@@ -101,13 +101,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2024",
-    "9",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "9",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::multi_line_example(data, part_2),
+    }),
+});

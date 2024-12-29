@@ -157,7 +157,7 @@ impl Display for Volcano {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut volcano = Volcano::new(data);
     let mut current_valve = "AA".to_owned();
 
@@ -181,4 +181,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(volcano.pressure_released.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "16", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "16",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

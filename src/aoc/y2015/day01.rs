@@ -9,7 +9,7 @@
 
 use itertools::{FoldWhile, Itertools};
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(data
         .next()
         .unwrap()
@@ -33,13 +33,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
         .to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2015",
-    "1",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "1",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::multi_line_example(data, part_2),
+    }),
+});

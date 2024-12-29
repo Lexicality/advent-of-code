@@ -132,7 +132,7 @@ impl Display for INode {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let root = INode::new_folder("/".to_string(), Weak::new());
     // let mut folders: HashMap<String, Rc<INoder>> = HashMap::new();
     let mut folders: Vec<Rc<INoder>> = Vec::new();
@@ -215,4 +215,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(size.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "7", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "7",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

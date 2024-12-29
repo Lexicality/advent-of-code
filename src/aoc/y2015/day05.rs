@@ -11,7 +11,7 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret = data
         .filter(|line| {
             let trips = line.chars().tuple_windows().any(|(a, _, c)| a == c);
@@ -39,4 +39,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2015", "5", main));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "5",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

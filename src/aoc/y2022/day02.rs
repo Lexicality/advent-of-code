@@ -64,7 +64,7 @@ fn game_result(you: &Result, elf: &Move) -> Move {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total_score: u32 = 0;
 
     for line in data {
@@ -85,4 +85,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(total_score.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "2", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "2",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -11,7 +11,7 @@ use crate::AoCError;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     lazy_static! {
         static ref LINE_RE: Regex = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
     }
@@ -34,4 +34,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "3", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "3",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

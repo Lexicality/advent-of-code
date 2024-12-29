@@ -11,7 +11,7 @@ use itertools::Itertools;
 
 use super::computer::Computer;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     for line in data {
         let og_computer: Computer = line.parse().unwrap();
         for (noun, verb) in (0..=99).cartesian_product(0..=99) {
@@ -29,4 +29,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "2", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "2",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

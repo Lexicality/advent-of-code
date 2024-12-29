@@ -51,7 +51,7 @@ impl Display for GridState {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let base_computer: Computer = data.next().unwrap().parse().unwrap();
     let mut computer = base_computer.clone();
     computer.run_to_completion().unwrap();
@@ -141,4 +141,12 @@ n
     }
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "17", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "17",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

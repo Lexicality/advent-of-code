@@ -161,7 +161,7 @@ fn drop_shape(
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> AoCResult<String> {
+pub fn part_1(mut data: crate::DataIn) -> AoCResult<String> {
     let instructions: Vec<Direction> = data
         .next()
         .unwrap()
@@ -191,4 +191,12 @@ pub fn main(mut data: crate::DataIn) -> AoCResult<String> {
     Ok(floor.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "17", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "17",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

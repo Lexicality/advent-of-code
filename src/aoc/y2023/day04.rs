@@ -102,7 +102,7 @@ impl CardQueue {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret: u64 = 0;
     let mut queue = CardQueue::new();
     for line in data {
@@ -119,4 +119,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "4", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "4",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

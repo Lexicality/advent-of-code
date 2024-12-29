@@ -46,7 +46,7 @@ impl Reading {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let readings: Vec<Reading> = data.map(Reading::parse).collect();
     let (min, max, maxdist) = readings.iter().fold(
         (BigCoord2D::MAX, BigCoord2D::MIN, 0),
@@ -73,4 +73,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(count.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "15", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "15",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

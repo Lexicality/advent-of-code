@@ -10,7 +10,7 @@
 use std::collections::HashMap;
 use std::time::Instant;
 
-use advent_of_code::{AoCData, AoCDay, AoCResult};
+use advent_of_code::{AoCData, AoCDay, AoCError, AoCResult};
 use itertools::Itertools;
 
 type DayMap = HashMap<&'static str, HashMap<&'static str, &'static AoCDay>>;
@@ -26,6 +26,12 @@ fn main() -> AoCResult<()> {
 
     let mut options = clap::command!()
         .arg(clap::arg!(--example "Read the example data file instead"))
+        .arg(
+            clap::Arg::new("part")
+                .long("part")
+                .default_value("both")
+                .value_parser(["1", "2", "both"]),
+        )
         .subcommand_required(true);
     for (year, days) in all_days.iter() {
         options = options.subcommand(
@@ -40,20 +46,75 @@ fn main() -> AoCResult<()> {
     let (year, year_args) = matches.subcommand().unwrap();
     let day = year_args.get_one::<String>("day").unwrap().as_str();
     let use_example = matches.get_flag("example");
+    let part = matches.get_one::<String>("part").unwrap().as_str();
 
     let data = AoCData::new_from_file(year, day, use_example)?;
 
-    let func = all_days[year][day].get_function(use_example);
+    let day_data = all_days[year][day];
 
-    println!("=== {year} day {day} ===");
-    let start = Instant::now();
-    let ret = func(data.into_iter())?;
-    let end = Instant::now();
+    // sanity checking
+    match part {
+        "1" => {
+            if day_data.part_1.is_none() {
+                return Err(AoCError::new(format!(
+                    "{year}/{day} does not have a part 1 defined!"
+                )));
+            }
+        }
+        "2" => {
+            if day_data.part_2.is_none() {
+                return Err(AoCError::new(format!(
+                    "{year}/{day} does not have a part 2 defined!"
+                )));
+            }
+        }
+        "both" => {
+            if day_data.part_1.is_none() && day_data.part_2.is_none() {
+                return Err(AoCError::new(format!(
+                    "{year}/{day} does not have any parts defined!"
+                )));
+            }
+        }
+        _ => {}
+    }
 
-    println!(
-        "=== Result in {} ===",
-        humantime::format_duration(end.duration_since(start))
-    );
-    println!("{}", ret);
+    if part == "1" || (part == "both" && day_data.part_1.is_some()) {
+        println!("=== {year} day {day} part 1 ===");
+
+        let func = day_data
+            .part_1
+            .as_ref()
+            .map(|part| if use_example { part.example } else { part.main })
+            .unwrap();
+
+        let start = Instant::now();
+        let ret = func(data.clone().into_iter())?;
+        let end = Instant::now();
+
+        println!(
+            "=== Result in {} ===",
+            humantime::format_duration(end.duration_since(start))
+        );
+        println!("{}", ret);
+    }
+    if part == "2" || (part == "both" && day_data.part_2.is_some()) {
+        println!("=== {year} day {day} part 2 ===");
+
+        let func = day_data
+            .part_2
+            .as_ref()
+            .map(|part| if use_example { part.example } else { part.main })
+            .unwrap();
+
+        let start = Instant::now();
+        let ret = func(data.into_iter())?;
+        let end = Instant::now();
+
+        println!(
+            "=== Result in {} ===",
+            humantime::format_duration(end.duration_since(start))
+        );
+        println!("{}", ret);
+    }
     Ok(())
 }

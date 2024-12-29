@@ -13,7 +13,7 @@ use itertools::Itertools;
 
 use crate::{partition_input, AoCError};
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let (setup, puzzle) = partition_input(data);
 
     let dependencies = setup
@@ -78,4 +78,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "5", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "5",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -13,7 +13,7 @@ use crate::aoc::y2019::computer::{Computer, RunState};
 
 const NUM_MACHINES: usize = 50;
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let base_code: Computer = data.next().unwrap().parse().unwrap();
 
     let mut packets_to_go: Vec<Vec<i64>> = (0..NUM_MACHINES).map(|_| Vec::new()).collect();
@@ -75,4 +75,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     }
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "23", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "23",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

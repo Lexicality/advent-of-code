@@ -29,7 +29,7 @@ impl FromStr for Towel {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let towels: Vec<Towel> = data
         .next()
         .unwrap()
@@ -80,4 +80,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "19", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "19",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

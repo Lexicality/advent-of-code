@@ -12,7 +12,7 @@ use itertools::Itertools;
 const WIDTH: usize = 25;
 const HEIGHT: usize = 6;
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
     let mut base_layer: Option<Vec<char>> = None;
     for layer_iter in line.chars().rev().chunks(WIDTH * HEIGHT).into_iter() {
@@ -55,4 +55,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "8", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "8",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

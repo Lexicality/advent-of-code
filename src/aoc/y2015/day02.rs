@@ -9,7 +9,7 @@
 
 use itertools::Itertools;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret: u32 = data
         .map(|line| {
             let mut tmp: Vec<u32> = line.split('x').map(|c| c.parse()).try_collect().unwrap();
@@ -27,4 +27,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2015", "2", main));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "2",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

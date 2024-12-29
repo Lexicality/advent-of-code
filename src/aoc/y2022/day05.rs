@@ -135,7 +135,7 @@ impl Move {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut yard = Yard::new(&mut data);
     println!("{}", yard);
     for op in data.map(Move::new) {
@@ -146,4 +146,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(yard.get_top())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "5", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "5",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -68,7 +68,7 @@ fn settle_sand(sand_start: Coord2D, floor_y: i32, grid: &InfGrid<GridData>) -> O
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut maxy = 0;
     let rocks: Vec<Vec<Coord2D>> = data
         .map(|line| {
@@ -120,4 +120,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(i.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "14", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "14",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

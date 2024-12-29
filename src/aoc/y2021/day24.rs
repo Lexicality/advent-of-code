@@ -169,7 +169,7 @@ impl Computer {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let instructions: Vec<Instruction> = data.map(|line| line.as_str().try_into()).try_collect()?;
 
     for num in (1111_11111_11111_u64..=9999_99999_99999).rev() {
@@ -193,7 +193,7 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Err(AoCError::new("Nothing computed??"))
 }
 
-pub fn main_example2(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1_example(data: crate::DataIn) -> crate::AoCResult<String> {
     let instructions: Vec<Instruction> = data.map(|line| line.as_str().try_into()).try_collect()?;
     let mut computer = Computer::new();
 
@@ -205,13 +205,12 @@ pub fn main_example2(data: crate::DataIn) -> crate::AoCResult<String> {
     ))
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::partitioned_example(data, main_example2)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2021",
-    "24",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2021",
+    day: "24",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: |data| crate::partitioned_example(data, part_1_example)
+    }),
+    part_2: None,
+});

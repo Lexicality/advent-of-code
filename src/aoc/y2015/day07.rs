@@ -194,7 +194,7 @@ fn drain_updates(
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let gates: Vec<Gate> = data.map(|line| line.parse()).try_collect()?;
     let mut wire_data: HashMap<String, WireValue> = gates
         .iter()
@@ -224,4 +224,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2015", "7", main));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "7",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

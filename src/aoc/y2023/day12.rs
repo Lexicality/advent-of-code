@@ -72,7 +72,7 @@ fn check_valid(state1: &[SpringState], state2: &[u32]) -> bool {
         })
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     for line in data {
         let (report, groups) = line.split_once(' ').unwrap();
@@ -104,4 +104,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "12", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "12",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

@@ -169,7 +169,7 @@ fn push_the_button(modules: &mut HashMap<String, Module>) -> (u64, u64) {
     (lows, highs)
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut modules: HashMap<String, Module> = data
         .map(|line| line.parse())
         .map_ok(|module: Module| (module.name.clone(), module))
@@ -212,4 +212,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok((lows * highs).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "20", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "20",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

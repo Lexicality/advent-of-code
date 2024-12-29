@@ -13,7 +13,7 @@ use itertools::Itertools;
 
 use crate::{Coord2D, Direction};
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
 
     let dirs: Vec<Direction> = line.chars().map(|c| c.try_into()).try_collect()?;
@@ -38,13 +38,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(seen.len().to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2015",
-    "3",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "3",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::multi_line_example(data, part_2),
+    }),
+});

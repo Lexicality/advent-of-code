@@ -46,7 +46,7 @@ fn run_amps(program: Computer, phase_settings: &[i64]) -> AoCResult<i64> {
     }
 }
 
-pub fn main_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     while let Some(phase) = data.next() {
         let og_computer: Computer = data.next().unwrap().parse().unwrap();
@@ -59,7 +59,7 @@ pub fn main_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     let og_computer: Computer = data.next().unwrap().parse().unwrap();
 
@@ -70,9 +70,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2019",
-    "7",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "7",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2_example
+    }),
+});

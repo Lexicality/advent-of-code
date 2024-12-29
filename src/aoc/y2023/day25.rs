@@ -45,7 +45,7 @@ impl Node {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let nodes: Vec<Node> = data.map(|line| line.parse()).try_collect()?;
     let mut nodes: HashMap<String, Node> = nodes
         .into_iter()
@@ -80,4 +80,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "25", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "25",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

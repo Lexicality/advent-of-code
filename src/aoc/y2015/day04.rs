@@ -9,7 +9,7 @@
 
 use md5::{Digest, Md5};
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let input = data.next().unwrap();
     let mut hasher = Md5::new();
     hasher.update(input);
@@ -24,13 +24,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     unreachable!()
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2015",
-    "4",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "4",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::multi_line_example(data, part_2),
+    }),
+});

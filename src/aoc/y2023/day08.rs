@@ -30,7 +30,7 @@ fn navigate<'a>(
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let raw_instructions = data
         .next()
         .unwrap()
@@ -84,4 +84,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "8", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "8",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

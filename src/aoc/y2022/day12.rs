@@ -234,7 +234,7 @@ impl Display for Grid {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::new(data);
 
     println!("{}", grid);
@@ -271,4 +271,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     panic!("no path to exit");
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "12", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "12",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

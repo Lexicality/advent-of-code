@@ -187,7 +187,7 @@ impl Display for Forest {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let size = data.peek().unwrap().len();
     let mut forest = Forest::new(size, &mut data);
@@ -197,4 +197,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(forest.get_visibilist().to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "8", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "8",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

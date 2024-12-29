@@ -77,7 +77,7 @@ impl RebootStep {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: InfGrid<CubeState, Coord3D> = InfGrid::new();
 
     for line in data {
@@ -104,4 +104,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2021", "22", main));
+inventory::submit!(crate::AoCDay {
+    year: "2021",
+    day: "22",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

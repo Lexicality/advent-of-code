@@ -72,7 +72,7 @@ impl FromStr for Instruction {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let instructions: Vec<Instruction> = data.map(|line| line.parse()).try_collect()?;
     let mut pos: BigCoord2D = Default::default();
     let n = instructions.len();
@@ -102,4 +102,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok((interior as usize + (exterior / 2) + 1).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "18", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "18",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

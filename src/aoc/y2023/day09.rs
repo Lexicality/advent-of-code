@@ -10,7 +10,7 @@
 use itertools::Itertools;
 
 #[allow(unused_variables)]
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let lines = data.map(|line| {
         line.split_ascii_whitespace()
             .map(|num| num.parse::<i32>().unwrap())
@@ -38,4 +38,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "9", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "9",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

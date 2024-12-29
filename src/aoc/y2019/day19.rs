@@ -43,7 +43,7 @@ fn mode(numbers: &[f64]) -> Option<f64> {
     })
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let base_computer: Computer = data.next().unwrap().parse().unwrap();
 
     let grid: Grid<GridState> = (0..50)
@@ -131,4 +131,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "19", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "19",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

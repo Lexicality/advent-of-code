@@ -40,7 +40,7 @@ impl Display for Space {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut starscape: InfGrid<Space, BigCoord2D> = data
         .enumerate()
         .flat_map(|(y, line)| {
@@ -89,4 +89,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "11", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "11",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -49,7 +49,7 @@ impl astar::AStarProvider for Day17Provider {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<u32> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect_vec()),
     );
@@ -124,4 +124,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
         .to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "17", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "17",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

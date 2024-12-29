@@ -202,7 +202,7 @@ impl Display for Monke {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let mut monkeys = Vec::with_capacity(8);
     while data.peek().is_some() {
@@ -251,4 +251,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(res.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "11", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "11",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

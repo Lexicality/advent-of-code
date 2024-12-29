@@ -7,7 +7,7 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut elves = vec![];
     let mut running_elf = 0;
     for line in data {
@@ -29,4 +29,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(elves[..3].iter().sum::<i32>().to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "1", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "1",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

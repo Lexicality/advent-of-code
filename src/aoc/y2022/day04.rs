@@ -26,7 +26,7 @@ impl Range {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut overlap = 0;
     for pair in data {
         let (elf1, elf2) = pair.split_once(',').unwrap();
@@ -39,4 +39,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(overlap.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "4", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "4",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -32,7 +32,7 @@ impl SubRoutine {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     for line in data {
         let mut citer = line.chars();
         let mut sub = SubRoutine::new(&mut citer);
@@ -54,4 +54,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok("".to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "6", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "6",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -7,9 +7,17 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret = data.count();
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "0", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "0",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None
+});

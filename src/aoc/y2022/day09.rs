@@ -62,7 +62,7 @@ impl Coord2D {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut head_pos = Coord2D { x: 0, y: 0 };
     let mut midroll: [Coord2D; 8] = [head_pos; 8];
     let mut tail_pos = head_pos;
@@ -105,4 +105,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(visited.len().to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "9", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "9",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

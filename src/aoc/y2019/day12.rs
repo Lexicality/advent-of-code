@@ -103,7 +103,7 @@ impl Display for Moon {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let moons: Vec<Moon> = data.map(|line| line.parse()).try_collect().unwrap();
 
     let (mut io, mut europa, mut ganymede, mut callisto) =
@@ -129,4 +129,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok((io.energy() + europa.energy() + ganymede.energy() + callisto.energy()).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "12", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "12",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

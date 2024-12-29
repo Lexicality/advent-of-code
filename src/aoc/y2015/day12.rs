@@ -24,20 +24,19 @@ fn recursive_sum(value: JSONValue) -> i64 {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
     let value = serde_json::from_str(&line).unwrap();
     let ret = recursive_sum(value);
     Ok(ret.to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, main)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2015",
-    "12",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "12",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| crate::multi_line_example(data, part_2),
+    }),
+});

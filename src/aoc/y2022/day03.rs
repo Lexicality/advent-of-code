@@ -39,7 +39,7 @@ fn get_comomn_item<L: Iterator<Item = String>>(lines: L) -> Option<char> {
     Some(*intersection[0])
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total_prio = 0;
     for lines in &data.chunks(3) {
         if let Some(common_item) = get_comomn_item(lines) {
@@ -53,4 +53,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(total_prio.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "3", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "3",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

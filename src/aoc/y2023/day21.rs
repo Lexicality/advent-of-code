@@ -78,17 +78,20 @@ pub fn submain(data: crate::DataIn, num_steps: u32) -> crate::AoCResult<String> 
     Ok(ret.to_string())
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     submain(data, 64)
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1_example(data: crate::DataIn) -> crate::AoCResult<String> {
     submain(data, 6)
 }
 
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2023",
-    "21",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "21",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1_example
+    }),
+    part_2: None,
+});

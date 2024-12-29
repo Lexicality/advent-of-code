@@ -83,7 +83,7 @@ impl Robot {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut robot = Robot::new(data.next().unwrap()).unwrap();
     let mut hull: InfGrid<Colour> = InfGrid::new();
 
@@ -97,4 +97,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(hull.grid.len().to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "11", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "11",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

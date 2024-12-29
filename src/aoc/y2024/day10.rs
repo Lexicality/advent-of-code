@@ -48,7 +48,7 @@ impl Height {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<Height> = Grid::new_from_chars(data)?;
 
     let mut ret = 0;
@@ -76,4 +76,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "10", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "10",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

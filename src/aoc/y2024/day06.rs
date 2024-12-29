@@ -48,7 +48,7 @@ impl Display for GridState {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::new_from_chars(data)?;
     let mut guardpos = grid
         .find(|(_, v)| matches!(v, GridState::Guard))
@@ -109,4 +109,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "6", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "6",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

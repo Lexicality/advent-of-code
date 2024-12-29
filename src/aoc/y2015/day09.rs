@@ -11,7 +11,7 @@ use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut destinations = HashSet::new();
 
     let routes = data
@@ -53,4 +53,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2015", "9", main));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "9",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

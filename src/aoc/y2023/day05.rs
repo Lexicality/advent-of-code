@@ -152,7 +152,7 @@ pub fn get_seeds(line: &str) -> Vec<Range<u64>> {
     ret
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let seeds = get_seeds(&data.next().unwrap());
     assert!(data.next().unwrap().is_empty());
@@ -179,4 +179,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "5", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "5",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

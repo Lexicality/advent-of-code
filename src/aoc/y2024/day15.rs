@@ -47,7 +47,7 @@ impl Display for GridState {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let (griddata, instructions) = partition_input(data);
     let mut grid: Grid<GridState> = Grid::new_from_chars(griddata)?;
     let instructions: Vec<Direction> = instructions
@@ -105,4 +105,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "15", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "15",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

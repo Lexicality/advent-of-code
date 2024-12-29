@@ -48,81 +48,16 @@ pub type DataIter<'a> = &'a mut dyn Iterator<Item = String>;
 pub type DataIn = utils::data::AoCDataIterator;
 pub type AoCDayFn = fn(DataIn) -> AoCResult<String>;
 
-pub struct AoCDay {
-    pub year: &'static str,
-    pub day: &'static str,
+pub struct AoCPart {
     pub main: AoCDayFn,
     pub example: AoCDayFn,
 }
 
-const fn validate_day(day: &'static str) {
-    assert!(
-        matches!(
-            day.as_bytes(),
-            b"1" | b"2"
-                | b"3"
-                | b"4"
-                | b"5"
-                | b"6"
-                | b"7"
-                | b"8"
-                | b"9"
-                | b"10"
-                | b"11"
-                | b"12"
-                | b"13"
-                | b"14"
-                | b"15"
-                | b"16"
-                | b"17"
-                | b"18"
-                | b"19"
-                | b"20"
-                | b"21"
-                | b"22"
-                | b"23"
-                | b"24"
-                | b"25"
-        ),
-        "Day must be valid"
-    )
-}
-
-impl AoCDay {
-    const fn mew(year: &'static str, day: &'static str, main: AoCDayFn) -> AoCDay {
-        validate_day(day);
-
-        Self {
-            year,
-            day,
-            main,
-            example: main,
-        }
-    }
-
-    const fn mew_with_example(
-        year: &'static str,
-        day: &'static str,
-        main: AoCDayFn,
-        example: AoCDayFn,
-    ) -> AoCDay {
-        validate_day(day);
-
-        Self {
-            year,
-            day,
-            main,
-            example,
-        }
-    }
-
-    pub fn get_function(&self, example: bool) -> AoCDayFn {
-        if example {
-            self.example
-        } else {
-            self.main
-        }
-    }
+pub struct AoCDay {
+    pub year: &'static str,
+    pub day: &'static str,
+    pub part_1: Option<AoCPart>,
+    pub part_2: Option<AoCPart>,
 }
 
 inventory::collect!(AoCDay);

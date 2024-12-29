@@ -42,7 +42,7 @@ fn check_line(mut results: impl Iterator<Item = u32>) -> bool {
     true
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     'lines: for line in data {
         let results: Vec<u32> = line.split(' ').map(|c| c.parse().unwrap()).collect();
@@ -67,4 +67,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "2", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "2",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

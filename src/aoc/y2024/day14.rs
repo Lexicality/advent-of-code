@@ -92,7 +92,7 @@ fn debug_grid(robots: &[Robot], max_x: i32, max_y: i32) {
     println!("{debuggrid:#}");
 }
 
-fn actual_main(data: crate::DataIn, max_x: i32, max_y: i32) -> AoCResult<String> {
+fn part_1(data: crate::DataIn, max_x: i32, max_y: i32) -> AoCResult<String> {
     // L + gridless
     let mut robots: Vec<Robot> = data.map(|line| line.parse()).try_collect()?;
     // println!("Initial State");
@@ -123,17 +123,12 @@ fn actual_main(data: crate::DataIn, max_x: i32, max_y: i32) -> AoCResult<String>
     Ok(ret.to_string())
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
-    actual_main(data, MAX_X, MAX_Y)
-}
-
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    actual_main(data, MAX_X_EXAMPLE, MAX_Y_EXAMPLE)
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2024",
-    "14",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "14",
+    part_1: Some(crate::AoCPart {
+        main: |data| part_1(data, MAX_X, MAX_Y),
+        example: |data| part_1(data, MAX_X_EXAMPLE, MAX_Y_EXAMPLE)
+    }),
+    part_2: None,
+});

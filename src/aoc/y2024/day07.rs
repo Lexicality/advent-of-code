@@ -22,7 +22,7 @@ const OPERATIONS: [fn(u64, u64) -> u64; 3] = [
     |a: u64, b: u64| format!("{a}{b}").parse().unwrap(),
 ];
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let calibrations: HashMap<u64, Vec<u64>> = data
         .map(|line| {
             let (result, operations) = line.split_once(": ").unwrap();
@@ -61,4 +61,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "7", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "7",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -107,7 +107,7 @@ impl AStarProvider for AStarImpl {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let provider = AStarImpl::new_from_chars(data)?;
     let start = provider.get_start();
     let route = a_star(provider, start);
@@ -146,4 +146,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "20", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "20",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

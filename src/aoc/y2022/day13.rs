@@ -78,7 +78,7 @@ impl Display for Sigh<'_> {
     }
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut signal = Vec::with_capacity(data.size_hint().0 + 2);
     let first_marker = json!([[2]]);
     let second_marker = json!([[6]]);
@@ -113,4 +113,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok((fpos * spos).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "13", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "13",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

@@ -14,7 +14,7 @@ use text_io::read;
 
 use super::computer::{Computer, RunState};
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
     while let RunState::NeedsInput = computer.run().unwrap() {
         print!("{}", computer.get_ascii_output().unwrap());
@@ -46,4 +46,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(computer.get_ascii_output().unwrap())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "25", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "25",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

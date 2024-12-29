@@ -137,22 +137,25 @@ fn collisions(hailstones: impl Iterator<Item = Hailstone>) -> impl Iterator<Item
 }
 
 #[allow(dead_code)]
-pub fn main(_data: crate::DataIn) -> AoCResult<String> {
+pub fn part_1(_data: crate::DataIn) -> AoCResult<String> {
     // hailstones.iter().for_each(|stone| println!("{stone:?}"));
     let ret = 0;
     Ok(ret.to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> AoCResult<String> {
+pub fn part_1_example(data: crate::DataIn) -> AoCResult<String> {
     let hailstones = stones(data)?;
     let collisions = collisions(hailstones.into_iter());
 
     Ok(collisions.inspect(|c| println!("{c}")).count().to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2023",
-    "24",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "24",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1_example
+    }),
+    part_2: None,
+});

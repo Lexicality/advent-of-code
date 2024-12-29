@@ -44,7 +44,7 @@ fn get_path<'a>(orbit_map: &'a HashMap<String, OrbitItem>, mut obj: &'a str) -> 
     ret
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut orbit_map: HashMap<String, OrbitItem> = HashMap::with_capacity({
         let hint = data.size_hint();
         hint.1.unwrap_or(hint.0) + 1
@@ -91,4 +91,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok((youtree.len() + santree.len()).to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2019", "6", main));
+inventory::submit!(crate::AoCDay {
+    year: "2019",
+    day: "6",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

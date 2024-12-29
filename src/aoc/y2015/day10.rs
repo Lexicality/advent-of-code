@@ -27,7 +27,7 @@ fn look_and_say(line: String) -> String {
     ret
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut line = data.next().unwrap();
     for _ in 0..50 {
         line = look_and_say(line);
@@ -35,13 +35,14 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(line.len().to_string())
 }
 
-pub fn main_example(data: crate::DataIn) -> crate::AoCResult<String> {
-    crate::multi_line_example(data, |mut lines| Ok(look_and_say(lines.next().unwrap())))
-}
-
-inventory::submit!(crate::AoCDay::mew_with_example(
-    "2015",
-    "10",
-    main,
-    main_example
-));
+inventory::submit!(crate::AoCDay {
+    year: "2015",
+    day: "10",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |data| {
+            crate::multi_line_example(data, |mut lines| Ok(look_and_say(lines.next().unwrap())))
+        }
+    }),
+});

@@ -26,7 +26,7 @@ fn evolvinate(mut value: Aaaa) -> Aaaa {
     value
 }
 
-pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret = data
         .map(|line| line.parse().map_err(AoCError::new_from_parseerror))
         .map_ok(|num| (0..ITERATIONS).fold(num, |value, _| evolvinate(value)))
@@ -34,4 +34,12 @@ pub fn main(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2024", "22", main));
+inventory::submit!(crate::AoCDay {
+    year: "2024",
+    day: "22",
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
+    part_2: None,
+});

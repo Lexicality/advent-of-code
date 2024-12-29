@@ -83,7 +83,7 @@ impl Cpu {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut cpu = Cpu::new(&mut data);
     println!(" {:>3} | {:^4} | {:^8} | {:4}", "pc", "x", "inst", "newx");
     while !cpu.done() {
@@ -93,4 +93,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(String::new())
 }
 
-inventory::submit!(crate::AoCDay::mew("2022", "10", main));
+inventory::submit!(crate::AoCDay {
+    year: "2022",
+    day: "10",
+    part_1: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+});

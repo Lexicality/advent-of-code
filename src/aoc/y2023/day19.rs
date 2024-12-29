@@ -215,7 +215,7 @@ impl FromStr for Part {
     }
 }
 
-pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let workflows: HashMap<String, Workflow> = data
         .by_ref()
         .take_while(|l| !l.is_empty())
@@ -246,4 +246,12 @@ pub fn main(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
-inventory::submit!(crate::AoCDay::mew("2023", "19", main));
+inventory::submit!(crate::AoCDay {
+    year: "2023",
+    day: "19",
+    part_1: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    }),
+    part_2: None,
+});
