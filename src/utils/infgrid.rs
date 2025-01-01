@@ -30,6 +30,10 @@ impl<Key: Coordinate, Item> InfGrid<Item, Key> {
         }
     }
 
+    pub fn entry(&mut self, key: Key) -> std::collections::hash_map::Entry<'_, Key, Item> {
+        self.grid.entry(key)
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = (&Key, &Item)> {
         self.grid.iter()
     }
