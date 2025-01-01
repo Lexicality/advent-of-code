@@ -7,23 +7,17 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use super::computer::Computer;
-
-pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
-    for line in data {
-        let mut computer: Computer = line.parse().unwrap();
-        computer.run_to_completion().unwrap();
-        println!("---------");
-    }
-    Ok("".to_string())
-}
+use super::computer;
 
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "9",
     part_1: Some(crate::AoCPart {
-        main: part_1,
-        example: part_1
+        main: |data| computer::run_one_with_input(data, &[1]),
+        example: |data| crate::multi_line_example(data, computer::run_one)
     }),
-    part_2: None,
+    part_2: Some(crate::AoCPart {
+        main: |data| computer::run_one_with_input(data, &[2]),
+        example: |data| crate::multi_line_example(data, computer::run_one)
+    }),
 });

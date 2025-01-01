@@ -389,3 +389,16 @@ impl Computer {
         self.pc = 0;
     }
 }
+
+pub fn run_one(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut computer: Computer = data.next().expect("Must have at least one line").parse()?;
+    computer.run_to_completion()?;
+    Ok(format!("{:?}", computer.output))
+}
+
+pub fn run_one_with_input(mut data: crate::DataIn, input: &[i64]) -> crate::AoCResult<String> {
+    let mut computer: Computer = data.next().expect("Must have at least one line").parse()?;
+    computer.input.extend(input);
+    computer.run_to_completion()?;
+    Ok(format!("{:?}", computer.output))
+}
