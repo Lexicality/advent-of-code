@@ -9,7 +9,17 @@
 
 use super::computer::Computer;
 
-const SPRINGCODE: &str = "
+const SPRINGCODE_PART_1: &str = "
+NOT A T
+NOT B J
+OR T J
+NOT C T
+OR T J
+AND D J
+WALK
+";
+
+const SPRINGCODE_PART_2: &str = "
 NOT A T
 NOT B J
 OR T J
@@ -27,9 +37,9 @@ AND T J
 RUN
 ";
 
-pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn run_droid(mut data: crate::DataIn, input: &'static str) -> crate::AoCResult<String> {
     let mut computer: Computer = data.next().unwrap().parse().unwrap();
-    computer.add_ascii_input(SPRINGCODE.trim_start());
+    computer.add_ascii_input(input.trim_start());
     computer.run_to_completion().unwrap();
     match computer.get_ascii_output() {
         Some(death) => Ok(death),
@@ -43,9 +53,12 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "21",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: |data| run_droid(data, SPRINGCODE_PART_1),
+        example: |_| unreachable!()
+    }),
     part_2: Some(crate::AoCPart {
-        main: part_2,
-        example: part_2
+        main: |data| run_droid(data, SPRINGCODE_PART_2),
+        example: |_| unreachable!()
     }),
 });

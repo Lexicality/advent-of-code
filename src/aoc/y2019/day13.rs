@@ -19,7 +19,7 @@ use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 use termion::screen::IntoAlternateScreen;
 
-use crate::AoCError;
+use crate::{AoCError, InfGrid};
 
 use super::computer::{Computer, RunState};
 
@@ -57,6 +57,33 @@ impl Display for GameScreen {
         }
         .fmt(f)
     }
+}
+
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut computer: Computer = data.next().unwrap().parse().unwrap();
+    let res = computer.run().unwrap();
+    assert!(matches!(res, RunState::Finished));
+
+    let screen: InfGrid<GameScreen> = computer
+        .output
+        .drain(..)
+        .tuples()
+        .map(|(x, y, v)| {
+            (
+                (x.try_into().unwrap(), y.try_into().unwrap()).into(),
+                v.try_into().unwrap(),
+            )
+        })
+        .collect();
+
+    println!("{screen}");
+
+    Ok(screen
+        .grid
+        .values()
+        .filter(|v| matches!(v, GameScreen::Block))
+        .count()
+        .to_string())
 }
 
 fn run(mut computer: Computer) -> i64 {
@@ -130,7 +157,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "13",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

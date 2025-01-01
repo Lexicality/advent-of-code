@@ -16,9 +16,7 @@ use crate::AoCError;
 
 type Aa = u64;
 
-const ITERATIONS: usize = 75;
-
-pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
+fn main(mut data: crate::DataIn, num_iterations: usize) -> crate::AoCResult<String> {
     let mut stones: HashMap<Aa, usize> = data
         .next()
         .unwrap()
@@ -30,7 +28,7 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     println!("{stones:?}");
 
-    for _ in 0..ITERATIONS {
+    for _ in 0..num_iterations {
         let stlen = stones.len();
         stones = stones
             .into_iter()
@@ -57,10 +55,21 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 25)
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 75)
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "11",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

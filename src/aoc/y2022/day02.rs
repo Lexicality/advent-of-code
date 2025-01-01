@@ -35,15 +35,57 @@ enum Move {
 impl Move {
     fn new(txt: &str) -> Move {
         match txt {
-            "A" => Move::Rock,
-            "B" => Move::Paper,
-            "C" => Move::Scissors,
+            "A" | "X" => Move::Rock,
+            "B" | "Y" => Move::Paper,
+            "C" | "Z" => Move::Scissors,
             _ => panic!("Unknown move {}!", txt),
         }
     }
 }
 
-fn game_result(you: &Result, elf: &Move) -> Move {
+fn game_result_part_1(you: &Move, elf: &Move) -> Result {
+    // brute force
+    match you {
+        Move::Rock => match elf {
+            Move::Rock => Result::Draw,
+            Move::Paper => Result::Loss,
+            Move::Scissors => Result::Win,
+        },
+        Move::Paper => match elf {
+            Move::Rock => Result::Win,
+            Move::Paper => Result::Draw,
+            Move::Scissors => Result::Loss,
+        },
+        Move::Scissors => match elf {
+            Move::Rock => Result::Loss,
+            Move::Paper => Result::Win,
+            Move::Scissors => Result::Draw,
+        },
+    }
+}
+
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut total_score: u32 = 0;
+
+    for line in data {
+        let (elf, you) = line.split_once(' ').unwrap();
+        let you = Move::new(you);
+        let elf = Move::new(elf);
+        let result = game_result_part_1(&you, &elf);
+
+        println!("{:?} {:?} {:?}", you, elf, result);
+        let move_score = you as u32;
+        let result_score = result as u32;
+        let round_score = move_score + result_score;
+        println!("{}+{}={}", move_score, result_score, round_score);
+        total_score += round_score;
+        println!("{}", total_score);
+    }
+
+    Ok(total_score.to_string())
+}
+
+fn game_result_part_2(you: &Result, elf: &Move) -> Move {
     // brute force
     match elf {
         Move::Rock => match you {
@@ -71,7 +113,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         let (elf, result) = line.split_once(' ').unwrap();
         let result = Result::new(result);
         let elf = Move::new(elf);
-        let you = game_result(&result, &elf);
+        let you = game_result_part_2(&result, &elf);
 
         println!("{:?} {:?} {:?}", result, elf, you);
         let move_score = result as u32;
@@ -88,7 +130,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "2",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

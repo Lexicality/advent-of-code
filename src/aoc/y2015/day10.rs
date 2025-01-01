@@ -27,6 +27,14 @@ fn look_and_say(line: String) -> String {
     ret
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut line = data.next().unwrap();
+    for _ in 0..40 {
+        line = look_and_say(line);
+    }
+    Ok(line.len().to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut line = data.next().unwrap();
     for _ in 0..50 {
@@ -38,7 +46,12 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "10",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: |data| {
+            crate::multi_line_example(data, |mut lines| Ok(look_and_say(lines.next().unwrap())))
+        }
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: |data| {

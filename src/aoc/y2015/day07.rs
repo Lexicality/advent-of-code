@@ -194,6 +194,28 @@ fn drain_updates(
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let gates: Vec<Gate> = data.map(|line| line.parse()).try_collect()?;
+    let mut wire_data: HashMap<String, WireValue> = gates
+        .iter()
+        .map(|gate| (gate.output.clone(), None))
+        .collect();
+    let gates: Vec<_> = gates
+        .into_iter()
+        .map(|gate| (gate.get_inputs(), gate))
+        .collect();
+    let mut updates = HashMap::with_capacity(wire_data.len());
+    updates.extend(init_updates(&gates));
+
+    drain_updates(&gates, &mut wire_data, &mut updates);
+
+    let ret = wire_data
+        .get("a")
+        .expect("wire a must exist")
+        .expect("a must have a value");
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let gates: Vec<Gate> = data.map(|line| line.parse()).try_collect()?;
     let mut wire_data: HashMap<String, WireValue> = gates
@@ -227,7 +249,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "7",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

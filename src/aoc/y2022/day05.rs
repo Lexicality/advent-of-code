@@ -75,7 +75,16 @@ impl Yard {
         panic!("We should never get here")
     }
 
-    fn perform_move(&mut self, op: &Move) {
+    fn perform_move_part_1(&mut self, op: &Move) {
+        println!("Moving {} from {} to {}", op.count, op.start, op.end);
+        for _ in 0..op.count {
+            let moving_box = self.stacks.get_mut(&op.start).unwrap().pop().unwrap();
+            println!(" Moving {} from {} to {}", moving_box, op.start, op.end);
+            self.stacks.get_mut(&op.end).unwrap().push(moving_box);
+        }
+    }
+
+    fn perform_move_part_2(&mut self, op: &Move) {
         println!("Moving {} from {} to {}", op.count, op.start, op.end);
         let boxes: Vec<_> = (0..op.count)
             .map(|_| {
@@ -135,11 +144,22 @@ impl Move {
     }
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut yard = Yard::new(&mut data);
+    println!("{}", yard);
+    for op in data.map(Move::new) {
+        yard.perform_move_part_1(&op);
+        println!("{}", yard);
+    }
+
+    Ok(yard.get_top())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut yard = Yard::new(&mut data);
     println!("{}", yard);
     for op in data.map(Move::new) {
-        yard.perform_move(&op);
+        yard.perform_move_part_2(&op);
         println!("{}", yard);
     }
 
@@ -149,7 +169,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "5",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

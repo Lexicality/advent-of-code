@@ -18,6 +18,25 @@ use crate::Grid;
 
 use super::computer::Computer;
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let base_computer: Computer = data.next().unwrap().parse().unwrap();
+
+    let ret = (0..50)
+        .cartesian_product(0..50)
+        .map(|(x, y)| {
+            let mut computer = base_computer.clone();
+            computer.input.push_back(x);
+            computer.input.push_back(y);
+            computer
+                .run_to_completion()
+                .expect("The computer must work");
+            computer.output.pop().expect("There must be output")
+        })
+        .sum::<i64>();
+
+    Ok(ret.to_string())
+}
+
 enum GridState {
     Void,
     Tractor,
@@ -134,7 +153,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "19",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

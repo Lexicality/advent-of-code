@@ -7,10 +7,53 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
+use itertools::Itertools;
+
 enum Direction {
     Mystery,
     Increasing,
     Decreasing,
+}
+
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret = 0;
+    'lines: for line in data {
+        print!("{line} ");
+        let mut dir = Direction::Mystery;
+        for (a, b) in line
+            .split(' ')
+            .map(|c| c.parse::<u32>().unwrap())
+            .tuple_windows()
+        {
+            if a.abs_diff(b) > 3 {
+                println!("UNSAFE (too big a change)");
+                continue 'lines;
+            }
+            match a.cmp(&b) {
+                std::cmp::Ordering::Less => {
+                    if matches!(dir, Direction::Increasing) {
+                        println!("UNSAFE (dir change)");
+                        continue 'lines;
+                    }
+                    dir = Direction::Decreasing
+                }
+                std::cmp::Ordering::Equal => {
+                    println!("UNSAFE (equality)");
+                    continue 'lines;
+                }
+                std::cmp::Ordering::Greater => {
+                    if matches!(dir, Direction::Decreasing) {
+                        println!("UNSAFE (dir change)");
+                        continue 'lines;
+                    }
+                    dir = Direction::Increasing
+                }
+            }
+        }
+        println!("safe!");
+        ret += 1;
+    }
+    Ok(ret.to_string())
 }
 
 fn check_line(mut results: impl Iterator<Item = u32>) -> bool {
@@ -70,7 +113,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "2",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

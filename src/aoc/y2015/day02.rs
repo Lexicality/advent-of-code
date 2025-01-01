@@ -9,6 +9,24 @@
 
 use itertools::Itertools;
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let ret: u32 = data
+        .map(|line| {
+            let tmp: Vec<u32> = line.split('x').map(|c| c.parse()).try_collect().unwrap();
+
+            let (l, w, h) = tmp.into_iter().collect_tuple().unwrap();
+
+            let a = l * w;
+            let b = w * h;
+            let c = l * h;
+            let slack = a.min(b).min(c);
+
+            2 * a + 2 * b + 2 * c + slack
+        })
+        .sum();
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret: u32 = data
         .map(|line| {
@@ -30,7 +48,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "2",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

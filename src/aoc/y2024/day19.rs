@@ -29,6 +29,55 @@ impl FromStr for Towel {
     }
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let towels: Vec<Towel> = data
+        .next()
+        .unwrap()
+        .split(", ")
+        .map(str::parse)
+        .try_collect()?;
+
+    assert!(data.next().unwrap().is_empty());
+
+    let ret = data
+        .filter(|line| {
+            let mut current_options: Vec<&[char]> =
+                towels.iter().map(|towel| &towel.letters[..]).collect();
+            for char in line.chars() {
+                let mut add_new = false;
+                current_options = current_options
+                    .into_iter()
+                    .filter_map(|stripes| match stripes.split_first() {
+                        Some((c, ret)) if *c == char => Some(ret),
+                        Some(_) => None,
+                        None => {
+                            add_new = true;
+                            None
+                        }
+                    })
+                    .collect();
+                if add_new {
+                    current_options.extend(
+                        towels
+                            .iter()
+                            .filter(|towel| towel.starts_with == char)
+                            .map(|towel| &towel.letters[1..]),
+                    );
+                }
+                if current_options.is_empty() {
+                    return false;
+                }
+            }
+            current_options
+                .into_iter()
+                .any(|stripes| stripes.is_empty())
+        })
+        .count();
+
+    // let ret = data.count();
+    Ok(ret.to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let towels: Vec<Towel> = data
         .next()
@@ -83,7 +132,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "19",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

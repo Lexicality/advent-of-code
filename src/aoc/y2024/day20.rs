@@ -13,7 +13,8 @@ use itertools::Itertools;
 use crate::utils::astar::{a_star, AStarProvider};
 use crate::{symbols, AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid};
 
-const TIME_TO_SAVE: usize = 74;
+const TIME_TO_SAVE_PART_1: usize = 100;
+const TIME_TO_SAVE_PART_2: usize = 74;
 
 type AStarID = Coord2D;
 
@@ -107,6 +108,28 @@ impl AStarProvider for AStarImpl {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let provider = AStarImpl::new_from_chars(data)?;
+    let start = provider.get_start();
+    let route = a_star(provider, start);
+    assert!(!route.is_empty());
+    let ret: usize = route
+        .iter()
+        .enumerate()
+        .map(|(i, coord)| {
+            route
+                .iter()
+                .enumerate()
+                .skip(i + TIME_TO_SAVE_PART_1)
+                .filter(|(_, other)| coord.distance(other) == 2)
+                // I'm not entirely sure why this is necessary but it is
+                .filter(|(j, _)| (j - i - 2) >= TIME_TO_SAVE_PART_1)
+                .count()
+        })
+        .sum();
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let provider = AStarImpl::new_from_chars(data)?;
     let start = provider.get_start();
@@ -119,7 +142,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
             route
                 .iter()
                 .enumerate()
-                .skip(i + TIME_TO_SAVE)
+                .skip(i + TIME_TO_SAVE_PART_2)
                 .filter_map(|(j, other)| {
                     let distance = coord.distance(other);
                     if (2..=20).contains(&distance) {
@@ -131,7 +154,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
                 })
                 .sorted()
                 .inspect(|v| println!("{v}"))
-                .filter(|v| *v >= TIME_TO_SAVE)
+                .filter(|v| *v >= TIME_TO_SAVE_PART_2)
                 // .inspect(|(j, distance)| println!("{}", j - i - (*distance as usize)))
                 // I'm not entirely sure why this is necessary but it is
                 // .filter(|(j, distance)| (j - i - (*distance as usize)) + 1 >= TIME_TO_SAVE)
@@ -149,7 +172,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "20",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

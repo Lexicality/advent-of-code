@@ -71,11 +71,11 @@ impl ClawMachine {
         })
     }
 
-    fn factorio(&self) -> Option<(Stupid, Stupid)> {
+    fn factorio(&self, addition: Stupid) -> Option<(Stupid, Stupid)> {
         let a_1 = self.a[0] * self.b[1];
-        let p_1 = (WAT + self.prize[0]) * self.b[1];
+        let p_1 = (addition + self.prize[0]) * self.b[1];
         let a_2 = self.a[1] * self.b[0];
-        let p_2 = (WAT + self.prize[1]) * self.b[0];
+        let p_2 = (addition + self.prize[1]) * self.b[0];
         let a = a_1 - a_2;
         let p = p_1 - p_2;
         if p % a != 0 {
@@ -87,7 +87,7 @@ impl ClawMachine {
             println!("A is negative! {a}");
             return None;
         }
-        let b = (WAT + self.prize[0]) - a * self.a[0];
+        let b = (addition + self.prize[0]) - a * self.a[0];
         let b_c = self.b[0];
         if b % b_c != 0 {
             println!("Uneven division b % b_c = {}", b % b_c);
@@ -102,6 +102,28 @@ impl ClawMachine {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut data = data.peekable();
+
+    let mut ret = 0;
+    while data.peek().is_some() {
+        let claw = ClawMachine::new(&mut data)?;
+        println!("{claw:?}");
+        if let Some((a, b)) = claw.factorio(0) {
+            println!("a: {a} b: {b}");
+
+            if a <= 100 && b <= 100 {
+                ret += b + a * 3;
+            }
+        }
+        if !data.next().is_none_or(|line| line.is_empty()) {
+            return Err(AoCError::new("Got out of sync with the claws!"));
+        }
+    }
+
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
 
@@ -109,7 +131,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     while data.peek().is_some() {
         let claw = ClawMachine::new(&mut data)?;
         println!("{claw:?}");
-        if let Some((a, b)) = claw.factorio() {
+        if let Some((a, b)) = claw.factorio(WAT) {
             println!("a: {a} b: {b}");
             ret += b + a * 3;
         }
@@ -124,7 +146,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "13",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

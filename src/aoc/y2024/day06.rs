@@ -48,6 +48,46 @@ impl Display for GridState {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid = Grid::new_from_chars(data)?;
+    let mut guardpos = grid
+        .find(|(_, v)| matches!(v, GridState::Guard))
+        .expect("Guard must exist");
+    let starting_position = guardpos;
+    println!("{grid:#}");
+
+    const A: Direction = Direction::North;
+
+    grid.set(guardpos, GridState::Visited(A));
+    let mut guard_direction = Direction::North;
+    loop {
+        let nextpos = guardpos + guard_direction.to_coord();
+        if nextpos == starting_position && guard_direction == Direction::North {
+            println!("Loop!");
+            break;
+        }
+
+        let Some(nextstate) = grid.get(&nextpos) else {
+            println!("They walked off!");
+            break;
+        };
+        if matches!(nextstate, GridState::Obstacle) {
+            // Pivot on the spot
+            guard_direction = guard_direction.rotate(RotateDirection::Right);
+            // Try again
+            continue;
+        }
+        guardpos = nextpos;
+        grid.set(guardpos, GridState::Visited(A));
+    }
+
+    let ret = grid
+        .into_iter()
+        .filter(|(_, v)| matches!(v, GridState::Visited(_)))
+        .count();
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::new_from_chars(data)?;
     let mut guardpos = grid
@@ -112,7 +152,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "6",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

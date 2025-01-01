@@ -12,6 +12,22 @@ use itertools::Itertools;
 const WIDTH: usize = 25;
 const HEIGHT: usize = 6;
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let line = data.next().unwrap();
+    let mut best_num_zero = usize::MAX;
+    let mut ret = 0;
+    for layer_iter in line.chars().chunks(WIDTH * HEIGHT).into_iter() {
+        let layer: Vec<char> = layer_iter.collect();
+        let num_zero = layer.iter().filter(|c| **c == '0').count();
+        if num_zero < best_num_zero {
+            ret = layer.iter().filter(|c| **c == '1').count()
+                * layer.iter().filter(|c| **c == '2').count();
+            best_num_zero = num_zero;
+        }
+    }
+    Ok(ret.to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let line = data.next().unwrap();
     let mut base_layer: Option<Vec<char>> = None;
@@ -58,7 +74,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "8",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

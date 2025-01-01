@@ -27,6 +27,7 @@ enum Card {
     Eight,
     Nine,
     Ten,
+    Jack,
     Queen,
     King,
     Ace,
@@ -36,10 +37,11 @@ impl TryFrom<char> for Card {
     type Error = AoCError;
     fn try_from(value: char) -> Result<Self, Self::Error> {
         match value {
+            '*' => Ok(Self::Joker),
             'A' => Ok(Self::Ace),
             'K' => Ok(Self::King),
             'Q' => Ok(Self::Queen),
-            'J' => Ok(Self::Joker),
+            'J' => Ok(Self::Jack),
             'T' => Ok(Self::Ten),
             '9' => Ok(Self::Nine),
             '8' => Ok(Self::Eight),
@@ -63,7 +65,7 @@ impl Display for Card {
                 Self::Ace => 'A',
                 Self::King => 'K',
                 Self::Queen => 'Q',
-                Self::Joker => 'J',
+                Self::Joker | Self::Jack => 'J',
                 Self::Ten => 'T',
                 Self::Nine => '9',
                 Self::Eight => '8',
@@ -167,7 +169,7 @@ impl FromStr for Hand {
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     let mut hands: Vec<Hand> = data.map(|line| line.parse()).try_collect().unwrap();
     hands.sort();
@@ -178,10 +180,18 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let data: crate::AoCData = data.map(|line| line.replace('J', "*")).collect();
+    part_1(data.into_iter())
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "7",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

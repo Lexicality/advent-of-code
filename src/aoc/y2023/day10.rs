@@ -96,6 +96,50 @@ impl PipeSegment {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let grid: Grid<PipeSegment> = Grid::new_from_lines(data.map(|line| {
+        line.chars()
+            .map(|c| c.try_into().unwrap())
+            .collect::<Vec<_>>()
+    }));
+    println!("{grid}");
+    let start = grid
+        .find(|(_, item)| matches!(item, PipeSegment::Mystery))
+        .expect("Must have a starting position");
+
+    let mut queue: VecDeque<(u32, Coord2D)> = grid
+        .get_neighbour_coords(start, false)
+        .filter(|coord| {
+            grid.get(coord)
+                .unwrap()
+                .get_neighbours(*coord)
+                .is_some_and(|(a, b)| a == start || b == start)
+        })
+        .map(|coord| (1, coord))
+        .collect();
+
+    let mut seen: HashSet<Coord2D> = HashSet::with_capacity(grid.len());
+    seen.insert(start);
+
+    let mut ret = 0;
+    while let Some((mut depth, coord)) = queue.pop_front() {
+        ret = ret.max(depth);
+        seen.insert(coord);
+        let item = grid.get(&coord).unwrap();
+        // working on the assumption here that the loop will never go out of bounds
+        let (a, b) = item.get_neighbours(coord).expect("loop must be contiguous");
+        depth += 1;
+        if !seen.contains(&a) {
+            queue.push_back((depth, a));
+        }
+        if !seen.contains(&b) {
+            queue.push_back((depth, b));
+        }
+    }
+
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<PipeSegment> = Grid::new_from_lines(data.map(|line| {
         line.chars()
@@ -222,7 +266,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "10",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: |data| crate::partitioned_example(data, part_1)
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: |data| crate::partitioned_example(data, part_2)

@@ -19,7 +19,7 @@ fn dice(value: usize) -> usize {
     (value % 100) + 1
 }
 
-pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut p1pos: usize = data
         .next()
         .unwrap()
@@ -80,9 +80,9 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2021",
     day: "21",
-    part_1: None,
-    part_2: Some(crate::AoCPart {
-        main: part_2,
-        example: part_2
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
     }),
+    part_2: None,
 });

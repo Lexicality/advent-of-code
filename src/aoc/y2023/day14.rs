@@ -151,6 +151,19 @@ fn loading(grid: &Grid<GridState>) -> u32 {
         .sum::<u32>()
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid: Grid<GridState> = Grid::new_from_lines(
+        data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
+    );
+    slide_north(&mut grid);
+    Ok(grid
+        .iter()
+        .filter(|(_, value)| matches!(value, GridState::Pebble))
+        .map(|(coord, _)| grid.height - coord.y as u32)
+        .sum::<u32>()
+        .to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
@@ -209,7 +222,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "14",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

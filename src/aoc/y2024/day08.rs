@@ -47,6 +47,70 @@ impl Display for GridState {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid: Grid<GridState> = Grid::new_from_chars(data)?;
+    println!("{grid:#}");
+    let mut antinodes: HashMap<char, Vec<Coord2D>> = grid
+        .iter()
+        .filter_map(|(_, s)| match s {
+            GridState::Antenna(c) => Some(c),
+            _ => None,
+        })
+        .unique()
+        .map(|c| (*c, vec![]))
+        .collect();
+
+    let tmp = grid
+        .iter()
+        .filter_map(|(coord, s)| match s {
+            GridState::Antenna(c) => Some((coord, c)),
+            _ => None,
+        })
+        .sorted_by_cached_key(|(_, c)| *c)
+        .chunk_by(|(_, c)| *c);
+
+    for (signal, coords) in tmp.into_iter() {
+        let antinodes = antinodes
+            .get_mut(signal)
+            .expect("we already prefilled this");
+        // for coords in coords.map(|(coord, _)| coord).permutations(2) {
+        //     let a = coords[0];
+        //     let b = coords[1];
+        let coords: Vec<_> = coords.map(|(coord, _)| coord).collect();
+        for (a, b) in coords.into_iter().tuple_combinations() {
+            let first = *a + (a - b);
+            let second = *b + (b - a);
+            // println!("{a},{b} results in {first} and {second}");
+            if grid.check_coord(&first) {
+                antinodes.push(first);
+            } else {
+                // println!("Invalid coord {first}!");
+            }
+            if grid.check_coord(&second) {
+                antinodes.push(second);
+                // println!("Invalid coord {second}!");
+            }
+        }
+    }
+
+    // decorate the grid
+    for coord in antinodes.values().flatten() {
+        let current = grid.get_mut(coord).unwrap();
+        if matches!(current, GridState::Empty) {
+            *current = GridState::Antinode;
+        }
+    }
+
+    println!("{grid:#}");
+
+    let ret = antinodes
+        .into_iter()
+        .flat_map(|(_, nodes)| nodes.into_iter())
+        .unique()
+        .count();
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid: Grid<GridState> = Grid::new_from_chars(data)?;
     println!("{grid:#}");
@@ -118,7 +182,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "8",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

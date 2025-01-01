@@ -11,6 +11,17 @@ use itertools::Itertools;
 
 use super::computer::Computer;
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    for line in data {
+        let mut computer: Computer = line.parse().unwrap();
+        computer.set(1, 12.into());
+        computer.set(2, 2.into());
+        computer.run_to_completion().unwrap();
+        println!("{}", computer.get(&0))
+    }
+    Ok("".to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     for line in data {
         let og_computer: Computer = line.parse().unwrap();
@@ -32,7 +43,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "2",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

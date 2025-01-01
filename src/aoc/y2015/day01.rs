@@ -9,6 +9,20 @@
 
 use itertools::{FoldWhile, Itertools};
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    Ok(data
+        .next()
+        .unwrap()
+        .chars()
+        .map(|c| match c {
+            '(' => 1,
+            ')' => -1,
+            _ => unreachable!(),
+        })
+        .sum::<i32>()
+        .to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(data
         .next()
@@ -36,7 +50,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "1",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: |data| crate::multi_line_example(data, part_1),
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: |data| crate::multi_line_example(data, part_2),

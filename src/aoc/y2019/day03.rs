@@ -80,6 +80,25 @@ fn wire_it_up(
     Ok(())
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret = 0;
+    while let Some(first) = data.next() {
+        let second = data.next().expect("Lines should be paired");
+        let mut grid = InfGrid::<GridState>::new();
+        wire_it_up(&mut grid, &first, GridState::First).unwrap();
+        wire_it_up(&mut grid, &second, GridState::Second).unwrap();
+        let crossover = grid
+            .iter()
+            .filter_map(|(pos, state)| (*state == GridState::Both).then_some(pos).copied())
+            .sorted_by_key(|pos| pos.len_manhatten())
+            .next()
+            .expect("Must have at least one crossover");
+        ret = crossover.len_manhatten();
+        println!("Crosses at {crossover} which is {ret} away");
+    }
+    Ok(ret.to_string())
+}
+
 fn steppinator(grid: &InfGrid<GridState>, first: &str, second: &str) -> AoCResult<i32> {
     let mut retdata = InfGrid::<i32>::new();
     for instructions in [first, second].iter() {
@@ -139,7 +158,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "3",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

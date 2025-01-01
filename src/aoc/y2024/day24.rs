@@ -160,7 +160,7 @@ fn drain_updates(
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let (wires, gates) = partition_input(data);
 
     let gates: Vec<Gate> = gates.map(|line| line.parse()).try_collect()?;
@@ -201,9 +201,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "24",
-    part_1: None,
-    part_2: Some(crate::AoCPart {
-        main: part_2,
-        example: part_2
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
     }),
+    // Part 2 was done non-programatically
+    part_2: None,
 });

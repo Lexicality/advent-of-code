@@ -34,7 +34,14 @@ impl FromStr for Action {
 }
 
 impl Action {
-    fn act(&self, value: u32) -> u32 {
+    fn act_part_1(&self, value: bool) -> bool {
+        match self {
+            Self::TurnOn => true,
+            Self::TurnOff => false,
+            Self::Toggle => !value,
+        }
+    }
+    fn act_part_2(&self, value: u32) -> u32 {
         match self {
             Self::TurnOn => value.checked_add(1).expect("u32 overflow!!"),
             Self::TurnOff => value.saturating_sub(1),
@@ -67,6 +74,20 @@ impl FromStr for Command {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid = Grid::<bool>::new_filled(1000, 1000, false);
+    for command in data.map(|line| line.parse()) {
+        let command: Command = command?;
+        for x in command.start.x..=command.end.x {
+            for y in command.start.y..=command.end.y {
+                let value = grid.get_mut(&(x, y).into()).unwrap();
+                *value = command.action.act_part_1(*value);
+            }
+        }
+    }
+    Ok(grid.into_iter().filter(|(_, v)| *v).count().to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut grid = Grid::<u32>::new_filled(1000, 1000, 0);
     for command in data.map(|line| line.parse()) {
@@ -74,7 +95,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         for x in command.start.x..=command.end.x {
             for y in command.start.y..=command.end.y {
                 let value = grid.get_mut(&(x, y).into()).unwrap();
-                *value = command.action.act(*value);
+                *value = command.action.act_part_2(*value);
             }
         }
     }
@@ -88,7 +109,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "6",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

@@ -62,6 +62,37 @@ impl Coord2D {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut head_pos = Coord2D { x: 0, y: 0 };
+    let mut tail_pos = head_pos;
+
+    let mut visited: HashSet<Coord2D> = HashSet::new();
+    visited.insert(tail_pos);
+
+    for line in data {
+        let instr: Instruction = line.parse().unwrap();
+        for coord in instr.coordinate() {
+            head_pos += coord;
+            let dist = head_pos - tail_pos;
+            if dist.x.abs() > 1 || dist.y.abs() > 1 {
+                // eyy I move a da tail
+                if dist.x == 0 || dist.y == 0 {
+                    // we can cheat beacuse we know the length is 2
+                    tail_pos += (dist / 2).unwrap();
+                } else {
+                    // fuck idk
+                    tail_pos += Coord2D {
+                        x: magic_clamp(dist.x),
+                        y: magic_clamp(dist.y),
+                    }
+                }
+                visited.insert(tail_pos);
+            }
+        }
+    }
+    Ok(visited.len().to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut head_pos = Coord2D { x: 0, y: 0 };
     let mut midroll: [Coord2D; 8] = [head_pos; 8];
@@ -108,7 +139,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "9",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

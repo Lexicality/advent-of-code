@@ -11,6 +11,48 @@ use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut destinations = HashSet::new();
+
+    let routes = data
+        .map(|line| {
+            let (from, line) = line.split_once(" to ").unwrap();
+            let (to, distance) = line.split_once(" = ").unwrap();
+            destinations.insert(from.to_owned());
+            destinations.insert(to.to_owned());
+            (
+                from.to_owned(),
+                to.to_owned(),
+                distance.parse::<u64>().unwrap(),
+            )
+        })
+        .fold(
+            HashMap::new(),
+            |mut acc: HashMap<String, HashMap<String, u64>>, (from, to, distance)| {
+                acc.entry(from.clone())
+                    .or_default()
+                    .insert(to.clone(), distance);
+                acc.entry(to).or_default().insert(from, distance);
+                acc
+            },
+        );
+
+    let ret: u64 = destinations
+        .iter()
+        .permutations(destinations.len())
+        .map(|route| {
+            route
+                .into_iter()
+                .tuple_windows()
+                .map(|(from, to)| routes[from][to])
+                .sum()
+        })
+        .min()
+        .unwrap();
+
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut destinations = HashSet::new();
 
@@ -56,7 +98,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "9",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

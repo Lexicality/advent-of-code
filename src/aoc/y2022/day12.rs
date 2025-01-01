@@ -98,6 +98,10 @@ impl Step {
     }
 
     fn is_start(&self) -> bool {
+        matches!(self.height, StepHeight::Start)
+    }
+
+    fn is_start_part_2(&self) -> bool {
         matches!(self.height, StepHeight::Start | StepHeight::Step(0))
     }
 
@@ -163,7 +167,24 @@ struct Grid {
 }
 
 impl Grid {
-    pub fn new(data: crate::DataIn) -> Grid {
+    pub fn new_part_1(data: crate::DataIn) -> Grid {
+        let mut data = data.peekable();
+        let width = data.peek().unwrap().len();
+        let mut ret = Self {
+            grid: crate::Grid::new_from_iter(
+                data.flat_map(|l| l.chars().map(Step::new).collect::<Vec<_>>()),
+                width as i32,
+            ),
+            end: Default::default(),
+        };
+        ret.end = ret.get_end();
+        let startc = ret.get_start();
+        let start = ret.grid.get_mut(&startc).unwrap();
+        start.cost = 0;
+        ret
+    }
+
+    pub fn new_part_2(data: crate::DataIn) -> Grid {
         let mut data = data.peekable();
         let width = data.peek().unwrap().len();
         let mut ret = Self {
@@ -177,7 +198,7 @@ impl Grid {
         ret.grid
             .iter_mut()
             .map(|(_, s)| s)
-            .filter(|s| s.is_start())
+            .filter(|s| s.is_start_part_2())
             .for_each(|s| {
                 s.visited = true;
                 s.cost = 0
@@ -185,10 +206,16 @@ impl Grid {
         ret
     }
 
-    fn get_start(&self) -> impl Iterator<Item = (Coord2D, i32)> + '_ {
+    fn get_start(&self) -> Coord2D {
+        self.grid
+            .find(|(_, step)| step.is_start())
+            .expect("no start?")
+    }
+
+    fn get_starts(&self) -> impl Iterator<Item = (Coord2D, i32)> + '_ {
         self.grid
             .iter()
-            .filter(|(_, step)| step.is_start())
+            .filter(|(_, step)| step.is_start_part_2())
             .map(|(coord, _)| (*coord, self.heuristic(coord)))
     }
 
@@ -234,13 +261,51 @@ impl Display for Grid {
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
-    let mut grid = Grid::new(data);
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid = Grid::new_part_1(data);
 
     println!("{}", grid);
 
     let mut queue = BinaryHeap::with_capacity(grid.len());
-    for (coord, heuristic) in grid.get_start() {
+    queue.push(PotentialStep {
+        heuristic: 0,
+        coord: grid.get_start(),
+    });
+
+    while let Some(PotentialStep { coord, .. }) = queue.pop() {
+        if grid.is_end(coord) {
+            return Ok(grid.get_cost(coord).to_string());
+        }
+        let cost = grid.get_cost(coord) + 1;
+        let neighbours: Vec<_> = grid.get_neighbours(coord).collect();
+        for neighbour_c in neighbours {
+            let heuristic = grid.heuristic(&neighbour_c);
+            let neighbour = grid.get_mut(&neighbour_c).unwrap();
+            if neighbour.cost <= cost {
+                continue;
+            }
+            neighbour.cost = cost;
+            neighbour.parent = Some(coord);
+            neighbour.visited = true;
+            queue.push(PotentialStep {
+                heuristic: cost + heuristic,
+                coord: neighbour_c,
+            })
+        }
+
+        // println!("{}", grid);
+    }
+
+    panic!("no path to exit");
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid = Grid::new_part_2(data);
+
+    println!("{}", grid);
+
+    let mut queue = BinaryHeap::with_capacity(grid.len());
+    for (coord, heuristic) in grid.get_starts() {
         queue.push(PotentialStep { heuristic, coord });
     }
 
@@ -265,7 +330,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
             })
         }
 
-        println!("{}", grid);
+        // println!("{}", grid);
     }
 
     panic!("no path to exit");
@@ -274,7 +339,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "12",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

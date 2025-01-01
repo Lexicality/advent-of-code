@@ -7,6 +7,17 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret: u64 = 0;
+    for line in data {
+        let num: u64 = line.parse().unwrap();
+        let req = (num / 3) - 2;
+        println!("Input: {num} Required: {req}");
+        ret += req;
+    }
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret: u64 = 0;
     for line in data {
@@ -29,7 +40,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "1",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

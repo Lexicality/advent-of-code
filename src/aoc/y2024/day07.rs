@@ -22,7 +22,10 @@ const OPERATIONS: [fn(u64, u64) -> u64; 3] = [
     |a: u64, b: u64| format!("{a}{b}").parse().unwrap(),
 ];
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+fn main(
+    data: crate::DataIn,
+    calibration_operations: &[fn(u64, u64) -> u64],
+) -> crate::AoCResult<String> {
     let calibrations: HashMap<u64, Vec<u64>> = data
         .map(|line| {
             let (result, operations) = line.split_once(": ").unwrap();
@@ -45,7 +48,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
                 options = options
                     .into_iter()
                     .flat_map(|option| {
-                        OPERATIONS
+                        calibration_operations
                             .iter()
                             .map(move |operation| operation(option, num))
                     })
@@ -61,10 +64,21 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, &OPERATIONS[0..2])
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, &OPERATIONS)
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "7",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

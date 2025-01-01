@@ -9,6 +9,24 @@
 
 use itertools::Itertools;
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let (mut a, mut b): (Vec<_>, Vec<_>) = data
+        .map(|line| -> (u64, u64) {
+            let (a, b) = line.split_once(' ').expect("line must be splittable");
+            (a.trim().parse().unwrap(), b.trim().parse().unwrap())
+        })
+        .unzip();
+    a.sort();
+    b.sort();
+    assert_eq!(a.len(), b.len(), "lists must have the same length!");
+    Ok(a.into_iter()
+        .zip_eq(b)
+        .map(|(a, b)| a.abs_diff(b))
+        .reduce(u64::saturating_add)
+        .unwrap()
+        .to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let (a, b): (Vec<_>, Vec<_>) = data
         .map(|line| -> (u64, u64) {
@@ -28,7 +46,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "1",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

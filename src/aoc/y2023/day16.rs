@@ -102,6 +102,14 @@ fn energise(grid: &Grid<GridState>, first: LightStep) -> usize {
     seen.into_iter().map(|(pos, _)| pos).unique().count()
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let grid: Grid<GridState> = Grid::new_from_lines(
+        data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
+    );
+    let ret = energise(&grid, (Coord2D { x: 0, y: 0 }, Direction::East));
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<GridState> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.try_into().unwrap()).collect_vec()),
@@ -138,7 +146,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "16",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

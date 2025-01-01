@@ -35,16 +35,96 @@ impl Display for GridState {
     }
 }
 
+#[derive(Debug)]
+struct AStarImplPart1 {
+    grid: Grid<GridState>,
+    end: Coord2D,
+}
+
+type AStarID = (Coord2D, usize);
+
+impl AStarImplPart1 {
+    fn new(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<Self> {
+        let mut grid = Grid::new(width, width);
+
+        for (i, coord) in data.enumerate().take(iterations) {
+            let coord = coord.parse()?;
+            grid.set(coord, GridState::Corrupted(i));
+        }
+
+        let end = i32::try_from(width).unwrap() - 1;
+        Ok(Self {
+            grid,
+            end: Coord2D { x: end, y: end },
+        })
+    }
+
+    fn get_start(&self) -> AStarID {
+        (Coord2D { x: 0, y: 0 }, 0)
+    }
+}
+
+impl Display for AStarImplPart1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.grid.fmt(f)
+    }
+}
+
+impl AStarProvider for AStarImplPart1 {
+    type IDType = AStarID;
+
+    fn get_neighbours(&self, id: &Self::IDType) -> Box<dyn Iterator<Item = Self::IDType> + '_> {
+        let (coord, steps) = *id;
+        Box::new(
+            [
+                Direction::North,
+                Direction::East,
+                Direction::South,
+                Direction::West,
+            ]
+            .into_iter()
+            .map(move |direction| (coord + direction.to_coord(), steps + 1))
+            .filter(move |(coord, _steps)| {
+                self.grid.get(coord).is_some_and(|value| match value {
+                    GridState::Void => true,
+                    GridState::Corrupted(_falls_at) => false, //*_falls_at > steps,
+                    GridState::Walko => unreachable!(),
+                })
+            }),
+        )
+    }
+
+    fn heuristic(&self, (coord, _): &Self::IDType) -> u64 {
+        self.end.distance(coord).try_into().unwrap()
+    }
+
+    fn cost(&self, _id: &Self::IDType) -> u64 {
+        1
+    }
+
+    fn is_end(&self, (coord, _): &Self::IDType) -> bool {
+        coord == &self.end
+    }
+}
+
+fn part_1(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<String> {
+    let provider = AStarImplPart1::new(data, width, iterations)?;
+    let start = provider.get_start();
+    let res = a_star(provider, start);
+    let ret = res.len();
+    Ok(ret.to_string())
+}
+
 #[derive(Debug, Clone)]
-struct AStarImpl {
+struct AStarImplPart2 {
     grid: Grid<GridState>,
     end: Coord2D,
     initial_iterations: usize,
 }
 
-type AStarID = Coord2D;
+type AStarID2 = Coord2D;
 
-impl AStarImpl {
+impl AStarImplPart2 {
     fn new(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<Self> {
         let mut grid = Grid::new(width, width);
 
@@ -61,19 +141,19 @@ impl AStarImpl {
         })
     }
 
-    fn get_start(&self) -> AStarID {
+    fn get_start(&self) -> AStarID2 {
         Coord2D { x: 0, y: 0 }
     }
 }
 
-impl Display for AStarImpl {
+impl Display for AStarImplPart2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.grid.fmt(f)
     }
 }
 
-impl AStarProvider for AStarImpl {
-    type IDType = AStarID;
+impl AStarProvider for AStarImplPart2 {
+    type IDType = AStarID2;
 
     fn get_neighbours(&self, id: &Self::IDType) -> Box<dyn Iterator<Item = Self::IDType> + '_> {
         let coord = *id;
@@ -110,7 +190,7 @@ impl AStarProvider for AStarImpl {
 }
 
 fn part_2(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<String> {
-    let provider = AStarImpl::new(data, width, iterations)?;
+    let provider = AStarImplPart2::new(data, width, iterations)?;
     let start = provider.get_start();
 
     // I'm a genius 🤦
@@ -146,7 +226,10 @@ fn part_2(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<Strin
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "18",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: |data| part_1(data, 71, 1024),
+        example: |data| part_1(data, 7, 12)
+    }),
     part_2: Some(crate::AoCPart {
         main: |data| part_2(data, 71, 1024),
         example: |data| part_2(data, 7, 12)

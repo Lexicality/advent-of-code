@@ -7,6 +7,19 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret = 0;
+    for value in data.next().unwrap().split(',') {
+        ret += value.chars().fold(0, |mut hash, c| {
+            hash += u32::from(c);
+            hash *= 17;
+            hash %= 256;
+            hash
+        });
+    }
+    Ok(ret.to_string())
+}
+
 fn hash(value: &str) -> usize {
     value.chars().fold(0, |mut hash, c| {
         hash += u32::from(c) as usize;
@@ -61,7 +74,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "15",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

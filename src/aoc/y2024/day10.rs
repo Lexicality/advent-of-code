@@ -7,7 +7,7 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use std::collections::VecDeque;
+use std::collections::{HashSet, VecDeque};
 use std::fmt::Display;
 
 use crate::{AoCError, CharGrid, CommonGrid, Grid};
@@ -48,6 +48,40 @@ impl Height {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let grid: Grid<Height> = Grid::new_from_chars(data)?;
+
+    let mut ret = 0;
+    for trailhead in grid
+        .iter()
+        .filter(|(_, h)| h.is_trailhead())
+        .map(|(c, _)| c)
+        .copied()
+    {
+        // Ungabunga brepth first here we go
+        let mut options = VecDeque::with_capacity(grid.len());
+        options.push_front(trailhead);
+
+        let mut seen = HashSet::with_capacity(grid.len());
+        while let Some(coord) = options.pop_front() {
+            if !seen.insert(coord) {
+                continue;
+            }
+            let value = grid.get(&coord).unwrap();
+            if value.is_end() {
+                ret += 1;
+                continue;
+            }
+            options.extend(
+                grid.get_neighbour_coords_filtered(coord, false, |coord, next| {
+                    next.can_walk(value) && !seen.contains(coord)
+                }),
+            );
+        }
+    }
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let grid: Grid<Height> = Grid::new_from_chars(data)?;
 
@@ -79,7 +113,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "10",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

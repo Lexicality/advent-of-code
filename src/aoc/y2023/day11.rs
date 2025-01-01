@@ -40,7 +40,7 @@ impl Display for Space {
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+fn main(data: crate::DataIn, expansion_factor: usize) -> crate::AoCResult<String> {
     let mut starscape: InfGrid<Space, BigCoord2D> = data
         .enumerate()
         .flat_map(|(y, line)| {
@@ -70,8 +70,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     starscape = starscape
         .into_iter()
         .map(|(mut coord, value)| {
-            let expand_x = expansion_cols.iter().filter(|x| **x < coord.x).count() * 999_999;
-            let expand_y = expansion_rows.iter().filter(|y| **y < coord.y).count() * 999_999;
+            let expand_x =
+                expansion_cols.iter().filter(|x| **x < coord.x).count() * expansion_factor;
+            let expand_y =
+                expansion_rows.iter().filter(|y| **y < coord.y).count() * expansion_factor;
             coord += (expand_x, expand_y).try_into().unwrap();
             (coord, value)
         })
@@ -89,10 +91,21 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 1)
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 999_999)
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "11",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

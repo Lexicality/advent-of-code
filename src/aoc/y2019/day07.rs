@@ -13,6 +13,46 @@ use crate::AoCResult;
 
 use super::computer::{Computer, RunState};
 
+pub fn part_1_example(mut data: crate::DataIn) -> AoCResult<String> {
+    let mut ret = 0;
+    while let Some(phase) = data.next() {
+        let og_computer: Computer = data.next().unwrap().parse().unwrap();
+
+        let phase_setting = phase.split(',').map(|v| v.parse().unwrap()).collect_vec();
+        let mut signal = 0;
+        for phase in phase_setting.iter() {
+            let mut amplifier = og_computer.clone();
+            amplifier.input.push_front(signal);
+            amplifier.input.push_front(*phase);
+            amplifier.run_to_completion().unwrap();
+            let output = amplifier.output[0];
+            println!("signal: {signal}, phase: {phase}, output: {output}");
+            signal = output;
+        }
+        ret = ret.max(signal);
+    }
+    Ok(ret.to_string())
+}
+
+pub fn part_1(mut data: crate::DataIn) -> AoCResult<String> {
+    let mut ret = 0;
+    let og_computer: Computer = data.next().unwrap().parse().unwrap();
+
+    for phase_setting in (0..5).permutations(5) {
+        let mut signal = 0;
+        for phase in phase_setting.iter() {
+            let mut amplifier = og_computer.clone();
+            amplifier.input.push_front(signal);
+            amplifier.input.push_front(*phase);
+            amplifier.run_to_completion().unwrap();
+            let output = amplifier.output[0];
+            signal = output;
+        }
+        ret = ret.max(signal);
+    }
+    Ok(ret.to_string())
+}
+
 fn run_amps(program: Computer, phase_settings: &[i64]) -> AoCResult<i64> {
     let mut loop_signals = vec![0];
     let mut amps = phase_settings
@@ -73,7 +113,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "7",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1_example
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2_example

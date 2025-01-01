@@ -49,7 +49,7 @@ impl astar::AStarProvider for Day17Provider {
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+fn main(data: crate::DataIn, min_steppe: u32, max_steppe: u32) -> crate::AoCResult<String> {
     let grid: Grid<u32> = Grid::new_from_lines(
         data.map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect_vec()),
     );
@@ -67,21 +67,18 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 
     queue.push_back(start_id);
 
-    const MIN_STEPPE: u32 = 4;
-    const MAX_STEPPE: u32 = 10;
-
     // Generate the graph
     while let Some((pos, dir, steps)) = queue.pop_front() {
         let next_steps = [
             {
-                if steps < MAX_STEPPE {
+                if steps < max_steppe {
                     Some((pos + dir.to_coord(), dir, steps + 1))
                 } else {
                     None
                 }
             },
             {
-                if steps >= MIN_STEPPE {
+                if steps >= min_steppe {
                     let dir = dir.rotate(RotateDirection::Left);
                     Some((pos + dir.to_coord(), dir, 1))
                 } else {
@@ -89,7 +86,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
                 }
             },
             {
-                if steps >= MIN_STEPPE {
+                if steps >= min_steppe {
                     let dir = dir.rotate(RotateDirection::Right);
                     Some((pos + dir.to_coord(), dir, 1))
                 } else {
@@ -99,7 +96,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         ]
         .into_iter()
         .flatten()
-        .filter(|(pos, _, steps)| grid.check_coord(pos) && (pos != &end || *steps >= MIN_STEPPE))
+        .filter(|(pos, _, steps)| grid.check_coord(pos) && (pos != &end || *steps >= min_steppe))
         .collect_vec();
         let node = Node {
             id: (pos, dir, steps),
@@ -124,10 +121,21 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         .to_string())
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 0, 3)
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 4, 10)
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "17",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

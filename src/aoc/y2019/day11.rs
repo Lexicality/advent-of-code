@@ -83,6 +83,20 @@ impl Robot {
     }
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut robot = Robot::new(data.next().unwrap()).unwrap();
+    let mut hull: InfGrid<Colour> = InfGrid::new();
+
+    let mut current_square = Colour::Black;
+    while let Some((pos, colour)) = robot.drive(current_square) {
+        hull.set(pos, colour);
+        current_square = hull.get(&robot.pos).copied().unwrap_or_default();
+    }
+    println!("{hull:-}\n");
+
+    Ok(hull.grid.len().to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let mut robot = Robot::new(data.next().unwrap()).unwrap();
     let mut hull: InfGrid<Colour> = InfGrid::new();
@@ -100,7 +114,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "11",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

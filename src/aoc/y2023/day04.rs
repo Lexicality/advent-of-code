@@ -25,6 +25,12 @@ struct Card {
 }
 
 impl Card {
+    fn points(&self) -> u32 {
+        self.winning_numbers
+            .intersection(&self.card_numbers)
+            .fold(0, |acc, _| if acc == 0 { 1 } else { acc * 2 })
+    }
+
     fn num_winning_nums(&self) -> usize {
         self.winning_numbers
             .intersection(&self.card_numbers)
@@ -102,6 +108,17 @@ impl CardQueue {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret = 0;
+    for line in data {
+        let card: Card = line.parse().unwrap();
+        let points = card.points();
+        println!("{card} | {points}");
+        ret += points;
+    }
+    Ok(ret.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret: u64 = 0;
     let mut queue = CardQueue::new();
@@ -122,7 +139,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "4",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

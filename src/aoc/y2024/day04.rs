@@ -9,6 +9,28 @@
 
 use crate::{CharGrid, CommonGrid, Coord2D, Grid};
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let grid: Grid<char> = Grid::new_from_chars(data).unwrap();
+    let ret = grid
+        .iter()
+        .filter(|(_, c)| **c == 'X')
+        .flat_map(|(x_coord, _)| {
+            grid.get_neighbour_coords_filtered(*x_coord, true, |_, v| *v == 'M')
+                .map(|m_coord| {
+                    let delta = m_coord - *x_coord;
+                    (m_coord + delta, m_coord + (delta * 2).unwrap())
+                })
+        })
+        .filter(|(a_coord, s_coord)| {
+            matches!(
+                (grid.get(a_coord), grid.get(s_coord)),
+                (Some('A'), Some('S'))
+            )
+        })
+        .count();
+    Ok(ret.to_string())
+}
+
 const UP_LEFT: Coord2D = Coord2D { x: -1, y: -1 };
 const DOWN_LEFT: Coord2D = Coord2D { x: -1, y: 1 };
 const UP_RIGHT: Coord2D = Coord2D { x: 1, y: -1 };
@@ -40,7 +62,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "4",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

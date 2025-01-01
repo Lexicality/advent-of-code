@@ -42,6 +42,25 @@ fn find_first(line: &str, nums: &[&str]) -> usize {
     }
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut total = 0;
+    for line in data {
+        let first = line
+            .chars()
+            .find(|c| c.is_ascii_digit())
+            .expect("at least one number");
+        let last = line
+            .chars()
+            .rev()
+            .find(|c| c.is_ascii_digit())
+            .expect("at least one number");
+        let value: u64 = format!("{first}{last}").parse().unwrap();
+        println!("{line} {value}");
+        total += value
+    }
+    Ok(total.to_string())
+}
+
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut total = 0;
     for line in data {
@@ -59,7 +78,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "1",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

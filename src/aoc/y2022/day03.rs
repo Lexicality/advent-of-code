@@ -23,6 +23,29 @@ fn get_priority(item: char) -> u32 {
     item as u32 - ('a' as u32 - 1)
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut total_prio = 0;
+    for line in data {
+        let len = line.len();
+        if len % 2 != 0 {
+            panic!("Line {} is uneven!", line);
+        }
+        let mid = len / 2;
+        let (contents1, contents2) = line.split_at(mid);
+        let pocket1: Pocket = contents1.chars().collect();
+        let pocket2: Pocket = contents2.chars().collect();
+        let intersection: Vec<_> = pocket1.intersection(&pocket2).collect();
+        if intersection.len() != 1 {
+            panic!("Got multiple intersections: {:?}", intersection)
+        }
+        let common_item = *intersection[0];
+        let prio = get_priority(common_item);
+        println!("{}: {}/{}", line, common_item, prio);
+        total_prio += prio;
+    }
+    Ok(total_prio.to_string())
+}
+
 fn get_comomn_item<L: Iterator<Item = String>>(lines: L) -> Option<char> {
     let (e1, e2, e3) = lines.collect_tuple()?;
     let e1: Pocket = e1.chars().collect();
@@ -56,7 +79,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "3",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

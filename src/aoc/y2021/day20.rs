@@ -13,8 +13,6 @@ use itertools::Itertools;
 
 use crate::{AoCError, AoCResult, CharGrid, CommonGrid, Coord2D, Coordinate2D, InfGrid};
 
-const NUM_ITERATIONS: usize = 50;
-
 #[derive(Debug, Clone, Copy)]
 enum PixelState {
     Dark,
@@ -77,7 +75,7 @@ impl Enhancer {
     }
 }
 
-pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
+pub fn main(mut data: crate::DataIn, iterations: usize) -> crate::AoCResult<String> {
     let enhancer = Enhancer::parse(data.next().unwrap())?;
 
     data.next().unwrap();
@@ -86,7 +84,7 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     let mut infstate = PixelState::Dark;
 
-    for _ in 0..NUM_ITERATIONS {
+    for _ in 0..iterations {
         let min: Coord2D = grid.min_key();
         let max = grid.max_key();
 
@@ -115,10 +113,21 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 2)
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    main(data, 50)
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2021",
     day: "20",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

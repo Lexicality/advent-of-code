@@ -6,60 +6,28 @@
 // You should have received a copy of the Licence along with this work. If not, see:
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
+use itertools::Itertools;
 
-use std::collections::{HashSet, VecDeque};
-use std::str::Chars;
-
-#[derive(Debug)]
-struct SubRoutine(VecDeque<char>, HashSet<char>);
-
-impl SubRoutine {
-    fn new(chars: &mut Chars) -> SubRoutine {
-        SubRoutine(chars.take(14).collect(), HashSet::with_capacity(14))
-    }
-
-    fn bingo_bango(&mut self) -> bool {
-        self.1.clear();
-        for c in self.0.iter() {
-            self.1.insert(*c);
+fn main(mut data: crate::DataIn, window_size: usize) -> crate::AoCResult<String> {
+    let chars = data.next().unwrap().chars().collect_vec();
+    for i in 0.. {
+        let end = i + window_size;
+        if chars[i..end].iter().unique().count() == window_size {
+            return Ok(end.to_string());
         }
-        self.1.len() == 14
     }
-
-    fn rotate(&mut self, value: char) {
-        self.0.pop_front().unwrap();
-        self.0.push_back(value);
-    }
-}
-
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
-    for line in data {
-        let mut citer = line.chars();
-        let mut sub = SubRoutine::new(&mut citer);
-        println!("{:?}", sub);
-        if sub.bingo_bango() {
-            println!("14");
-            continue;
-        }
-        let mut i = 15;
-        for c in citer {
-            sub.rotate(c);
-            if sub.bingo_bango() {
-                break;
-            }
-            i += 1
-        }
-        println!("{}", i);
-    }
-    Ok("".to_string())
+    unreachable!()
 }
 
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "6",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: |data| main(data, 4),
+        example: |data| crate::multi_line_example(data, |data| main(data, 4))
+    }),
     part_2: Some(crate::AoCPart {
-        main: part_2,
-        example: part_2
+        main: |data| main(data, 14),
+        example: |data| crate::multi_line_example(data, |data| main(data, 14))
     }),
 });

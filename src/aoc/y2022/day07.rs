@@ -132,7 +132,7 @@ impl Display for INode {
     }
 }
 
-pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+fn folderize(data: crate::DataIn) -> (Rc<INoder>, Vec<Rc<INoder>>) {
     let root = INode::new_folder("/".to_string(), Weak::new());
     // let mut folders: HashMap<String, Rc<INoder>> = HashMap::new();
     let mut folders: Vec<Rc<INoder>> = Vec::new();
@@ -191,6 +191,28 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         }
     }
     println!("{}", Borrow::<INoder>::borrow(&root).borrow());
+    (root, folders)
+}
+
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let (_, folders) = folderize(data);
+
+    let size: u64 = folders
+        .iter()
+        .map(|d| {
+            let dir = Borrow::<INoder>::borrow(d).borrow();
+            let size = dir.size();
+            println!("Folder {} is {}", dir.name(), size);
+            size
+        })
+        .filter(|s| s < &100_000)
+        .sum();
+
+    Ok(size.to_string())
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let (root, folders) = folderize(data);
 
     let total_space = 70_000_000;
     let total_needed = 30_000_000;
@@ -218,7 +240,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "7",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

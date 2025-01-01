@@ -51,6 +51,41 @@ impl Display for GridState {
     }
 }
 
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut computer: Computer = data.next().unwrap().parse().unwrap();
+    computer.run_to_completion().unwrap();
+
+    let output = computer.get_ascii_output().expect("There must be output");
+
+    let grid: Grid<GridState> = Grid::new_from_chars(
+        output
+            .lines()
+            .map(|l| l.to_owned())
+            .collect_vec()
+            .into_iter(),
+    )?;
+
+    println!("{grid:#}");
+
+    let mut ret = 0;
+    // extremely simplistic intersection detection
+    for coord in grid
+        .iter()
+        .filter(|(_, value)| matches!(value, GridState::Scaffold))
+        .map(|(pos, _)| pos)
+    {
+        if grid
+            .get_neighbour_coords_filtered(*coord, false, |_, v| matches!(v, GridState::Scaffold))
+            .count()
+            == 4
+        {
+            ret += coord.x * coord.y;
+        }
+    }
+
+    Ok(ret.to_string())
+}
+
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
     let base_computer: Computer = data.next().unwrap().parse().unwrap();
     let mut computer = base_computer.clone();
@@ -144,7 +179,10 @@ n
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "17",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

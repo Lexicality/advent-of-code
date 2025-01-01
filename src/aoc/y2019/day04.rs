@@ -9,7 +9,41 @@
 
 use std::cmp::Ordering;
 
-fn check_num(num: u32) -> bool {
+fn check_num_part_1(num: u32) -> bool {
+    let num = num.to_string();
+    if num.len() != 6 {
+        return false;
+    }
+    let mut digits = num.chars().map(|c| c.to_digit(10).unwrap());
+    let mut prev = digits.next().unwrap();
+    let mut doubles = false;
+    for digit in digits {
+        match digit.cmp(&prev) {
+            Ordering::Less => return false,
+            Ordering::Equal => doubles = true,
+            Ordering::Greater => (),
+        };
+        prev = digit;
+    }
+    doubles
+}
+
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let line = data.next().unwrap();
+    let (start, end) = line.split_once('-').unwrap();
+    let (start, end) = (start.parse().unwrap(), end.parse().unwrap());
+
+    let mut ret = 0;
+    for num in start..end {
+        if check_num_part_1(num) {
+            ret += 1;
+        }
+    }
+
+    Ok(ret.to_string())
+}
+
+fn check_num_part_2(num: u32) -> bool {
     let num = num.to_string();
     if num.len() != 6 {
         return false;
@@ -44,7 +78,7 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
     let mut ret = 0;
     for num in start..end {
-        if check_num(num) {
+        if check_num_part_2(num) {
             ret += 1;
         }
     }
@@ -55,7 +89,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "4",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2
@@ -64,7 +101,7 @@ inventory::submit!(crate::AoCDay {
 
 #[cfg(test)]
 mod test {
-    use super::check_num;
+    use super::check_num_part_2 as check_num;
 
     #[test]
     fn adjacent() {
