@@ -126,9 +126,9 @@ fn part_1(data: crate::DataIn, max_x: i32, max_y: i32) -> AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "14",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: |data| part_1(data, MAX_X, MAX_Y),
         example: |data| part_1(data, MAX_X_EXAMPLE, MAX_Y_EXAMPLE)
-    }),
+    },
     part_2: None,
 });

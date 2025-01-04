@@ -12,10 +12,10 @@ use super::computer;
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "9",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: |data| computer::run_one_with_input(data, &[1]),
         example: |data| crate::multi_line_example(data, computer::run_one)
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| computer::run_one_with_input(data, &[2]),
         example: |data| crate::multi_line_example(data, computer::run_one)

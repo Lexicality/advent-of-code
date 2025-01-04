@@ -194,9 +194,9 @@ pub fn part_1(mut data: crate::DataIn) -> AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "17",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: part_1
-    }),
+    },
     part_2: None,
 });

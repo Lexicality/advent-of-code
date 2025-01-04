@@ -266,10 +266,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2023",
     day: "10",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: |data| crate::partitioned_example(data, part_1)
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: |data| crate::partitioned_example(data, part_2)

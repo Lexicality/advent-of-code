@@ -226,10 +226,10 @@ fn part_2(data: crate::DataIn, width: u32, iterations: usize) -> AoCResult<Strin
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "18",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: |data| part_1(data, 71, 1024),
         example: |data| part_1(data, 7, 12)
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| part_2(data, 71, 1024),
         example: |data| part_2(data, 7, 12)

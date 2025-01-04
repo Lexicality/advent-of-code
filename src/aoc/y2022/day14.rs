@@ -228,10 +228,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "14",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: part_1
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

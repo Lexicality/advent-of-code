@@ -53,10 +53,10 @@ pub fn run_droid(mut data: crate::DataIn, input: &'static str) -> crate::AoCResu
 inventory::submit!(crate::AoCDay {
     year: "2019",
     day: "21",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: |data| run_droid(data, SPRINGCODE_PART_1),
         example: |_| unreachable!()
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| run_droid(data, SPRINGCODE_PART_2),
         example: |_| unreachable!()

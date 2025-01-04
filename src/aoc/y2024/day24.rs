@@ -201,10 +201,10 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "24",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: part_1
-    }),
+    },
     // Part 2 was done non-programatically
     part_2: None,
 });

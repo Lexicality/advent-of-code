@@ -56,7 +56,7 @@ pub struct AoCPart {
 pub struct AoCDay {
     pub year: &'static str,
     pub day: &'static str,
-    pub part_1: Option<AoCPart>,
+    pub part_1: AoCPart,
     pub part_2: Option<AoCPart>,
 }
 

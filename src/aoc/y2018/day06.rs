@@ -101,10 +101,10 @@ pub fn part_2(data: crate::DataIn, max_distance: u64) -> crate::AoCResult<String
 inventory::submit!(crate::AoCDay {
     year: "2018",
     day: "6",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: part_1
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| part_2(data, 10_000),
         example: |data| part_2(data, 32),

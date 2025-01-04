@@ -57,10 +57,10 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "3",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: |data| crate::multi_line_example(data, part_1),
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: |data| crate::multi_line_example(data, part_2),

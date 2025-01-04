@@ -22,10 +22,10 @@ fn main(mut data: crate::DataIn, window_size: usize) -> crate::AoCResult<String>
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "6",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: |data| main(data, 4),
         example: |data| crate::multi_line_example(data, |data| main(data, 4))
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| main(data, 14),
         example: |data| crate::multi_line_example(data, |data| main(data, 14))

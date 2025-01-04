@@ -174,10 +174,10 @@ pub fn part_2(data: crate::DataIn, num_helpers: usize, time_penalty: u32) -> AoC
 inventory::submit!(crate::AoCDay {
     year: "2018",
     day: "7",
-    part_1: Some(crate::AoCPart {
+    part_1: crate::AoCPart {
         main: part_1,
         example: part_1
-    }),
+    },
     part_2: Some(crate::AoCPart {
         main: |data| part_2(data, 5, 60),
         example: |data| part_2(data, 2, 0),

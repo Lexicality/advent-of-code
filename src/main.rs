@@ -53,39 +53,23 @@ fn main() -> AoCResult<()> {
     let day_data = all_days[year][day];
 
     // sanity checking
-    match part {
-        "1" => {
-            if day_data.part_1.is_none() {
-                return Err(AoCError::new(format!(
-                    "{year}/{day} does not have a part 1 defined!"
-                )));
-            }
-        }
-        "2" => {
-            if day_data.part_2.is_none() {
-                return Err(AoCError::new(format!(
-                    "{year}/{day} does not have a part 2 defined!"
-                )));
-            }
-        }
-        "both" => {
-            if day_data.part_1.is_none() && day_data.part_2.is_none() {
-                return Err(AoCError::new(format!(
-                    "{year}/{day} does not have any parts defined!"
-                )));
-            }
-        }
-        _ => {}
+    if part == "2" && day_data.part_2.is_none() {
+        return Err(AoCError::new(format!(
+            "{year}/{day} does not have a part 2 defined!"
+        )));
     }
 
-    if part == "1" || (part == "both" && day_data.part_1.is_some()) {
+    if part == "1" || part == "both" {
         println!("=== {year} day {day} part 1 ===");
 
-        let func = day_data
-            .part_1
-            .as_ref()
-            .map(|part| if use_example { part.example } else { part.main })
-            .unwrap();
+        let func = {
+            let part = &day_data.part_1;
+            if use_example {
+                part.example
+            } else {
+                part.main
+            }
+        };
 
         let start = Instant::now();
         let ret = func(data.clone().into_iter())?;
