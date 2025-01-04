@@ -84,7 +84,7 @@ impl FromStr for Coord2D {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (x, y) = s
             .split(',')
-            .map(|c| c.parse().map_err(AoCError::new_from_parseerror))
+            .map(|c| c.trim().parse().map_err(AoCError::new_from_parseerror))
             .collect_tuple()
             .ok_or_else(|| {
                 AoCError::new(format!(
@@ -216,6 +216,12 @@ impl Display for Coord2D {
 impl From<(CoordType, CoordType)> for Coord2D {
     fn from((x, y): (CoordType, CoordType)) -> Self {
         Self { x, y }
+    }
+}
+
+impl From<&(CoordType, CoordType)> for Coord2D {
+    fn from((x, y): &(CoordType, CoordType)) -> Self {
+        Self { x: *x, y: *y }
     }
 }
 
