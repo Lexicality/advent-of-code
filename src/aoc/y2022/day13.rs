@@ -66,6 +66,29 @@ fn actual_check_order(left: &Value, right: &Value) -> Option<Order> {
     }
 }
 
+fn check_order(left: Value, right: Value) -> Order {
+    actual_check_order(&left, &right).unwrap()
+}
+
+pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut index = 0;
+    let mut ret = 0;
+    loop {
+        index += 1;
+        let v1: Value = serde_json::from_str(&data.next().unwrap()).unwrap();
+        let v2: Value = serde_json::from_str(&data.next().unwrap()).unwrap();
+        let order = check_order(v1, v2);
+        if let Order::Right = order {
+            ret += index;
+        }
+
+        if data.next().is_none() {
+            break;
+        }
+    }
+    Ok(ret.to_string())
+}
+
 struct Sigh<'a>(&'a Vec<Value>);
 
 impl Display for Sigh<'_> {
@@ -116,7 +139,10 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "13",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2

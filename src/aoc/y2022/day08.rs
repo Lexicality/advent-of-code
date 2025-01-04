@@ -35,7 +35,29 @@ lazy_static! {
     static ref COLOURS: [Style; NUM_SIZES] = _COLOURS.map(|c| Color::Fixed(c).on(Color::Black));
 }
 
+enum Visibility {
+    FileNotFound,
+    Visible,
+    Hidden,
+}
+impl Visibility {
+    fn setup(val: bool) -> Visibility {
+        match val {
+            true => Visibility::Visible,
+            false => Visibility::FileNotFound,
+        }
+    }
+
+    fn done(&self) -> bool {
+        !matches!(self, Visibility::FileNotFound)
+    }
+}
+
 impl Direction {
+    fn rev(&self) -> Direction {
+        self.rotate(crate::RotateDirection::Backwards)
+    }
+
     fn idx(&self) -> usize {
         match self {
             Direction::North => 0,
@@ -48,15 +70,173 @@ impl Direction {
 
 type Coord = (u32, u32);
 
-struct Tree {
+struct TreePart1 {
+    // coord: Coord,
+    height: u32,
+    total_visibility: Visibility,
+    cardinal_visibility: [Visibility; 4],
+}
+
+impl TreePart1 {
+    fn new(size: usize, coord: Coord, height: u32) -> TreePart1 {
+        let last = (size - 1) as u32;
+        let (x, y) = coord;
+        let north = x == 0;
+        let east = y == last;
+        let south = x == last;
+        let west = y == 0;
+
+        TreePart1 {
+            // coord,
+            height,
+            total_visibility: Visibility::setup(north || east || south || west),
+            cardinal_visibility: [
+                Visibility::setup(north),
+                Visibility::setup(east),
+                Visibility::setup(south),
+                Visibility::setup(west),
+            ],
+        }
+    }
+
+    fn done(&self, direction: &Direction) -> bool {
+        self.total_visibility.done() || self.cardinal_visibility[direction.idx()].done()
+    }
+
+    fn set_vis(&mut self, direction: &Direction, visibility: Visibility) {
+        if let Visibility::Visible = visibility {
+            self.total_visibility = Visibility::Visible;
+        }
+        self.cardinal_visibility[direction.idx()] = visibility;
+    }
+
+    fn is_visible(&self) -> bool {
+        matches!(self.total_visibility, Visibility::Visible)
+    }
+}
+
+struct ForestPart1 {
+    trees: HashMap<Coord, TreePart1>,
+    size: usize,
+}
+
+impl ForestPart1 {
+    fn new(size: usize, data: &mut dyn Iterator<Item = String>) -> ForestPart1 {
+        let mut forest = ForestPart1 {
+            trees: HashMap::with_capacity(size * size),
+            size,
+        };
+        for (y, line) in data.enumerate() {
+            for (x, height) in line.chars().map(|c| c.to_digit(10).unwrap()).enumerate() {
+                let coord: Coord = (x as u32, y as u32);
+                forest
+                    .trees
+                    .insert(coord, TreePart1::new(size, coord, height));
+            }
+        }
+        forest
+    }
+
+    fn zoop(&self, start: &Coord, direction: &Direction) -> Box<dyn Iterator<Item = Coord>> {
+        let (x, y) = *start;
+        let limit = self.size as u32;
+
+        let iter: Box<dyn Iterator<Item = Coord>> = match direction {
+            Direction::North => Box::new((0..y).rev().map(move |y| (x, y))),
+            Direction::East => Box::new((x + 1..limit).map(move |x| (x, y))),
+            Direction::South => Box::new((y + 1..limit).map(move |y| (x, y))),
+            Direction::West => Box::new((0..x).rev().map(move |x| (x, y))),
+        };
+        iter
+    }
+
+    fn check_vis(&self, coord: &Coord, direction: &Direction, tree_height: u32) -> Visibility {
+        for o_coord in self.zoop(coord, direction) {
+            if self.get_tree(&o_coord).height >= tree_height {
+                return Visibility::Hidden;
+            }
+        }
+        Visibility::Visible
+    }
+
+    fn invisify(&mut self, coord: &Coord, direction: &Direction) {
+        for o_coord in self.zoop(coord, &direction.rev()) {
+            self.get_tree_mut(&o_coord).set_vis(
+                // ???
+                direction,
+                Visibility::Hidden,
+            );
+        }
+    }
+
+    fn get_tree(&self, coord: &Coord) -> &TreePart1 {
+        self.trees.get(coord).unwrap()
+    }
+    fn get_tree_mut(&mut self, coord: &Coord) -> &mut TreePart1 {
+        self.trees.get_mut(coord).unwrap()
+    }
+
+    fn floodify(&mut self, direction: &Direction, coord: Coord) {
+        if self.get_tree(&coord).done(direction) {
+            return;
+        }
+        let tree_height = self.get_tree(&coord).height;
+
+        if tree_height == 9 {
+            self.invisify(&coord, direction);
+        }
+        let visibility = self.check_vis(&coord, direction, tree_height);
+        self.get_tree_mut(&coord).set_vis(direction, visibility);
+    }
+
+    fn flood(&mut self) {
+        let limit = (self.size - 1) as u32;
+        for y in 1..limit {
+            for x in 1..limit {
+                let coord = (x, y);
+                for dir in [
+                    Direction::North,
+                    Direction::East,
+                    Direction::South,
+                    Direction::West,
+                ] {
+                    self.floodify(&dir, coord);
+                }
+                let tree = self.get_tree_mut(&coord);
+                if let Visibility::FileNotFound = tree.total_visibility {
+                    tree.total_visibility = Visibility::Hidden;
+                }
+            }
+        }
+    }
+
+    fn count_visible(&self) -> usize {
+        self.trees
+            .values()
+            .map(|tree| tree.is_visible())
+            .filter(|v| *v)
+            .count()
+    }
+}
+
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut data = data.peekable();
+    let size = data.peek().unwrap().len();
+    let mut forest = ForestPart1::new(size, &mut data);
+    forest.flood();
+
+    Ok(forest.count_visible().to_string())
+}
+
+struct TreePart2 {
     // coord: Coord,
     height: u32,
     cardinal_visibility: [usize; 4],
 }
 
-impl Tree {
-    fn new(height: u32) -> Tree {
-        Tree {
+impl TreePart2 {
+    fn new(height: u32) -> TreePart2 {
+        TreePart2 {
             // coord,
             height,
             cardinal_visibility: [0, 0, 0, 0],
@@ -76,21 +256,21 @@ impl Tree {
     }
 }
 
-struct Forest {
-    trees: HashMap<Coord, Tree>,
+struct ForestPart2 {
+    trees: HashMap<Coord, TreePart2>,
     size: usize,
 }
 
-impl Forest {
-    fn new(size: usize, data: &mut dyn Iterator<Item = String>) -> Forest {
-        let mut forest = Forest {
+impl ForestPart2 {
+    fn new(size: usize, data: &mut dyn Iterator<Item = String>) -> ForestPart2 {
+        let mut forest = ForestPart2 {
             trees: HashMap::with_capacity(size * size),
             size,
         };
         for (y, line) in data.enumerate() {
             for (x, height) in line.chars().map(|c| c.to_digit(10).unwrap()).enumerate() {
                 let coord: Coord = (x as u32, y as u32);
-                forest.trees.insert(coord, Tree::new(height));
+                forest.trees.insert(coord, TreePart2::new(height));
             }
         }
         forest
@@ -120,10 +300,10 @@ impl Forest {
         vis
     }
 
-    fn get_tree(&self, coord: &Coord) -> &Tree {
+    fn get_tree(&self, coord: &Coord) -> &TreePart2 {
         self.trees.get(coord).unwrap()
     }
-    fn get_tree_mut(&mut self, coord: &Coord) -> &mut Tree {
+    fn get_tree_mut(&mut self, coord: &Coord) -> &mut TreePart2 {
         self.trees.get_mut(coord).unwrap()
     }
 
@@ -165,7 +345,7 @@ impl Forest {
     }
 }
 
-impl Display for Forest {
+impl Display for ForestPart2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.size {
             for x in 0..self.size {
@@ -190,17 +370,20 @@ impl Display for Forest {
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut data = data.peekable();
     let size = data.peek().unwrap().len();
-    let mut forest = Forest::new(size, &mut data);
-    println!("{}", forest);
+    let mut forest = ForestPart2::new(size, &mut data);
+    // println!("{}", forest);
     forest.flood();
-    println!("{}", forest);
+    // println!("{}", forest);
     Ok(forest.get_visibilist().to_string())
 }
 
 inventory::submit!(crate::AoCDay {
     year: "2022",
     day: "8",
-    part_1: None,
+    part_1: Some(crate::AoCPart {
+        main: part_1,
+        example: part_1
+    }),
     part_2: Some(crate::AoCPart {
         main: part_2,
         example: part_2
