@@ -7,7 +7,7 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use std::{cmp::Ordering, fmt::Display, str::FromStr};
+use std::{cmp::Ordering, collections::HashSet, fmt::Display, str::FromStr};
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
@@ -63,7 +63,7 @@ impl Robot {
             self.pos.y += max_y;
             // print!(" y too smol!!");
         }
-        println!();
+        // println!();
     }
 }
 
@@ -123,6 +123,36 @@ fn part_1(data: crate::DataIn, max_x: i32, max_y: i32) -> AoCResult<String> {
     Ok(ret.to_string())
 }
 
+fn paws() -> AoCResult<bool> {
+    let mut buffer = String::new();
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .map_err(|cause| AoCError::new_with_cause("Failed to read from stdin", cause))?;
+    Ok(buffer.trim().to_lowercase() == "y")
+}
+
+fn robots_unique(robots: &[Robot]) -> bool {
+    let mut seen = HashSet::with_capacity(robots.len());
+    robots.iter().all(|robot| seen.insert(robot.pos))
+}
+
+fn part_2(data: crate::DataIn) -> AoCResult<String> {
+    let mut robots: Vec<Robot> = data.map(|line| line.parse()).try_collect()?;
+    for i in 1.. {
+        for robot in robots.iter_mut() {
+            robot.simulate(MAX_X, MAX_Y);
+        }
+        if robots_unique(&robots) {
+            debug_grid(&robots, MAX_X, MAX_Y);
+            println!("Correct (@ {i})?");
+            if paws()? {
+                return Ok(i.to_string());
+            }
+        }
+    }
+    unreachable!()
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2024",
     day: "14",
@@ -130,5 +160,8 @@ inventory::submit!(crate::AoCDay {
         main: |data| part_1(data, MAX_X, MAX_Y),
         example: |data| part_1(data, MAX_X_EXAMPLE, MAX_Y_EXAMPLE)
     },
-    part_2: None,
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: |_| Err(AoCError::new("No example for part 2!"))
+    }),
 });
