@@ -9,7 +9,7 @@
 
 use itertools::Itertools;
 
-use crate::{AoCError, Coord2D};
+use crate::Coord2D;
 
 fn power_level(coord: Coord2D, serial: i64) -> i32 {
     let x: i64 = coord.x.into();
@@ -21,11 +21,7 @@ fn power_level(coord: Coord2D, serial: i64) -> i32 {
 }
 
 pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
-    let serial = data
-        .next()
-        .unwrap()
-        .parse()
-        .map_err(AoCError::new_from_parseerror)?;
+    let serial = data.next().unwrap().parse()?;
 
     let to_check = 1..=(300 - 3);
     let to_glom = 0_i32..3;

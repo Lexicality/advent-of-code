@@ -34,9 +34,9 @@ impl FromStr for Colour {
             .captures(s)
             .ok_or_else(|| AoCError::new(format!("Colour {s} does not match regex!")))?;
         Ok(Colour {
-            red: u8::from_str_radix(&matches[1], 16).map_err(AoCError::new_from_parseerror)?,
-            green: u8::from_str_radix(&matches[2], 16).map_err(AoCError::new_from_parseerror)?,
-            blue: u8::from_str_radix(&matches[3], 16).map_err(AoCError::new_from_parseerror)?,
+            red: u8::from_str_radix(&matches[1], 16)?,
+            green: u8::from_str_radix(&matches[2], 16)?,
+            blue: u8::from_str_radix(&matches[3], 16)?,
         })
     }
 }
@@ -62,7 +62,7 @@ impl FromStr for InstructionPart1 {
 
         Ok(InstructionPart1 {
             dir: matches[1].parse()?,
-            len: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
+            len: matches[2].parse()?,
             colour: matches[3].parse()?,
         })
     }
@@ -153,7 +153,7 @@ impl FromStr for InstructionPart2 {
                 v => v,
             }
             .parse()?,
-            len: u64::from_str_radix(&matches[1], 16).map_err(AoCError::new_from_parseerror)?,
+            len: u64::from_str_radix(&matches[1], 16)?,
         })
     }
 }

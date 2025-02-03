@@ -54,7 +54,7 @@ fn parse_register(line: String) -> AoCResult<Integer> {
     let (_, value) = line
         .split_once(": ")
         .ok_or(AoCError::new(format!("colon missing from '{line}'!")))?;
-    value.parse().map_err(AoCError::new_from_parseerror)
+    Ok(value.parse()?)
 }
 
 impl Computer {
@@ -71,11 +71,7 @@ impl Computer {
                 let (_, value) = line_program.split_once(": ").ok_or(AoCError::new(format!(
                     "colon missing from '{line_program}'!"
                 )))?;
-                value
-                    .split(',')
-                    .map(str::parse)
-                    .try_collect()
-                    .map_err(AoCError::new_from_parseerror)?
+                value.split(',').map(str::parse).try_collect()?
             },
             pc: 0,
         })

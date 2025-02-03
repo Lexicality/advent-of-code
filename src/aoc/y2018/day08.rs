@@ -70,8 +70,7 @@ pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
         .unwrap()
         .split(' ')
         .map(|s| s.parse())
-        .try_collect()
-        .map_err(AoCError::new_from_parseerror)?;
+        .try_collect()?;
     let root_node = Node::new(&mut numbers.into_iter())?;
     let ret = root_node.part_1_sum();
     Ok(ret.to_string())
@@ -83,8 +82,7 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
         .unwrap()
         .split(' ')
         .map(|s| s.parse())
-        .try_collect()
-        .map_err(AoCError::new_from_parseerror)?;
+        .try_collect()?;
     let root_node = Node::new(&mut numbers.into_iter())?;
     let ret = root_node.part_2_sum();
     Ok(ret.to_string())

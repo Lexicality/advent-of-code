@@ -12,7 +12,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{CommonGrid, Coord2D, Coordinate, Direction, Grid, InfGrid};
+use crate::{AoCError, CommonGrid, Coord2D, Coordinate, Direction, Grid, InfGrid};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum GridData {
@@ -84,7 +84,7 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut rocks: Vec<Vec<Coord2D>> = data
         .map(|line| {
             line.split(" -> ")
-                .map(|coord| {
+                .map(|coord| -> Result<_, AoCError> {
                     let coord: Coord2D = coord.parse()?;
                     min = min.get_min(&coord);
                     max = max.get_max(&coord);

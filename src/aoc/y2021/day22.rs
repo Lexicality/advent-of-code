@@ -49,14 +49,14 @@ impl RebootStep {
         Ok(Self {
             state: CubeState::parse(&matches[1])?,
             min: Coord3D {
-                x: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
-                y: matches[4].parse().map_err(AoCError::new_from_parseerror)?,
-                z: matches[6].parse().map_err(AoCError::new_from_parseerror)?,
+                x: matches[2].parse()?,
+                y: matches[4].parse()?,
+                z: matches[6].parse()?,
             },
             max: Coord3D {
-                x: matches[3].parse().map_err(AoCError::new_from_parseerror)?,
-                y: matches[5].parse().map_err(AoCError::new_from_parseerror)?,
-                z: matches[7].parse().map_err(AoCError::new_from_parseerror)?,
+                x: matches[3].parse()?,
+                y: matches[5].parse()?,
+                z: matches[7].parse()?,
             },
         })
     }

@@ -103,7 +103,7 @@ impl FromStr for Rule {
         match matches {
             Some(matches) => {
                 let category = matches[1].chars().next().unwrap().try_into()?;
-                let value = matches[3].parse().map_err(AoCError::new_from_parseerror)?;
+                let value = matches[3].parse()?;
                 let condition = if &matches[2] == ">" {
                     Condition::CategoryGreater(category, value)
                 } else {
@@ -207,10 +207,10 @@ impl FromStr for Part {
             .ok_or_else(|| AoCError::new(format!("Line {s} does not match regex!")))?;
 
         Ok(Self {
-            x: matches[1].parse().map_err(AoCError::new_from_parseerror)?,
-            m: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
-            a: matches[3].parse().map_err(AoCError::new_from_parseerror)?,
-            s: matches[4].parse().map_err(AoCError::new_from_parseerror)?,
+            x: matches[1].parse()?,
+            m: matches[2].parse()?,
+            a: matches[3].parse()?,
+            s: matches[4].parse()?,
         })
     }
 }

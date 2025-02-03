@@ -11,23 +11,17 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use crate::AoCError;
-
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret: i64 = data
         .map(|line| line.parse())
-        .try_collect::<_, Vec<i64>, _>()
-        .map_err(AoCError::new_from_parseerror)?
+        .try_collect::<_, Vec<i64>, _>()?
         .into_iter()
         .sum();
     Ok(ret.to_string())
 }
 
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
-    let changes: Vec<i64> = data
-        .map(|line| line.parse())
-        .try_collect()
-        .map_err(AoCError::new_from_parseerror)?;
+    let changes: Vec<i64> = data.map(|line| line.parse()).try_collect()?;
 
     let mut seen = HashSet::with_capacity(changes.len());
     let mut current = 0;

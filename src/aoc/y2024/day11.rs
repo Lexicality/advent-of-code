@@ -12,8 +12,6 @@ use std::collections::HashMap;
 use itertools::Itertools;
 use num::Integer;
 
-use crate::AoCError;
-
 type Aa = u64;
 
 fn main(mut data: crate::DataIn, num_iterations: usize) -> crate::AoCResult<String> {
@@ -23,8 +21,7 @@ fn main(mut data: crate::DataIn, num_iterations: usize) -> crate::AoCResult<Stri
         .split(" ")
         .map(str::parse)
         .map_ok(|v| (v, 1))
-        .try_collect()
-        .map_err(AoCError::new_from_parseerror)?;
+        .try_collect()?;
 
     println!("{stones:?}");
 

@@ -84,9 +84,9 @@ impl FromStr for Moon {
 
         Ok(Moon {
             pos: Coord3D {
-                x: matches[1].parse().map_err(AoCError::new_from_parseerror)?,
-                y: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
-                z: matches[3].parse().map_err(AoCError::new_from_parseerror)?,
+                x: matches[1].parse()?,
+                y: matches[2].parse()?,
+                z: matches[3].parse()?,
             },
             vel: Coord3D { x: 0, y: 0, z: 0 },
         })

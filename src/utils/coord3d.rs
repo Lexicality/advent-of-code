@@ -79,7 +79,7 @@ impl FromStr for Coord3D {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (x, y, z) = s
             .split(',')
-            .map(|c| c.parse().map_err(AoCError::new_from_parseerror))
+            .map(|c| c.parse())
             .collect_tuple()
             .ok_or_else(|| {
                 AoCError::new(format!(

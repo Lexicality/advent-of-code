@@ -47,26 +47,26 @@ impl ClawMachine {
             a: [
                 matches_a[1]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
                 matches_a[2]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
             ],
             b: [
                 matches_b[1]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
                 matches_b[2]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
             ],
             prize: [
                 matches_prize[1]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
                 matches_prize[2]
                     .parse()
-                    .map_err(AoCError::new_from_parseerror)?,
+                    ?,
             ],
         })
     }

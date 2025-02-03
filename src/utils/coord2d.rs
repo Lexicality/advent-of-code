@@ -84,7 +84,7 @@ impl FromStr for Coord2D {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (x, y) = s
             .split(',')
-            .map(|c| c.trim().parse().map_err(AoCError::new_from_parseerror))
+            .map(|c| c.trim().parse())
             .collect_tuple()
             .ok_or_else(|| {
                 AoCError::new(format!(

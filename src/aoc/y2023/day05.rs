@@ -79,7 +79,7 @@ impl Mapping {
 
             let (dest, source, count) = line
                 .splitn(3, ' ')
-                .map(|num| num.parse().map_err(AoCError::new_from_parseerror))
+                .map(|num| num.parse())
                 .collect::<Result<Vec<u64>, _>>()?
                 .into_iter()
                 .collect_tuple()
@@ -130,7 +130,7 @@ impl Mapping {
 
             let (dest, source, count) = line
                 .splitn(3, ' ')
-                .map(|num| num.parse().map_err(AoCError::new_from_parseerror))
+                .map(|num| num.parse())
                 .collect::<Result<Vec<u64>, _>>()?
                 .into_iter()
                 .collect_tuple()

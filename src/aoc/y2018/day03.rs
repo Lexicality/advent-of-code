@@ -34,10 +34,10 @@ impl FromStr for Claim {
             .ok_or_else(|| AoCError::new(format!("input {s} does not match regex")))?;
 
         Ok(Self {
-            id: matches[1].parse().map_err(AoCError::new_from_parseerror)?,
-            top_left: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
-            width: matches[3].parse().map_err(AoCError::new_from_parseerror)?,
-            height: matches[4].parse().map_err(AoCError::new_from_parseerror)?,
+            id: matches[1].parse()?,
+            top_left: matches[2].parse()?,
+            width: matches[3].parse()?,
+            height: matches[4].parse()?,
         })
     }
 }

@@ -164,7 +164,7 @@ impl FromStr for Hand {
         Ok(Hand {
             kind: HandType::new_from_cards(&cards),
             cards,
-            bid: bid.parse().map_err(AoCError::new_from_parseerror)?,
+            bid: bid.parse()?,
         })
     }
 }

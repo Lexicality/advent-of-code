@@ -38,16 +38,16 @@ fn parse_guards(data: crate::DataIn) -> AoCResult<Vec<GuardData>> {
             .ok_or_else(|| AoCError::new(format!("input {line} does not match regex")))?;
 
         if matches[2].starts_with("Guard") {
-            current_guard_id = matches[3].parse().map_err(AoCError::new_from_parseerror)?;
+            current_guard_id = matches[3].parse()?;
             continue;
         } else if &matches[2] == "falls asleep" {
-            let ret = slept_at.replace(matches[1].parse().map_err(AoCError::new_from_parseerror)?);
+            let ret = slept_at.replace(matches[1].parse()?);
             assert!(ret.is_none(), "fell asleep twice?");
             continue;
         }
         let mins = guards.entry(current_guard_id).or_insert([0; 60]);
         let slept_at = slept_at.take().expect("woke up twice?");
-        let woke_at = matches[1].parse().map_err(AoCError::new_from_parseerror)?;
+        let woke_at = matches[1].parse()?;
         for min in &mut mins[slept_at..woke_at] {
             *min += 1;
         }

@@ -7,7 +7,6 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use crate::AoCError;
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -19,8 +18,8 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut ret = 0;
     for line in data {
         for [a, b] in LINE_RE.captures_iter(&line).map(|c| c.extract().1) {
-            let a: u64 = a.parse().map_err(AoCError::new_from_parseerror)?;
-            let b: u64 = b.parse().map_err(AoCError::new_from_parseerror)?;
+            let a: u64 = a.parse()?;
+            let b: u64 = b.parse()?;
             ret += a * b;
         }
     }
@@ -41,8 +40,8 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
             } else if &capture[0] == "do()" {
                 dont = false;
             } else if !dont {
-                let a: u64 = capture[1].parse().map_err(AoCError::new_from_parseerror)?;
-                let b: u64 = capture[2].parse().map_err(AoCError::new_from_parseerror)?;
+                let a: u64 = capture[1].parse()?;
+                let b: u64 = capture[2].parse()?;
                 ret += a * b;
             }
         }

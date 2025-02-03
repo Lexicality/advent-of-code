@@ -9,8 +9,6 @@
 
 use itertools::Itertools;
 
-use crate::AoCError;
-
 type Aaaa = u64;
 
 const PRUNE: Aaaa = 16777216;
@@ -28,7 +26,7 @@ fn evolvinate(mut value: Aaaa) -> Aaaa {
 
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let ret = data
-        .map(|line| line.parse().map_err(AoCError::new_from_parseerror))
+        .map(|line| line.parse())
         .map_ok(|num| (0..ITERATIONS).fold(num, |value, _| evolvinate(value)))
         .try_fold(0, |acc, value| value.map(|value| acc + value))?;
     Ok(ret.to_string())

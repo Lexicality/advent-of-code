@@ -7,9 +7,19 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-use std::{error::Error, fmt::Display};
+use std::error::Error;
+use std::fmt::Display;
 
 pub type AoCResult<T> = Result<T, AoCError>;
+
+// impl<T, E> From<Result<T, E>> for AoCResult<T>
+// where
+//     E: Into<AoCError>,
+// {
+//     fn from(value: Result<T, E>) -> Self {
+//         value.map_err(|e| e.into())
+//     }
+// }
 
 #[derive(Debug)]
 pub struct AoCError {
@@ -53,5 +63,17 @@ impl AoCError {
 
     pub fn new_from_char(value: char) -> Self {
         Self::new(format!("Unexpected character '{value}'"))
+    }
+}
+
+impl From<std::num::ParseIntError> for AoCError {
+    fn from(value: std::num::ParseIntError) -> Self {
+        Self::new_with_cause("failed to parse:", value)
+    }
+}
+
+impl From<std::num::ParseFloatError> for AoCError {
+    fn from(value: std::num::ParseFloatError) -> Self {
+        Self::new_with_cause("failed to parse:", value)
     }
 }

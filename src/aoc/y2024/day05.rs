@@ -17,36 +17,26 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let (setup, puzzle) = partition_input(data);
 
     let dependencies = setup
-        .map(|line| {
+        .map(|line| -> Result<_, AoCError> {
             let (before, after) = line.split_once('|').unwrap();
-            (
-                before
-                    .parse()
-                    .map_err(AoCError::new_from_parseerror)
-                    .unwrap(),
-                after
-                    .parse()
-                    .map_err(AoCError::new_from_parseerror)
-                    .unwrap(),
-            )
+            Ok((before.parse()?, after.parse()?))
         })
-        .fold(
+        .fold_ok(
             HashMap::new(),
             |mut acc: HashMap<u32, HashSet<u32>>, (before, after): (u32, u32)| {
                 acc.entry(after).or_default().insert(before);
                 acc
             },
-        );
+        )?;
 
     let ret: u32 = puzzle
-        .map(|line| -> Vec<u32> {
+        .map(|line| {
             line.split(',')
                 .map(str::parse)
-                .try_collect()
+                .try_collect::<_, Vec<u32>, _>()
                 .map_err(AoCError::new_from_parseerror)
-                .unwrap()
         })
-        .filter(|pages| {
+        .filter_ok(|pages| {
             for (i, page) in pages.iter().enumerate() {
                 let Some(bads) = dependencies.get(page) else {
                     continue;
@@ -57,8 +47,8 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
             }
             true
         })
-        .map(|pages| pages[pages.len() / 2])
-        .sum();
+        .map_ok(|pages| pages[pages.len() / 2])
+        .fold_ok(0, std::ops::Add::add)?;
     Ok(ret.to_string())
 }
 
@@ -66,26 +56,17 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     let (setup, puzzle) = partition_input(data);
 
     let dependencies = setup
-        .map(|line| {
+        .map(|line| -> Result<_, AoCError> {
             let (before, after) = line.split_once('|').unwrap();
-            (
-                before
-                    .parse()
-                    .map_err(AoCError::new_from_parseerror)
-                    .unwrap(),
-                after
-                    .parse()
-                    .map_err(AoCError::new_from_parseerror)
-                    .unwrap(),
-            )
+            Ok((before.parse()?, after.parse()?))
         })
-        .fold(
+        .fold_ok(
             HashMap::new(),
             |mut acc: HashMap<u32, HashSet<u32>>, (before, after): (u32, u32)| {
                 acc.entry(after).or_default().insert(before);
                 acc
             },
-        );
+        )?;
 
     fn find_bads(
         pages: &[u32],
@@ -108,22 +89,21 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
     }
 
     let ret: u32 = puzzle
-        .map(|line| -> Vec<u32> {
+        .map(|line| {
             line.split(',')
                 .map(str::parse)
-                .try_collect()
+                .try_collect::<_, Vec<u32>, _>()
                 .map_err(AoCError::new_from_parseerror)
-                .unwrap()
         })
-        .filter(|pages| find_bads(pages, &dependencies).is_some())
-        .map(|mut pages| {
+        .filter_ok(|pages| find_bads(pages, &dependencies).is_some())
+        .map_ok(|mut pages| {
             while let Some((i, j)) = find_bads(&pages, &dependencies) {
                 pages.swap(i, j);
             }
             pages
         })
-        .map(|pages| pages[pages.len() / 2])
-        .sum();
+        .map_ok(|pages| pages[pages.len() / 2])
+        .fold_ok(0, std::ops::Add::add)?;
     Ok(ret.to_string())
 }
 

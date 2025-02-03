@@ -27,14 +27,10 @@ fn main(
     calibration_operations: &[fn(u64, u64) -> u64],
 ) -> crate::AoCResult<String> {
     let calibrations: HashMap<u64, Vec<u64>> = data
-        .map(|line| {
+        .map(|line| -> Result<_, AoCError> {
             let (result, operations) = line.split_once(": ").unwrap();
-            let result = result.parse().map_err(AoCError::new_from_parseerror)?;
-            let numbers = operations
-                .split(' ')
-                .map(str::parse)
-                .try_collect()
-                .map_err(AoCError::new_from_parseerror)?;
+            let result = result.parse()?;
+            let numbers = operations.split(' ').map(str::parse).try_collect()?;
             Ok((result, numbers))
         })
         .try_collect()?;
