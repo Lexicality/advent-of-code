@@ -43,7 +43,13 @@ fn main() -> Result<(), String> {
     let client = Client::new();
     let res = client
         .get(format!("https://adventofcode.com/{year}/day/{day}/input"))
-        .header(header::COOKIE, format!("session={}", args.session_token))
+        .header(header::COOKIE, {
+            let mut token = args.session_token;
+            if !token.starts_with("session=") {
+                token = format!("session={}", token);
+            }
+            token
+        })
         .header(
             header::USER_AGENT,
             "github.com/lexicality/advent-of-code by lexi@lexi.org.uk",
