@@ -17,11 +17,20 @@ use regex::Regex;
 use crate::AoCError;
 
 #[derive(Debug)]
+enum State {
+    Flap(usize),
+    Eep(usize),
+}
+
+#[derive(Debug)]
 struct Reindeer {
     name: String,
     speed: usize,
     fly_time: usize,
     rest_time: usize,
+    distance: usize,
+    points: usize,
+    state: State,
 }
 
 impl Reindeer {
@@ -47,6 +56,48 @@ impl Reindeer {
             }
         }
     }
+
+    fn tick(&mut self) {
+        match self.state {
+            State::Flap(time_left) => {
+                self.distance += self.speed;
+                let time_left = time_left - 1;
+                if time_left > 0 {
+                    self.state = State::Flap(time_left)
+                } else {
+                    self.state = State::Eep(self.rest_time)
+                }
+            }
+            State::Eep(time_left) => {
+                let time_left = time_left - 1;
+                if time_left > 0 {
+                    self.state = State::Eep(time_left)
+                } else {
+                    self.state = State::Flap(self.fly_time)
+                }
+            }
+        }
+    }
+}
+
+impl PartialEq for Reindeer {
+    fn eq(&self, other: &Self) -> bool {
+        self.name.eq(&other.name)
+    }
+}
+
+impl Eq for Reindeer {}
+
+impl PartialOrd for Reindeer {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Reindeer {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.distance.cmp(&other.distance)
+    }
 }
 
 impl FromStr for Reindeer {
@@ -62,11 +113,15 @@ impl FromStr for Reindeer {
             .captures(s)
             .ok_or_else(|| AoCError::new(format!("Line {s} does not match regex")))?;
 
+        let fly_time = matches[3].parse().map_err(AoCError::new_from_parseerror)?;
         Ok(Self {
             name: matches[1].to_owned(),
             speed: matches[2].parse().map_err(AoCError::new_from_parseerror)?,
-            fly_time: matches[3].parse().map_err(AoCError::new_from_parseerror)?,
+            fly_time,
             rest_time: matches[4].parse().map_err(AoCError::new_from_parseerror)?,
+            distance: 0,
+            points: 0,
+            state: State::Flap(fly_time),
         })
     }
 }
@@ -86,6 +141,35 @@ pub fn part_1(data: crate::DataIn, time: usize) -> crate::AoCResult<String> {
         .ok_or(AoCError::new("No reindeer??"))
 }
 
+pub fn part_2(data: crate::DataIn, time: usize) -> crate::AoCResult<String> {
+    let mut reindeer: Vec<Reindeer> = data.map(|line| line.parse()).try_collect()?;
+
+    // so much for having done it the smart way the first time
+    for _ in 0..time {
+        reindeer.iter_mut().for_each(Reindeer::tick);
+        // Can't think of a less stupid way rn
+        let max_dist = reindeer.iter_mut().max().unwrap().distance;
+        reindeer
+            .iter_mut()
+            .filter(|r| r.distance == max_dist)
+            .for_each(|r| r.points += 1);
+    }
+
+    for reindeer in reindeer.iter() {
+        println!(
+            "{} flew {} km and scored {} points",
+            reindeer.name, reindeer.distance, reindeer.points
+        );
+    }
+
+    Ok(reindeer
+        .into_iter()
+        .map(|r| r.points)
+        .max()
+        .unwrap()
+        .to_string())
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2015",
     day: "14",
@@ -93,5 +177,8 @@ inventory::submit!(crate::AoCDay {
         main: |data| part_1(data, 2503),
         example: |data| part_1(data, 1000),
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: |data| part_2(data, 2503),
+        example: |data| part_2(data, 1000),
+    }),
 });
