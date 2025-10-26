@@ -27,10 +27,10 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
             for pair in unique_pairs.into_iter() {
                 let a = line.find(&pair);
                 let b = line.rfind(&pair);
-                if let (Some(first), Some(last)) = (a, b) {
-                    if last > first + 1 {
-                        return true;
-                    }
+                if let (Some(first), Some(last)) = (a, b)
+                    && last > first + 1
+                {
+                    return true;
                 }
             }
             false

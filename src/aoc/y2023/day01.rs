@@ -23,13 +23,13 @@ fn find_first(line: &str, nums: &[&str]) -> usize {
     let mut found_val = "";
 
     for num in nums {
-        if let Some(index) = line.find(num) {
-            if index < found_index {
-                found_index = index;
-                found_val = num;
-                if index == 0 {
-                    break;
-                }
+        if let Some(index) = line.find(num)
+            && index < found_index
+        {
+            found_index = index;
+            found_val = num;
+            if index == 0 {
+                break;
             }
         }
     }
