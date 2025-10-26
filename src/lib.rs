@@ -23,6 +23,7 @@ pub mod utils {
     pub mod infgrid;
     pub mod input_partitioner;
 }
+mod integration_tests;
 pub mod symbols;
 
 pub use crate::utils::bigcoord2d::BigCoord2D;
