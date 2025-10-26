@@ -134,7 +134,7 @@ impl Test {
     }
 
     fn test(&self, item: Item) -> MonkeyID {
-        if item % self.testor == 0 {
+        if item.is_multiple_of(self.testor) {
             self.success
         } else {
             self.failure

@@ -165,7 +165,7 @@ impl AStarProvider for AStarImplPart2 {
                 Direction::West,
             ]
             .into_iter()
-            .map(move |direction| (coord + direction.to_coord()))
+            .map(move |direction| coord + direction.to_coord())
             .filter(move |coord| {
                 self.grid.get(coord).is_some_and(|value| match value {
                     GridState::Void => true,

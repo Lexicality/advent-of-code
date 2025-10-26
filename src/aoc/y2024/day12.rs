@@ -167,7 +167,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
             // HACK: My sides code cannot correctly handle interior slots with a
             // T shape, but conveniently my input is such that this hack allows
             // me to get the star and I really can't be bothered to fix it
-            if num_sides % 2 != 0 {
+            if !num_sides.is_multiple_of(2) {
                 num_sides += 1;
             }
             area * num_sides

@@ -64,7 +64,7 @@ fn check_valid(state1: &[SpringState], state2: &[u32]) -> bool {
     groups
         .into_iter()
         .filter(|(key, _)| matches!(key, SpringState::Damaged))
-        .map(|(_, values)| (values.count() as u32))
+        .map(|(_, values)| values.count() as u32)
         .zip_longest(state2)
         .all(|aa| match aa {
             EitherOrBoth::Both(a, b) => a == *b,

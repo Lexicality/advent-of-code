@@ -44,30 +44,9 @@ impl ClawMachine {
             .ok_or_else(|| AoCError::new(format!("Line '{prize}' does not match regex!")))?;
 
         Ok(Self {
-            a: [
-                matches_a[1]
-                    .parse()
-                    ?,
-                matches_a[2]
-                    .parse()
-                    ?,
-            ],
-            b: [
-                matches_b[1]
-                    .parse()
-                    ?,
-                matches_b[2]
-                    .parse()
-                    ?,
-            ],
-            prize: [
-                matches_prize[1]
-                    .parse()
-                    ?,
-                matches_prize[2]
-                    .parse()
-                    ?,
-            ],
+            a: [matches_a[1].parse()?, matches_a[2].parse()?],
+            b: [matches_b[1].parse()?, matches_b[2].parse()?],
+            prize: [matches_prize[1].parse()?, matches_prize[2].parse()?],
         })
     }
 
