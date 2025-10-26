@@ -8,12 +8,9 @@
  * <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::fs;
 use std::iter::FusedIterator;
 use std::path::PathBuf;
-
-use itertools::Itertools;
 
 use crate::{AoCError, AoCResult, InputPartitioner};
 
@@ -67,6 +64,10 @@ impl AoCData {
         vec![line].into()
     }
 
+    pub fn new_from_data(data: String) -> Self {
+        Self(data.lines().map(|line| line.to_owned()).collect())
+    }
+
     pub fn new_from_file(year: &str, day: &str, example: bool) -> AoCResult<Self> {
         let mut data_path: PathBuf = [".", "data", year].iter().collect();
         if example {
@@ -83,17 +84,14 @@ impl AoCData {
                 )));
             }
         }
-        let data_path_str = data_path.to_string_lossy().to_string();
-        Ok(Self(
-            BufReader::new(File::open(data_path).map_err(|cause| {
-                AoCError::new_with_cause(format!("Failed to open {data_path_str}"), cause)
-            })?)
-            .lines()
-            .try_collect()
+        fs::read_to_string(&data_path)
             .map_err(|cause| {
-                AoCError::new_with_cause(format!("Failed to read line from {data_path_str}"), cause)
-            })?,
-        ))
+                AoCError::new_with_cause(
+                    format!("Failed to read {}", data_path.to_string_lossy()),
+                    cause,
+                )
+            })
+            .map(Self::new_from_data)
     }
 }
 
