@@ -162,6 +162,6 @@ inventory::submit!(crate::AoCDay {
     },
     part_2: Some(crate::AoCPart {
         main: part_2,
-        example: |_| Err(AoCError::new("No example for part 2!"))
+        example: crate::no_example
     }),
 });

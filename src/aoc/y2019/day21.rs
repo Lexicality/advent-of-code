@@ -55,10 +55,10 @@ inventory::submit!(crate::AoCDay {
     day: "21",
     part_1: crate::AoCPart {
         main: |data| run_droid(data, SPRINGCODE_PART_1),
-        example: |_| unreachable!()
+        example: crate::no_example
     },
     part_2: Some(crate::AoCPart {
         main: |data| run_droid(data, SPRINGCODE_PART_2),
-        example: |_| unreachable!()
+        example: crate::no_example
     }),
 });

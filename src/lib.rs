@@ -91,3 +91,7 @@ pub fn partition_input(data: DataIn) -> (DataIn, DataIn) {
         partitioner.next().unwrap_or_default().into_iter(),
     )
 }
+
+pub fn no_example(_: DataIn) -> AoCResult<String> {
+    Err(AoCError::new("No example available"))
+}
