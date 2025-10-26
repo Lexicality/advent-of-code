@@ -74,6 +74,15 @@ impl AoCData {
         }
         data_path.push(format!("{:0>2}", day));
         data_path.set_extension("txt");
+        if !data_path.exists() {
+            if example {
+                return Self::new_from_file(year, day, false);
+            } else {
+                return Err(AoCError::new(format!(
+                    "No data found for {year} day {day:0>2}!"
+                )));
+            }
+        }
         let data_path_str = data_path.to_string_lossy().to_string();
         Ok(Self(
             BufReader::new(File::open(data_path).map_err(|cause| {
