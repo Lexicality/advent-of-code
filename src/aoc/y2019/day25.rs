@@ -12,6 +12,7 @@ use std::io::prelude::*;
 
 use text_io::read;
 
+
 use super::computer::{Computer, RunState};
 
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
@@ -51,7 +52,7 @@ inventory::submit!(crate::AoCDay {
     day: "25",
     part_1: crate::AoCPart {
         main: part_2,
-        example: part_2
+        example: crate::no_example,
     },
     part_2: None,
 });
