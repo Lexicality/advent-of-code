@@ -26,7 +26,7 @@ pub fn part_1_example(mut data: crate::DataIn) -> AoCResult<String> {
             amplifier.input.push_front(*phase);
             amplifier.run_to_completion().unwrap();
             let output = amplifier.output[0];
-            println!("signal: {signal}, phase: {phase}, output: {output}");
+            // println!("signal: {signal}, phase: {phase}, output: {output}");
             signal = output;
         }
         ret = ret.max(signal);
@@ -93,7 +93,7 @@ pub fn part_2_example(mut data: crate::DataIn) -> crate::AoCResult<String> {
 
         let phase_settings = phase.split(',').map(|v| v.parse().unwrap()).collect_vec();
         let signal = run_amps(og_computer, &phase_settings).unwrap();
-        println!("{phase_settings:?} {signal}");
+        // println!("{phase_settings:?} {signal}");
         ret = ret.max(signal);
     }
     Ok(ret.to_string())

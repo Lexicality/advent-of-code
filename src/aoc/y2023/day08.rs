@@ -47,7 +47,7 @@ pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
         })
         .collect();
 
-    println!("{nodes:#?}");
+    // println!("{nodes:#?}");
 
     let mut ret = 0;
     let mut pos = "AAA";
@@ -56,13 +56,13 @@ pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
         let node = nodes
             .get(pos)
             .unwrap_or_else(|| panic!("don't have a node for {pos}!!!"));
-        print!("{pos}, {node:?} ");
+        // print!("{pos}, {node:?} ");
         pos = match instructions.next().unwrap() {
             Direction::East => &node.0,
             Direction::West => &node.1,
             _ => unreachable!(),
         };
-        println!("=> {pos}");
+        // println!("=> {pos}");
     }
     Ok(ret.to_string())
 }

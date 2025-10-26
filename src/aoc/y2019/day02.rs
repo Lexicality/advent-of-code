@@ -31,7 +31,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
             computer.set(2, verb.into());
             computer.run_to_completion().unwrap();
             let res = computer.get(&0).to_value();
-            println!("{noun} {verb} {res}");
+            // println!("{noun} {verb} {res}");
             if res == 19690720 {
                 return Ok(((100 * noun) + verb).to_string());
             }
