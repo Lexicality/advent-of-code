@@ -11,8 +11,8 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::utils::astar::{a_star, AStarProvider};
-use crate::{symbols, AoCResult, CommonGrid, Coord2D, Coordinate, Direction, Grid};
+use crate::utils::astar::{AStarProvider, a_star};
+use crate::{AoCResult, CommonGrid, Coord2D, Coordinate, Direction, Grid, symbols};
 
 #[derive(Debug, Default, Clone, Copy)]
 #[allow(dead_code)]

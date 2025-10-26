@@ -8,9 +8,9 @@
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
 use std::fmt::Display;
-use std::io::{stdin, stdout, Write};
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::io::{Write, stdin, stdout};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use itertools::Itertools;
 use termion::cursor::HideCursor;

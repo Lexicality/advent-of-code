@@ -12,7 +12,7 @@ use std::{collections::HashMap, fmt::Display};
 use itertools::Itertools;
 use lazy_static::lazy_static;
 
-use crate::utils::astar::{a_star, AStarProvider};
+use crate::utils::astar::{AStarProvider, a_star};
 use crate::{AoCError, CommonGrid, Coord2D, Coordinate, InfGrid};
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]

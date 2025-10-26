@@ -14,7 +14,7 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-use crate::{partition_input, AoCError};
+use crate::{AoCError, partition_input};
 
 type WireValue = Option<u16>;
 

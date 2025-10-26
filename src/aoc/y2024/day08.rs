@@ -12,12 +12,12 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::symbols;
 use crate::AoCError;
 use crate::CharGrid;
 use crate::CommonGrid;
 use crate::Coord2D;
 use crate::Grid;
+use crate::symbols;
 
 enum GridState {
     Empty,

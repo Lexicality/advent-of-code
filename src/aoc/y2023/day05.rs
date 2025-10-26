@@ -165,7 +165,9 @@ impl Mapping {
                 let size = input.end - input.start;
                 let result = (end.start + offset)..(end.start + offset + size);
                 if result.is_empty() {
-                    panic!("wat input: {input:?} start: {start:?} end: {end:?}\n offset: {offset} size: {size}\n result: {result:?}");
+                    panic!(
+                        "wat input: {input:?} start: {start:?} end: {end:?}\n offset: {offset} size: {size}\n result: {result:?}"
+                    );
                 }
                 output.push(result);
                 break;

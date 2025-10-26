@@ -11,7 +11,7 @@ use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
 
-use crate::{partition_input, AoCError};
+use crate::{AoCError, partition_input};
 
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let (setup, puzzle) = partition_input(data);

@@ -11,9 +11,9 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use clap::Parser;
+use reqwest::StatusCode;
 use reqwest::blocking::Client;
 use reqwest::header;
-use reqwest::StatusCode;
 
 #[derive(Debug, Parser)]
 struct Args {

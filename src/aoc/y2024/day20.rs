@@ -10,8 +10,8 @@ use itertools::Itertools;
 // You should have received a copy of the Licence along with this work. If not, see:
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
-use crate::utils::astar::{a_star, AStarProvider};
-use crate::{symbols, AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid};
+use crate::utils::astar::{AStarProvider, a_star};
+use crate::{AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid, symbols};
 
 const TIME_TO_SAVE_PART_1: usize = 100;
 const TIME_TO_SAVE_PART_2: usize = 74;

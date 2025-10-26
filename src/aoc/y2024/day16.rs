@@ -8,10 +8,10 @@ use std::fmt::Display;
 // You should have received a copy of the Licence along with this work. If not, see:
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
-use crate::utils::astar::{a_star, AStarProvider};
+use crate::utils::astar::{AStarProvider, a_star};
 use crate::{
-    symbols, AoCError, AoCResult, CharGrid, CommonGrid, Coord2D, Coordinate, Direction, Grid,
-    RotateDirection,
+    AoCError, AoCResult, CharGrid, CommonGrid, Coord2D, Coordinate, Direction, Grid,
+    RotateDirection, symbols,
 };
 
 type AStarID = (Coord2D, Direction, RotateDirection);

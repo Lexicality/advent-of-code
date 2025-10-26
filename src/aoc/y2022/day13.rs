@@ -12,7 +12,7 @@ use itertools::Itertools;
 use std::cmp::Ordering;
 use std::fmt::Display;
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 enum Order {
     Right,

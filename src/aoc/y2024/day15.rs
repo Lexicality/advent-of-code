@@ -11,7 +11,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 
-use crate::{partition_input, symbols, AoCError, CharGrid, CommonGrid, Direction, Grid};
+use crate::{AoCError, CharGrid, CommonGrid, Direction, Grid, partition_input, symbols};
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]

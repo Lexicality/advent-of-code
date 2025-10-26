@@ -64,11 +64,7 @@ fn main() -> AoCResult<()> {
 
         let func = {
             let part = &day_data.part_1;
-            if use_example {
-                part.example
-            } else {
-                part.main
-            }
+            if use_example { part.example } else { part.main }
         };
 
         let start = Instant::now();

@@ -13,7 +13,7 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-use crate::{symbols, AoCError, AoCResult, CommonGrid, Coord2D, Grid};
+use crate::{AoCError, AoCResult, CommonGrid, Coord2D, Grid, symbols};
 
 const ITERATIONS: usize = 100;
 // these are exclusive

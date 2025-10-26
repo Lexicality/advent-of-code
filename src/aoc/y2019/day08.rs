@@ -42,11 +42,7 @@ pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
                         .zip(layer)
                         .map(
                             |(base, incoming)| {
-                                if incoming == '2' {
-                                    base
-                                } else {
-                                    incoming
-                                }
+                                if incoming == '2' { base } else { incoming }
                             },
                         )
                         .collect(),

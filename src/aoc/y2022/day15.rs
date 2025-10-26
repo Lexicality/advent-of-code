@@ -12,7 +12,7 @@ use std::cmp;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-use crate::{utils::bigcoord2d::BigCoord2D, Coordinate};
+use crate::{Coordinate, utils::bigcoord2d::BigCoord2D};
 
 #[derive(Debug)]
 struct Reading {

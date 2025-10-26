@@ -53,7 +53,9 @@ pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
                 p1pos = (p1pos + result - 1) % 10 + 1;
                 p1score += p1pos;
                 if p1score >= 1000 {
-                    println!("Player 1 wins! Their score is {p1score} while p2 has {p2score}. The dice was rolled {c} times!");
+                    println!(
+                        "Player 1 wins! Their score is {p1score} while p2 has {p2score}. The dice was rolled {c} times!"
+                    );
                     ret = p2score * (c + 1);
                     break;
                 }
@@ -62,7 +64,9 @@ pub fn part_1(mut data: crate::DataIn) -> crate::AoCResult<String> {
                 p2pos = (p2pos + result - 1) % 10 + 1;
                 p2score += p2pos;
                 if p2score >= 1000 {
-                    println!("Player 2 wins! Their score is {p2score} while p1 has {p1score}. The dice was rolled {c} times!");
+                    println!(
+                        "Player 2 wins! Their score is {p2score} while p1 has {p1score}. The dice was rolled {c} times!"
+                    );
                     ret = p1score * (c + 1);
                     break;
                 }

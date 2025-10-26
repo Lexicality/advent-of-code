@@ -11,7 +11,7 @@ use std::{collections::HashSet, fmt::Display};
 
 use itertools::Itertools;
 
-use crate::{utils::bigcoord2d::BigCoord2D, AoCError, Coordinate, InfGrid};
+use crate::{AoCError, Coordinate, InfGrid, utils::bigcoord2d::BigCoord2D};
 
 enum Space {
     Void,

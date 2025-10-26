@@ -45,11 +45,7 @@ impl Valve {
     }
 
     pub fn potential_flow(&self) -> u32 {
-        if !self.open {
-            self.flow_rate
-        } else {
-            0
-        }
+        if !self.open { self.flow_rate } else { 0 }
     }
 }
 

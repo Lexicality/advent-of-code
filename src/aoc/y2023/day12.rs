@@ -9,7 +9,7 @@
 
 use std::fmt::{Debug, Display};
 
-use itertools::{repeat_n, EitherOrBoth, Itertools};
+use itertools::{EitherOrBoth, Itertools, repeat_n};
 
 use crate::AoCError;
 
