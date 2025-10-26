@@ -83,10 +83,8 @@ impl FromStr for GateAction {
                 "LSHIFT" => Self::LShift,
                 wat => unreachable!("mystery gate {wat}"),
             }(a, b))
-        } else if let Ok(const_input) = s.parse() {
-            Ok(Self::Const(const_input))
         } else {
-            Err(AoCError::new(format!("Gate {s} does not match regex!")))
+            s.parse().map(Self::Const)
         }
     }
 }
