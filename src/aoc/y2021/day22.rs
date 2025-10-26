@@ -61,7 +61,7 @@ impl RebootStep {
         })
     }
 
-    fn get_coords(&self) -> impl Iterator<Item = Coord3D> {
+    fn get_coords(&self) -> impl Iterator<Item = Coord3D> + use<> {
         (self.min.x..=self.max.x)
             .cartesian_product(self.min.y..=self.max.y)
             .cartesian_product(self.min.z..=self.max.z)

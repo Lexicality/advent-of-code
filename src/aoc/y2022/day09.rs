@@ -33,7 +33,7 @@ impl FromStr for Instruction {
 }
 
 impl Instruction {
-    fn coordinate(&self) -> impl Iterator<Item = Coord2D> {
+    fn coordinate(&self) -> impl Iterator<Item = Coord2D> + use<> {
         let coord = self.dir.into();
         (0..self.amt).map(move |_| coord)
     }

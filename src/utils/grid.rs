@@ -117,7 +117,7 @@ impl<Item> Grid<Item> {
             .map(|(coord, _)| coord)
     }
 
-    pub fn keys(&self) -> impl Iterator<Item = Coord2D> {
+    pub fn keys(&self) -> impl Iterator<Item = Coord2D> + use<Item> {
         let width = self.width;
         (0..self.height as i32).flat_map(move |y| (0..width as i32).map(move |x| (x, y).into()))
     }

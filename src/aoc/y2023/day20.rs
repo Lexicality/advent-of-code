@@ -111,7 +111,7 @@ impl Display for Module {
 
 impl Module {
     fn add_input(&mut self, input: &str) {
-        if let ModuleType::Conjunction(ref mut inputs) = &mut self.module_type {
+        if let ModuleType::Conjunction(inputs) = &mut self.module_type {
             inputs.insert(input.to_owned(), SignalState::Low);
         }
     }

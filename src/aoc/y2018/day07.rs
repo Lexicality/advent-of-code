@@ -43,7 +43,7 @@ fn parse_steps(data: crate::DataIn) -> AoCResult<HashMap<StepID, Step>> {
     Ok(steps)
 }
 
-fn alphasort((id, _): &(&char, &Step)) -> impl Ord {
+fn alphasort((id, _): &(&char, &Step)) -> impl Ord + use<> {
     u32::from('Z') - u32::from(**id)
 }
 
