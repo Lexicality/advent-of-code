@@ -29,9 +29,10 @@ struct Valve {
 impl Valve {
     pub fn parse(line: String) -> Valve {
         lazy_static! {
-            static ref RE: Regex =
-                Regex::new(r"^Valve ([A-Z]{2}) has flow rate=(\d+); tunnels lead to valves (.+)$")
-                    .unwrap();
+            static ref RE: Regex = Regex::new(
+                r"^Valve ([A-Z]{2}) has flow rate=(\d+); tunnels? leads? to valves? (.+)$"
+            )
+            .unwrap();
         }
 
         let matches = RE
