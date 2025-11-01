@@ -49,6 +49,6 @@ inventory::submit!(crate::AoCDay {
     },
     part_2: Some(crate::AoCPart {
         main: part_2,
-        example: part_2
+        example: crate::no_example
     }),
 });

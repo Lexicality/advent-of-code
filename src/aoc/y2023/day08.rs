@@ -141,7 +141,8 @@ inventory::submit!(crate::AoCDay {
     day: "8",
     part_1: crate::AoCPart {
         main: part_1,
-        example: part_1
+        // example modified for part 2, no longer compatible
+        example: crate::no_example
     },
     part_2: Some(crate::AoCPart {
         main: part_2,

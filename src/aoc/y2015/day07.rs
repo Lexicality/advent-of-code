@@ -249,10 +249,10 @@ inventory::submit!(crate::AoCDay {
     day: "7",
     part_1: crate::AoCPart {
         main: part_1,
-        example: part_1
+        example: crate::no_example
     },
     part_2: Some(crate::AoCPart {
         main: part_2,
-        example: part_2
+        example: crate::no_example
     }),
 });
