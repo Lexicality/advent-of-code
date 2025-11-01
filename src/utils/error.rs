@@ -10,6 +10,8 @@
 use std::error::Error;
 use std::fmt::Display;
 
+use regex::Regex;
+
 pub type AoCResult<T> = Result<T, AoCError>;
 
 // impl<T, E> From<Result<T, E>> for AoCResult<T>
@@ -29,7 +31,11 @@ pub struct AoCError {
 
 impl Display for AoCError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.message)
+        write!(f, "{}", self.message)?;
+        if let Some(ref cause) = self.cause {
+            write!(f, ": {}", *cause)?;
+        }
+        Ok(())
     }
 }
 
@@ -58,11 +64,15 @@ impl AoCError {
     }
 
     pub fn new_from_parseerror<E: Into<Box<dyn Error>>>(cause: E) -> AoCError {
-        Self::new_with_cause("failed to parse:", cause)
+        Self::new_with_cause("failed to parse", cause)
     }
 
     pub fn new_from_char(value: char) -> Self {
         Self::new(format!("Unexpected character '{value}'"))
+    }
+
+    pub fn new_from_regex(string: &str, regex: &Regex) -> impl FnOnce() -> Self {
+        move || Self::new(format!("{string:?} does not match regex {regex}"))
     }
 }
 

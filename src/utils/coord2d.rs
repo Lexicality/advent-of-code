@@ -88,7 +88,7 @@ impl FromStr for Coord2D {
             .collect_tuple()
             .ok_or_else(|| {
                 AoCError::new(format!(
-                    "String '{s}' has {} commas, expected 1",
+                    "String {s:?} has {} commas, expected 1",
                     s.chars().filter(|c| *c == ',').count()
                 ))
             })?;

@@ -74,6 +74,9 @@ fn test_foo(
             crate::no_example as fn(crate::DataIn) -> AoCResult<String>,
         )
     {
-        func(data.into_iter()).unwrap();
+        let res = func(data.into_iter());
+        if let Err(err) = res {
+            panic!("{err}");
+        }
     }
 }

@@ -8,6 +8,7 @@
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
 use std::collections::HashMap;
+use std::process::ExitCode;
 use std::time::Instant;
 
 use advent_of_code::{AoCData, AoCDay, AoCError, AoCResult};
@@ -15,7 +16,7 @@ use itertools::Itertools;
 
 type DayMap = HashMap<&'static str, HashMap<&'static str, &'static AoCDay>>;
 
-fn main() -> AoCResult<()> {
+fn main_wrapped() -> AoCResult<()> {
     let all_days: DayMap = (inventory::iter::<AoCDay>)
         .into_iter()
         .map(|day_data| (day_data.year, (day_data.day, day_data)))
@@ -97,4 +98,14 @@ fn main() -> AoCResult<()> {
         println!("{}", ret);
     }
     Ok(())
+}
+
+fn main() -> ExitCode {
+    match main_wrapped() {
+        Ok(_) => ExitCode::SUCCESS,
+        Err(err) => {
+            eprintln!("Error: {err}");
+            ExitCode::FAILURE
+        }
+    }
 }
