@@ -16,6 +16,8 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 
+use crate::AoCError;
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 struct Valve {
     name: String,
@@ -32,7 +34,10 @@ impl Valve {
                     .unwrap();
         }
 
-        let matches = RE.captures(&line).expect("Line should match regex?");
+        let matches = RE
+            .captures(&line)
+            .ok_or_else(AoCError::new_from_regex(&line, &RE))
+            .unwrap();
         Valve {
             name: matches[1].to_owned(),
             flow_rate: matches[2].parse().unwrap(),

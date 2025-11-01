@@ -31,7 +31,7 @@ impl TryFrom<char> for GridState {
             '#' => Ok(Self::Obstacle),
             '.' => Ok(Self::Empty),
             '^' => Ok(Self::Guard),
-            _ => Err(AoCError::new(format!("Unknown value '{value}'"))),
+            _ => Err(AoCError::new_from_char(value)),
         }
     }
 }

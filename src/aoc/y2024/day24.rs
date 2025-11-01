@@ -65,18 +65,17 @@ impl FromStr for GateAction {
             static ref GATE_RE: Regex = Regex::new(r"^(.+) (AND|X?OR) (.+)$").unwrap();
         }
 
-        if let Some(matches) = GATE_RE.captures(s) {
-            let a: Input = matches[1].parse()?;
-            let b: Input = matches[3].parse()?;
-            Ok(match &matches[2] {
-                "AND" => Self::And,
-                "OR" => Self::Or,
-                "XOR" => Self::Xor,
-                wat => unreachable!("mystery gate {wat}"),
-            }(a, b))
-        } else {
-            Err(AoCError::new(format!("Gate {s} does not match regex!")))
-        }
+        let matches = GATE_RE
+            .captures(s)
+            .ok_or_else(AoCError::new_from_regex(s, &GATE_RE))?;
+        let a: Input = matches[1].parse()?;
+        let b: Input = matches[3].parse()?;
+        Ok(match &matches[2] {
+            "AND" => Self::And,
+            "OR" => Self::Or,
+            "XOR" => Self::Xor,
+            wat => unreachable!("mystery gate {wat}"),
+        }(a, b))
     }
 }
 

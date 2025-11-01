@@ -35,13 +35,13 @@ impl ClawMachine {
         }
         let matches_a = BUTTON_RE
             .captures(&a)
-            .ok_or_else(|| AoCError::new(format!("Line '{a}' does not match regex!")))?;
+            .ok_or_else(AoCError::new_from_regex(&a, &BUTTON_RE))?;
         let matches_b = BUTTON_RE
             .captures(&b)
-            .ok_or_else(|| AoCError::new(format!("Line '{b}' does not match regex!")))?;
+            .ok_or_else(AoCError::new_from_regex(&b, &BUTTON_RE))?;
         let matches_prize = PRIZE_RE
             .captures(&prize)
-            .ok_or_else(|| AoCError::new(format!("Line '{prize}' does not match regex!")))?;
+            .ok_or_else(AoCError::new_from_regex(&prize, &PRIZE_RE))?;
 
         Ok(Self {
             a: [matches_a[1].parse()?, matches_a[2].parse()?],
