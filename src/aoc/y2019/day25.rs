@@ -12,7 +12,6 @@ use std::io::prelude::*;
 
 use text_io::read;
 
-
 use super::computer::{Computer, RunState};
 
 pub fn part_2(mut data: crate::DataIn) -> crate::AoCResult<String> {
