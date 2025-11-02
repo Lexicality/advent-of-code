@@ -22,8 +22,6 @@ jobs:
   test:
     name: Tests
     runs-on: ubuntu-latest
-    needs:
-      - build
     steps:
       - name: Checkout repo & data
         uses: actions/checkout@v5
@@ -38,8 +36,6 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
-    needs:
-      - build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
