@@ -10,12 +10,14 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+use num::Integer;
+
 use crate::AoCError;
 
 #[derive(Debug)]
 enum Instruction {
-    Left(i16),
-    Right(i16),
+    Left(u16),
+    Right(u16),
 }
 
 impl FromStr for Instruction {
@@ -38,18 +40,11 @@ impl FromStr for Instruction {
 
 impl Display for Instruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Rotate {} {} clicks",
-            match self {
-                Self::Left(_) => "left",
-                Self::Right(_) => "right",
-            },
-            match self {
-                Self::Left(i) => i,
-                Self::Right(i) => i,
-            }
-        )
+        let (dir, amt) = match self {
+            Self::Left(i) => ("L", i),
+            Self::Right(i) => ("R", i),
+        };
+        write!(f, "{}{}", dir, amt)
     }
 }
 
@@ -69,27 +64,48 @@ impl Display for Dial {
 }
 
 impl Dial {
-    fn rotate(&mut self, instruction: Instruction) {
+    fn rotate(&mut self, instruction: Instruction) -> u32 {
+        let mut ret = 0;
+
         match instruction {
             Instruction::Left(count) => {
+                let (full_rotations, count) = count.div_mod_floor(&100);
+                ret += full_rotations as u32;
                 let count: i64 = count.into();
+                let prezero = self.0 == 0;
                 self.0 -= count;
+                if self.0 < 0 {
+                    self.0 += 100;
+                    if !prezero {
+                        ret += 1;
+                    }
+                } else if count > 0 && self.0 == 0 {
+                    ret += 1;
+                }
             }
             Instruction::Right(count) => {
+                let (full_rotations, count) = count.div_mod_floor(&100);
+                ret += full_rotations as u32;
                 let count: i64 = count.into();
                 self.0 += count;
+                if self.0 > 99 {
+                    self.0 -= 100;
+                    ret += 1;
+                } else if count > 0 && self.0 == 0 {
+                    ret += 1;
+                }
             }
         }
-        self.clampinate();
-    }
+        if ret > 0 {
+            log::debug!(
+                "The dial is rotated {instruction} to point at {}; {ret} passes of 0",
+                self.0
+            );
+        } else {
+            log::debug!("The dial is rotated {instruction} to point at {}", self.0);
+        }
 
-    fn clampinate(&mut self) {
-        while self.0 < 0 {
-            self.0 += 100;
-        }
-        while self.0 > 99 {
-            self.0 -= 100;
-        }
+        ret
     }
 }
 
@@ -98,12 +114,21 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut dial: Dial = Default::default();
     for line in data {
         let instruction = line.parse()?;
-        log::debug!("{dial}");
-        log::debug!("-> {instruction}");
         dial.rotate(instruction);
         if dial.0 == 0 {
             ret += 1;
         }
+    }
+    log::info!("{dial}");
+    Ok(ret.to_string())
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ret = 0;
+    let mut dial: Dial = Default::default();
+    for line in data {
+        let instruction = line.parse()?;
+        ret += dial.rotate(instruction);
     }
     log::info!("{dial}");
     Ok(ret.to_string())
@@ -116,5 +141,93 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
+
+#[cfg(test)]
+mod test {
+    use super::{Dial, Instruction};
+
+    #[test]
+    fn test_safe_zero() {
+        let mut dial = Dial(50);
+        let instruction = Instruction::Left(50);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 1);
+    }
+
+    #[test]
+    fn test_right_zero() {
+        let mut dial = Dial(50);
+        let instruction = Instruction::Right(50);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 1);
+    }
+
+    #[test]
+    fn test_left_multi_rot() {
+        let mut dial = Dial(50);
+        let instruction = Instruction::Left(150);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 2);
+    }
+
+    #[test]
+    fn test_right_multi_rot() {
+        let mut dial = Dial(50);
+        let instruction = Instruction::Right(150);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 2);
+    }
+
+    #[test]
+    fn test_zero_full_left() {
+        let mut dial = Dial(0);
+        let instruction = Instruction::Left(100);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 1);
+    }
+
+    #[test]
+    fn test_zero_full_right() {
+        let mut dial = Dial(0);
+        let instruction = Instruction::Right(100);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 0);
+        assert_eq!(ret, 1);
+    }
+
+    #[test]
+    fn test_one_click_left() {
+        let mut dial = Dial(0);
+        let instruction = Instruction::Left(1);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 99);
+        assert_eq!(ret, 0);
+    }
+
+    #[test]
+    fn test_one_click_right() {
+        let mut dial = Dial(0);
+        let instruction = Instruction::Right(1);
+
+        let ret = dial.rotate(instruction);
+        assert_eq!(dial.0, 1);
+        assert_eq!(ret, 0);
+    }
+}
