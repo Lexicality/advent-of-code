@@ -11,8 +11,11 @@ use std::collections::HashMap;
 use std::process::ExitCode;
 use std::time::Instant;
 
-use advent_of_code::{AoCData, AoCDay, AoCError, AoCResult};
+use env_logger::Builder;
 use itertools::Itertools;
+use log::LevelFilter;
+
+use advent_of_code::{AoCData, AoCDay, AoCError, AoCResult};
 
 type DayMap = HashMap<&'static str, HashMap<&'static str, &'static AoCDay>>;
 
@@ -101,6 +104,12 @@ fn main_wrapped() -> AoCResult<()> {
 }
 
 fn main() -> ExitCode {
+    Builder::new()
+        .filter_level(LevelFilter::Info)
+        .format_target(false)
+        .format_timestamp(None)
+        .parse_default_env()
+        .init();
     match main_wrapped() {
         Ok(_) => ExitCode::SUCCESS,
         Err(err) => {

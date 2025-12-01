@@ -98,13 +98,14 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let mut dial: Dial = Default::default();
     for line in data {
         let instruction = line.parse()?;
-        // println!("{dial}\n{instruction}");
+        log::debug!("{dial}");
+        log::debug!("-> {instruction}");
         dial.rotate(instruction);
         if dial.0 == 0 {
             ret += 1;
         }
     }
-    // println!("{dial}");
+    log::info!("{dial}");
     Ok(ret.to_string())
 }
 
