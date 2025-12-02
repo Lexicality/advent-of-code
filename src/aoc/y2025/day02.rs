@@ -62,15 +62,18 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
                 let len = numstr.len();
                 let max_len = len / 2;
 
-                // This takes 6 seconds but whatever 😭
-                (1..=max_len).any(|size| {
-                    let substr = &numstr[0..size];
-                    numstr
-                        .chars()
-                        .chunks(size)
-                        .into_iter()
-                        .all(|window| window.collect::<String>() == substr)
-                })
+                // This takes 4 seconds but whatever 😭
+                (1..=max_len)
+                    // Filter out any number that can't make valid windows
+                    .filter(|size| len % size == 0)
+                    .any(|size| {
+                        let substr = &numstr[0..size];
+                        numstr
+                            .chars()
+                            .chunks(size)
+                            .into_iter()
+                            .all(|window| window.collect::<String>() == substr)
+                    })
             })
         })
         .inspect(|serial| log::debug!("Found invalid serial number {serial}"))
