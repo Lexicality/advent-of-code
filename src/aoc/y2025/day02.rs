@@ -12,12 +12,12 @@ use std::ops::RangeInclusive;
 use itertools::Itertools;
 use num::Integer;
 
-use crate::AoCError;
+use crate::{AoCError, AoCResult};
 
-pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+fn rangify(data: crate::DataIn) -> AoCResult<Vec<RangeInclusive<u64>>> {
     // damn references
     let lines = data.collect_vec();
-    let ranges: Vec<RangeInclusive<u64>> = lines
+    lines
         .iter()
         .flat_map(|line| line.split(','))
         .map(|raw| {
@@ -25,11 +25,12 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
                 .ok_or_else(|| AoCError::new(format!("Line {raw} is missing a -!")))
                 .and_then(|(start, end)| Ok((start.parse()?)..=(end.parse()?)))
         })
-        .try_collect()?;
+        .try_collect()
+        .inspect(|ranges| log::debug!("Collected ranges: {ranges:?}"))
+}
 
-    log::debug!("Collected ranges: {ranges:?}");
-
-    let ret: u64 = ranges
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let ret: u64 = rangify(data)?
         .into_iter()
         .flat_map(|range| {
             range.filter(|num| {
@@ -50,6 +51,34 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let ret: u64 = rangify(data)?
+        .into_iter()
+        .flat_map(|range| {
+            range.filter(|num| {
+                // safety: this string is made of numbers which are all going to be ascii
+                // characters unless something has gone catastrophically wrong
+                let numstr = num.to_string();
+                let len = numstr.len();
+                let max_len = len / 2;
+
+                // This takes 6 seconds but whatever 😭
+                (1..=max_len).any(|size| {
+                    let substr = &numstr[0..size];
+                    numstr
+                        .chars()
+                        .chunks(size)
+                        .into_iter()
+                        .all(|window| window.collect::<String>() == substr)
+                })
+            })
+        })
+        .inspect(|serial| log::debug!("Found invalid serial number {serial}"))
+        .sum();
+
+    Ok(ret.to_string())
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2025",
     day: "2",
@@ -57,5 +86,8 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
