@@ -42,8 +42,43 @@ fn process_line_p1(line: String) -> crate::AoCResult<u64> {
     best.parse().map_err(AoCError::new_from_parseerror)
 }
 
+fn process_line_p2(line: String) -> crate::AoCResult<u64> {
+    log::debug!("Looking at bank {line}");
+    let len = line.len();
+
+    let (_, best) = (0..12).fold((0, vec![]), |(last_idx, mut acc): (usize, Vec<char>), i| {
+        let endo = len - 11 + i;
+        let line = &line[last_idx..endo];
+        log::debug!("I'm character #{i} and I'm looking at {last_idx}..{endo}: {line}",);
+
+        // stoopid
+        let next_char = line.chars().max().expect("line won't be empty");
+        let idx = line
+            .chars()
+            .position(|c| c == next_char)
+            .expect("we know it's in there");
+
+        log::debug!("Wow, my next best is {next_char} at {idx}!");
+
+        acc.push(next_char);
+        (idx + 1 + last_idx, acc)
+    });
+
+    let best: String = best.into_iter().collect();
+
+    log::debug!("The best is {best}!");
+
+    best.parse().map_err(AoCError::new_from_parseerror)
+}
+
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let banks: Vec<_> = data.map(process_line_p1).try_collect()?;
+    let ret: u64 = banks.into_iter().sum();
+    Ok(ret.to_string())
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let banks: Vec<_> = data.map(process_line_p2).try_collect()?;
     let ret: u64 = banks.into_iter().sum();
     Ok(ret.to_string())
 }
@@ -55,5 +90,8 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
