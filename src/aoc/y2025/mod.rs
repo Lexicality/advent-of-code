@@ -8,3 +8,4 @@
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 pub mod day01;
 pub mod day02;
+pub mod day03;
