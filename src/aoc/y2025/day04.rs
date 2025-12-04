@@ -9,7 +9,9 @@
 
 use std::fmt::Display;
 
-use crate::{AoCError, CharGrid, Grid, symbols};
+use itertools::Itertools;
+
+use crate::{AoCError, CharGrid, CommonGrid, Coord2D, Grid, symbols};
 
 enum GridState {
     Empty,
@@ -37,11 +39,8 @@ impl Display for GridState {
     }
 }
 
-pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
-    let grid = Grid::<GridState>::new_from_chars(data)?;
-    log::debug!("{grid}");
-    let ret = grid
-        .iter()
+fn get_forkable(grid: &Grid<GridState>) -> impl Iterator<Item = Coord2D> {
+    grid.iter()
         .filter(|(coord, state)| {
             matches!(state, GridState::Roll)
                 && grid
@@ -50,8 +49,33 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
                     .count()
                     < 4
         })
-        .count();
+        .map(|(coord, _)| *coord)
+}
+
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let grid = Grid::<GridState>::new_from_chars(data)?;
+    log::debug!("{grid}");
+    let ret = get_forkable(&grid).count();
     Ok(ret.to_string())
+}
+
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut grid = Grid::<GridState>::new_from_chars(data)?;
+    let mut total_removed = 0;
+
+    loop {
+        log::debug!("{grid}");
+        let forkable = get_forkable(&grid).collect_vec();
+        let count = forkable.len();
+        if count == 0 {
+            break;
+        }
+        total_removed += count;
+        forkable.into_iter().for_each(|coord| {
+            grid.set(coord, GridState::Empty);
+        });
+    }
+    Ok(total_removed.to_string())
 }
 
 inventory::submit!(crate::AoCDay {
@@ -61,5 +85,8 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
