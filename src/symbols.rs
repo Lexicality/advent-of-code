@@ -15,6 +15,7 @@ pub const SHADE_DARK: char = '▓';
 pub const VOID: char = '·';
 pub const INVALID: char = '╳';
 pub const BOX: char = '▢';
+pub const ROLL: char = '●';
 pub const ROBOT: char = '✪';
 // Arrows etc
 pub const ARROW_UP: char = '↑';
