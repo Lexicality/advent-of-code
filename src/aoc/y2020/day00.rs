@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Lexi Robinson
+// Copyright (c) 2025 Lexi Robinson
 //
 // Licensed under the EUPL, Version 1.2
 //
@@ -7,12 +7,17 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
-pub mod y2015;
-pub mod y2018;
-pub mod y2019;
-pub mod y2020;
-pub mod y2021;
-pub mod y2022;
-pub mod y2023;
-pub mod y2024;
-pub mod y2025;
+pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
+    let ret = data.count();
+    Ok(ret.to_string())
+}
+
+inventory::submit!(crate::AoCDay {
+    year: "2020",
+    day: "0",
+    part_1: crate::AoCPart {
+        main: part_1,
+        example: part_1
+    },
+    part_2: None
+});
