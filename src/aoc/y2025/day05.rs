@@ -37,6 +37,48 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut ranges: Vec<_> = data
+        .take_while(|line| !line.is_empty())
+        .map(|line| -> AoCResult<RangeInclusive<Num>> {
+            let (start, end) = line.split_once('-').ok_or_else(|| {
+                AoCError::new(format!("Input range {line} doesn't have a - in it?"))
+            })?;
+            Ok(start.parse()?..=end.parse()?)
+        })
+        .try_collect()?;
+    ranges.sort_by_key(|range| *range.start());
+
+    // I'm sure there's a smarter way to do this.
+    let mut ret = 0;
+    let mut last: Option<RangeInclusive<Num>> = None;
+
+    for range in ranges.into_iter() {
+        log::debug!("Looking at {range:?}. Last is {last:?}, count is {ret}");
+        match last.as_mut() {
+            Some(last) => {
+                if last.end() >= range.start() {
+                    // bah
+                    if last.end() >= range.end() {
+                        continue;
+                    }
+                    ret += range.end() - last.end()
+                } else {
+                    ret += range.end() - range.start() + 1;
+                }
+                *last = range;
+            }
+            None => {
+                ret += range.end() - range.start() + 1;
+                last = Some(range);
+            }
+        }
+        log::debug!("> count is now {ret}");
+    }
+
+    Ok(ret.to_string())
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2025",
     day: "5",
@@ -44,5 +86,8 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
