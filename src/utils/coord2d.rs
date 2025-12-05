@@ -77,6 +77,66 @@ impl Coordinate2D for Coord2D {
     fn from_tuple(value: (Self::Type, Self::Type)) -> Self {
         value.into()
     }
+
+    fn get_neighbours(&self) -> [Self; 4] {
+        // Clockwise from north
+        [
+            Self {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Self {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Self {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Self {
+                x: self.x - 1,
+                y: self.y,
+            },
+        ]
+    }
+
+    fn get_diagonal_neighbours(&self) -> [Self; 8] {
+        // Clockwise from north
+        [
+            Self {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Self {
+                x: self.x + 1,
+                y: self.y - 1,
+            },
+            Self {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Self {
+                x: self.x + 1,
+                y: self.y + 1,
+            },
+            Self {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Self {
+                x: self.x - 1,
+                y: self.y + 1,
+            },
+            Self {
+                x: self.x - 1,
+                y: self.y,
+            },
+            Self {
+                x: self.x - 1,
+                y: self.y - 1,
+            },
+        ]
+    }
 }
 
 impl FromStr for Coord2D {

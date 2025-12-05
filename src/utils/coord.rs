@@ -46,4 +46,8 @@ where
     fn try_from_tuple<V: PrimInt>(value: (V, V)) -> Option<Self> {
         Some(Self::from_tuple((num::cast(value.0)?, num::cast(value.1)?)))
     }
+
+    fn get_neighbours(&self) -> [Self; 4];
+
+    fn get_diagonal_neighbours(&self) -> [Self; 8];
 }
