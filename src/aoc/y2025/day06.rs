@@ -94,6 +94,41 @@ pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     Ok(ret.to_string())
 }
 
+pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
+    let mut lines = data.collect_vec();
+
+    let operations_str = lines.pop().expect("There's going to be at least one line");
+    let operations = operations_str.split_whitespace();
+
+    let mut lines = lines
+        .into_iter()
+        .map(|line| line.chars().collect_vec().into_iter())
+        .collect_vec();
+
+    let ret = operations
+        .map(|oper| -> AoCResult<Num> {
+            let numbers: Vec<Num> = (0..)
+                .map(|_| {
+                    let num: String = lines.iter_mut().map(|i| i.next().unwrap_or(' ')).collect();
+                    num.trim().to_owned()
+                })
+                .take_while(|num| !num.is_empty())
+                .map(|num| num.parse())
+                .try_collect()?;
+            if numbers.is_empty() {
+                panic!("ran out of numbers before operations!");
+            }
+            match oper {
+                "*" => Ok(numbers.into_iter().product()),
+                "+" => Ok(numbers.into_iter().sum()),
+                _ => Err(AoCError::new(format!("Unexpected operator {oper}!"))),
+            }
+        })
+        .try_fold(0, |acc, num| -> AoCResult<Num> { Ok(acc + num?) })?;
+
+    Ok(ret.to_string())
+}
+
 inventory::submit!(crate::AoCDay {
     year: "2025",
     day: "6",
@@ -101,5 +136,8 @@ inventory::submit!(crate::AoCDay {
         main: part_1,
         example: part_1
     },
-    part_2: None
+    part_2: Some(crate::AoCPart {
+        main: part_2,
+        example: part_2
+    })
 });
