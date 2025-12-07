@@ -14,6 +14,7 @@ default-run = "advent-of-code"
 [dependencies]
 ansi_term = "0.12.1"
 aoc_macros = { path = "./aoc_macros" }
+cached = "0.56.0"
 clap = { version = "4.0.29", features = ["cargo", "derive", "env"] }
 env_logger = "0.11.8"
 hex = "0.4.3"
