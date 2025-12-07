@@ -11,7 +11,7 @@ use std::hash::Hash;
 
 use num::{FromPrimitive, PrimInt};
 
-pub trait Coordinate: Hash + Eq + Copy
+pub trait Coordinate: Hash + Eq + Copy + Default
 where
     Self: Sized,
 {

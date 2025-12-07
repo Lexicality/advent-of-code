@@ -9,9 +9,13 @@
 
 use std::fmt::Display;
 
-use crate::{CharGrid, CommonGrid, Coord2D, Grid, symbols};
+use aoc_macros::VoidState;
 
+use crate::{CharGrid, CommonGrid, Coord2D, SparseGrid, symbols};
+
+#[derive(VoidState)]
 enum GridState {
+    #[void]
     Snow,
     Tree,
 }
@@ -38,34 +42,33 @@ impl Display for GridState {
     }
 }
 
-fn toboggonate(grid: &Grid<GridState>, dir: Coord2D) -> usize {
+fn toboggonate(grid: &SparseGrid<GridState>, dir: Coord2D) -> usize {
     let mut pos = Coord2D { x: 0, y: 0 };
     let mut trees = 0;
-    loop {
-        match grid.get(&pos) {
-            Some(GridState::Tree) => trees += 1,
-            Some(_) => (),
-            None => {
-                log::debug!("Fell of the end of the map at {pos}");
-                break;
-            }
+    let max = grid.max_key();
+    while pos.y <= max.y {
+        if let Some(GridState::Tree) = grid.get(&pos) {
+            log::trace!("Hit a tree at {pos}");
+            trees += 1
+        } else {
+            log::trace!("safe at {pos}");
         }
         pos += dir;
-        pos.x %= grid.width as i32;
+        pos.x %= max.x + 1;
     }
-
+    log::debug!("Fell of the end of the map at {pos}");
     trees
 }
 
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
-    let grid: Grid<GridState> = Grid::new_from_chars(data)?;
+    let grid: SparseGrid<GridState> = SparseGrid::new_from_chars(data)?;
     log::debug!("\n{grid:#}");
     let ret = toboggonate(&grid, Coord2D { x: 3, y: 1 });
     Ok(ret.to_string())
 }
 
 pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
-    let grid: Grid<GridState> = Grid::new_from_chars(data)?;
+    let grid: SparseGrid<GridState> = SparseGrid::new_from_chars(data)?;
     log::debug!("\n{grid:#}");
     let ret: usize = [
         Coord2D { x: 1, y: 1 },

@@ -20,8 +20,10 @@ pub mod utils {
     pub mod direction;
     pub mod error;
     pub mod grid;
+    pub mod gridstate;
     pub mod infgrid;
     pub mod input_partitioner;
+    pub mod sparsegrid;
 }
 mod integration_tests;
 pub mod symbols;
@@ -42,8 +44,11 @@ pub use crate::utils::direction::RotateDirection;
 pub use crate::utils::error::AoCError;
 pub use crate::utils::error::AoCResult;
 pub use crate::utils::grid::Grid;
+pub use crate::utils::gridstate::GridState;
+pub use crate::utils::gridstate::VoidState;
 pub use crate::utils::infgrid::InfGrid;
 pub use crate::utils::input_partitioner::InputPartitioner;
+pub use crate::utils::sparsegrid::SparseGrid;
 
 pub type DataIter<'a> = &'a mut dyn Iterator<Item = String>;
 pub type DataIn = utils::data::AoCDataIterator;

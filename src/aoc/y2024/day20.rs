@@ -1,7 +1,3 @@
-use std::fmt::Display;
-
-use itertools::Itertools;
-
 // Copyright (c) 2024 Lexi Robinson
 //
 // Licensed under the EUPL, Version 1.2
@@ -10,47 +6,17 @@ use itertools::Itertools;
 // You should have received a copy of the Licence along with this work. If not, see:
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
+use std::fmt::Display;
+
+use itertools::Itertools;
+
 use crate::utils::astar::{AStarProvider, a_star};
-use crate::{AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid, symbols};
+use crate::{AoCError, AoCResult, CharGrid, Coord2D, Coordinate, Grid, GridState};
 
 const TIME_TO_SAVE_PART_1: usize = 100;
 const TIME_TO_SAVE_PART_2: usize = 74;
 
 type AStarID = Coord2D;
-
-#[allow(dead_code)]
-#[derive(Debug, Clone, Copy)]
-enum GridState {
-    Empty,
-    Wall,
-    Start,
-    End,
-}
-
-impl TryFrom<char> for GridState {
-    type Error = AoCError;
-    fn try_from(value: char) -> Result<Self, Self::Error> {
-        Ok(match value {
-            '.' => Self::Empty,
-            '#' => Self::Wall,
-            'S' => Self::Start,
-            'E' => Self::End,
-            _ => return Err(AoCError::new_from_char(value)),
-        })
-    }
-}
-
-impl Display for GridState {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            GridState::Empty => symbols::VOID,
-            GridState::Wall => symbols::BLOCK,
-            GridState::Start => 'S',
-            GridState::End => 'E',
-        }
-        .fmt(f)
-    }
-}
 
 #[derive(Debug)]
 struct AStarImpl {
@@ -90,7 +56,7 @@ impl AStarProvider for AStarImpl {
         Box::new(
             self.grid
                 .get_neighbour_coords_filtered(*coord, false, |_, state| {
-                    matches!(state, GridState::Empty | GridState::End)
+                    matches!(state, GridState::Void | GridState::End)
                 }),
         )
     }
@@ -110,6 +76,7 @@ impl AStarProvider for AStarImpl {
 
 pub fn part_1(data: crate::DataIn) -> crate::AoCResult<String> {
     let provider = AStarImpl::new_from_chars(data)?;
+    log::debug!("\n{}", provider.grid);
     let start = provider.get_start();
     let route = a_star(provider, start);
     assert!(!route.is_empty());
@@ -153,7 +120,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
                     }
                 })
                 .sorted()
-                .inspect(|v| println!("{v}"))
+                .inspect(|v| log::trace!("{v}"))
                 .filter(|v| *v >= TIME_TO_SAVE_PART_2)
                 // .inspect(|(j, distance)| println!("{}", j - i - (*distance as usize)))
                 // I'm not entirely sure why this is necessary but it is
@@ -162,7 +129,7 @@ pub fn part_2(data: crate::DataIn) -> crate::AoCResult<String> {
         })
         .inspect(|v| {
             if *v > 0 {
-                println!("   {v}")
+                log::trace!("   {v}")
             }
         })
         .sum();

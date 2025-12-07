@@ -60,38 +60,6 @@ where
     }
 }
 
-pub trait SparseGrid<Key: Coordinate2D, Item>: CommonGrid<Key, Item>
-where
-    Self: Sized + FromIterator<(Key, Item)>,
-{
-    fn new_from_sparse_lines<Iter, Inner>(data: Iter) -> Self
-    where
-        Inner: IntoIterator<Item = Option<Item>>,
-        Iter: Iterator<Item = Inner>,
-    {
-        data.enumerate()
-            .flat_map(|(y, inner)| {
-                let y = Key::Type::from_usize(y).expect("Too many lines");
-                inner.into_iter().enumerate().map(move |(x, item)| {
-                    (
-                        Key::from_tuple((Key::Type::from_usize(x).expect("Row is too big"), y)),
-                        item,
-                    )
-                })
-            })
-            .filter_map(|(key, item)| item.map(|item| (key, item)))
-            .collect()
-    }
-
-    fn new_from_sparse_iter<I>(data: I, width: Key::Type) -> Self
-    where
-        I: Iterator<Item = Option<Item>>,
-    {
-        let width = width.to_usize().expect("Width cannot be negative");
-        Self::new_from_sparse_lines(data.chunks(width).into_iter())
-    }
-}
-
 pub trait CharGrid<Key, Item>: FlatGrid<Key, Item>
 where
     Key: Coordinate2D,

@@ -18,6 +18,10 @@ pub const BOX: char = '▢';
 pub const ROLL: char = '●';
 pub const ROBOT: char = '✪';
 pub const TREE: char = '𓆭';
+pub const FLAG_WHITE: char = '⚐';
+pub const FLAG_BLACK: char = '⚑';
+pub const START: char = '𝕊';
+pub const END: char = '𝔼';
 // Arrows etc
 pub const ARROW_UP: char = '↑';
 pub const ARROW_RIGHT: char = '→';

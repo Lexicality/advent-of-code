@@ -80,21 +80,6 @@ impl<Item, Key: Coordinate> IntoIterator for InfGrid<Item, Key> {
 }
 
 impl<Item, Key: Coordinate2D + std::ops::Add<Output = Key>> InfGrid<Item, Key> {
-    pub fn new_from_lines<Iter, Inner>(data: Iter) -> Self
-    where
-        Inner: IntoIterator<Item = Item>,
-        Iter: Iterator<Item = Inner>,
-    {
-        data.enumerate()
-            .flat_map(|(y, inner)| {
-                inner
-                    .into_iter()
-                    .enumerate()
-                    .map(move |(x, item)| (Key::try_from_tuple((x, y)).unwrap(), item))
-            })
-            .collect()
-    }
-
     pub fn get_neighbour_coords(
         &self,
         coord: Key,
@@ -164,12 +149,6 @@ impl<Item, Key: Coordinate> CommonGrid<Key, Item> for InfGrid<Item, Key> {
 
 impl<Item, Key: Coordinate2D> FlatGrid<Key, Item> for InfGrid<Item, Key> {}
 impl<Item: TryFrom<char>, Key: Coordinate2D> CharGrid<Key, Item> for InfGrid<Item, Key> {}
-
-// impl<Item, Key: Coordinate2D> DisplayGrid<Key, Item> for InfGrid<Item, Key> {
-//     fn get_for_display(&self, key: &Key) -> Option<&dyn Display> {
-//         self.get(key).map(&'#')
-//     }
-// }
 
 impl<Item: Display, Key: Coordinate2D> DisplayGrid<Key, Item> for InfGrid<Item, Key> {
     fn get_for_display(&self, key: &Key) -> Option<&dyn Display> {

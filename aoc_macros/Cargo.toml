@@ -1,0 +1,13 @@
+[package]
+name = "aoc_macros"
+version = "0.1.0"
+edition = "2024"
+authors = ["Lexi Robinson <lexi@lexi.org.uk>"]
+license = "EUPL-1.2"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.42"
+syn = "2.0.111"
