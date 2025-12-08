@@ -7,6 +7,7 @@
 // <https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12>.
 // See the Licence for the specific language governing permissions and limitations under the Licence.
 
+use std::cmp;
 use std::fmt::Display;
 use std::ops;
 use std::str::FromStr;
@@ -229,5 +230,18 @@ impl TryFrom<(usize, usize, usize)> for Coord3D {
             y: y.try_into()?,
             z: z.try_into()?,
         })
+    }
+}
+
+impl Ord for Coord3D {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        // Incredibly basic comparison - more numbers = more ord
+        (self.x + self.y + self.z).cmp(&(other.x + other.y + other.z))
+    }
+}
+
+impl PartialOrd for Coord3D {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
