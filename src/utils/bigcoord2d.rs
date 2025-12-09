@@ -304,3 +304,15 @@ impl From<Direction> for BigCoord2D {
         (c.x, c.y).into()
     }
 }
+impl Ord for BigCoord2D {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        // Incredibly basic comparison - more numbers = more ord
+        (self.x + self.y).cmp(&(other.x + other.y))
+    }
+}
+
+impl PartialOrd for BigCoord2D {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
