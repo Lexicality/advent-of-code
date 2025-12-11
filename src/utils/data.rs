@@ -11,6 +11,7 @@
 use std::fs;
 use std::iter::FusedIterator;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use crate::{AoCError, AoCResult, InputPartitioner};
 
@@ -43,6 +44,10 @@ impl DoubleEndedIterator for AoCDataIterator {
 impl AoCDataIterator {
     pub fn partition(self) -> impl Iterator<Item = AoCData> {
         InputPartitioner::new(self, |line| !line.is_empty()).map(|data| data.into())
+    }
+
+    pub fn parse<F: FromStr>(self) -> impl Iterator<Item = Result<F, F::Err>> {
+        self.map(|line| line.parse())
     }
 }
 
